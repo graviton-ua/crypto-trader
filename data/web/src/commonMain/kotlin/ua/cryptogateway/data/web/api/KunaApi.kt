@@ -136,27 +136,27 @@ class KunaApi(
             header("account", "pro")
             val nonce = Clock.System.now().toEpochMilliseconds()
             header("nonce", nonce)
+            val jsonBody = Json.encodeToString(value = /*body ?:*/ JsonObject(content = emptyMap()))
             header(
                 "signature",
                 createSignature(
                     path = "/v4/private/me",
                     nonce = nonce,
-                    body = JsonObject(content = emptyMap()),
+                    body = jsonBody,
                 )
             )
         }.asResult<KunaResponse<KunaMe>>().map { it.data }
     }
 
 
-    private inline fun <reified T> createSignature(
+    private fun createSignature(
         path: String,
         nonce: Long,
-        body: T? = null,
+        body: String? = null,
         privateKey: String = BuildConfig.KUNA_PRIVAT_KEY,
     ): String {
         // Serialize the body to JSON
-        val jsonBody = Json.encodeToString(value = body ?: JsonObject(content = emptyMap()))
-        val message = "$path$nonce$jsonBody"
+        val message = "$path$nonce$body"
 
         // Assuming you're targeting JVM and using java.security for HMAC
         val hmac = javax.crypto.Mac.getInstance("HmacSHA384")
