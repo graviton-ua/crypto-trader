@@ -34,5 +34,6 @@ include(
     ":core:logging:implementation",
     ":core:preferences",
 )
+include(":data:db")
 include(":shared")
 include(":composeApp")
