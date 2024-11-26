@@ -12,10 +12,10 @@ actual interface MsSqlDatabasePlatformComponent {
     @ApplicationScope
     fun provideHikariConfig(): HikariConfig = HikariConfig().apply {
         //jdbcUrl = "jdbc:sqlite:${databaseFile.absolutePath}",
-        jdbcUrl = "jdbc:sqlserver://localhost:1433;databaseName=mydatabase" // Update with your database name
+        jdbcUrl = "jdbc:sqlserver://localhost:1433;databaseName=kuna" // Update with your database name
         driverClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-        username = "myusername" // Replace with your username
-        password = "mypassword" // Replace with your password
+        username = "kuna" // Replace with your username
+        password = "kuna" // Replace with your password
         maximumPoolSize = 10
         isAutoCommit = false
         transactionIsolation = "TRANSACTION_READ_COMMITTED"
