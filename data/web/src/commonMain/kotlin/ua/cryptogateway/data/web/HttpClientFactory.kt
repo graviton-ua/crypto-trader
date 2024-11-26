@@ -21,7 +21,6 @@ class HttpClientFactory(
         install(DefaultRequest) {
             url(BuildConfig.KUNA_BASE_URL)
             header("accept", "application/json")
-            header("nonce", Clock.System.now().toEpochMilliseconds())
         }
         install(ContentNegotiation) {
             json(Json {

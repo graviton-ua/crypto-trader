@@ -21,7 +21,7 @@ fun main() {
             applicationComponent.initializers.initialize()
         }
 
-        val observeFees = applicationComponent.observeFees
+        val observeFees = applicationComponent.observeMe
         LaunchedEffect(observeFees) {
             observeFees.flow.collectLatest {
                 println(it)
