@@ -1,6 +1,5 @@
 package ua.cryptogateway.domain.observers
 
-import ua.cryptogateway.data.models.web.KunaFee
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.data.models.web.KunaMe

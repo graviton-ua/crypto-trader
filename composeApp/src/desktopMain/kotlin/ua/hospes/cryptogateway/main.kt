@@ -17,14 +17,24 @@ fun main() {
 
     application {
 
-        val observeFees = applicationComponent.observeMe
-        LaunchedEffect(observeFees) {
-            observeFees.flow.collectLatest {
+        val observeMe = applicationComponent.observeMe
+        LaunchedEffect(observeMe) {
+            observeMe.flow.collectLatest {
                 Log.debug(it.toString())
             }
         }
-        LaunchedEffect(observeFees) {
-            observeFees.invoke(Unit)
+        LaunchedEffect(observeMe) {
+            observeMe.invoke(Unit)
+        }
+
+        val observeOrdersGrid = applicationComponent.observeOrdersGrid
+        LaunchedEffect(observeOrdersGrid) {
+            observeOrdersGrid.flow.collectLatest {
+                Log.debug(it.toString())
+            }
+        }
+        LaunchedEffect(observeOrdersGrid) {
+            observeOrdersGrid.invoke(Unit)
         }
 
 

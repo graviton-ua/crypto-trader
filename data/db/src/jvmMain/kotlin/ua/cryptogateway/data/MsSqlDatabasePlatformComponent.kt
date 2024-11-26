@@ -2,9 +2,9 @@ package ua.cryptogateway.data
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import java.io.File
 import me.tatarka.inject.annotations.Provides
 import ua.cryptogateway.inject.ApplicationScope
+import java.io.File
 import javax.sql.DataSource
 
 actual interface MsSqlDatabasePlatformComponent {
@@ -12,7 +12,8 @@ actual interface MsSqlDatabasePlatformComponent {
     @ApplicationScope
     fun provideHikariConfig(): HikariConfig = HikariConfig().apply {
         //jdbcUrl = "jdbc:sqlite:${databaseFile.absolutePath}",
-        jdbcUrl = "jdbc:sqlserver://localhost:1433;databaseName=kuna" // Update with your database name
+        jdbcUrl =
+            "jdbc:sqlserver://localhost:1433;databaseName=kuna;encrypt=true;trustServerCertificate=true;" // Update with your database name
         driverClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
         username = "kuna" // Replace with your username
         password = "kuna" // Replace with your password
@@ -24,7 +25,7 @@ actual interface MsSqlDatabasePlatformComponent {
 
     @Provides
     @ApplicationScope
-    fun provideDataSourceFactory(
+    fun provideDataSource(
         hikariConfig: HikariConfig,
     ): DataSource = HikariDataSource(hikariConfig)
 }

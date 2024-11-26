@@ -1,10 +1,9 @@
 package ua.cryptogateway.domain
 
-import ua.cryptogateway.data.web.KtorComponent
-import ua.cryptogateway.domain.observers.ObserveFees
 import ua.cryptogateway.domain.observers.ObserveMe
+import ua.cryptogateway.domain.observers.ObserveOrdersGrid
 
-interface ServicesComponent : KtorComponent {
-    val observeFees: ObserveFees    // TODO: Remove after testing
+interface ServicesComponent {
     val observeMe: ObserveMe    // TODO: Remove after testing
+    val observeOrdersGrid: ObserveOrdersGrid    // TODO: Remove after testing
 }

@@ -9,7 +9,8 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.core.base)
             implementation(projects.core.logging)
-            //api(projects.data.db)
+
+            api(projects.data.models.db)
 
             api(libs.kotlinx.datetime)
             // Need to force upgrade these for recent Kotlin support
@@ -18,14 +19,15 @@ kotlin {
 
             implementation(libs.kotlininject.runtime)
 
-            implementation(libs.exposed.core)
+            api(libs.exposed.core)
+            api(libs.exposed.jdbc)
             //implementation(libs.sqldelight.primitive)
             //implementation(libs.paging.common)
         }
 
         jvmMain {
             dependencies {
-                implementation(libs.hikari)
+                api(libs.hikari)
                 implementation(libs.mssql.jdbc)
             }
         }
