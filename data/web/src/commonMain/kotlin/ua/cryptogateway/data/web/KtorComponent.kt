@@ -4,9 +4,7 @@ import io.ktor.client.*
 import me.tatarka.inject.annotations.Provides
 import ua.cryptogateway.inject.ApplicationScope
 
-expect interface KtorPlatformComponent
-
-interface KtorComponent : KtorPlatformComponent {
+interface KtorComponent {
     @ApplicationScope
     @Provides
     fun provideHttpClient(

@@ -39,6 +39,7 @@ kotlin {
                 api(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.client.serialization.json)
+                implementation(libs.ktor.client.cio)
                 implementation(libs.ktor.client.logging)
                 implementation(libs.ktor.client.auth)
 
@@ -46,13 +47,6 @@ kotlin {
                 api(libs.kotlinx.serialization.json)
 
                 api(libs.kotlininject.runtime)
-            }
-        }
-
-        jvmMain {
-            dependencies {
-                api(libs.okhttp.okhttp)
-                implementation(libs.ktor.client.okhttp)
             }
         }
     }
