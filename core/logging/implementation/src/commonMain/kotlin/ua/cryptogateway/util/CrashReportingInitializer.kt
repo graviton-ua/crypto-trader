@@ -1,10 +1,10 @@
 package ua.cryptogateway.util
 
-import app.tivi.settings.TiviPreferences
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.appinitializers.AppInitializer
 import ua.cryptogateway.inject.ApplicationCoroutineScope
+import ua.cryptogateway.settings.TiviPreferences
 
 @Inject
 class CrashReportingInitializer(

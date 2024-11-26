@@ -43,7 +43,7 @@ interface SharedApplicationComponent :
 
     val initializers: AppInitializers
     val dispatchers: AppCoroutineDispatchers
-    val deepLinker: DeepLinker
+    //val deepLinker: DeepLinker
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @ApplicationScope

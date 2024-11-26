@@ -1,6 +1,5 @@
 package ua.cryptogateway.settings
 
-import app.tivi.settings.TiviPreferences.Theme
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
@@ -9,6 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.inject.ApplicationCoroutineScope
+import ua.cryptogateway.settings.TiviPreferences.*
 import ua.cryptogateway.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.seconds
 
