@@ -34,6 +34,10 @@ include(
     ":core:logging:implementation",
     ":core:preferences",
 )
-include(":data:db")
+include(
+    ":data:db",
+    ":data:web",
+)
+include(":domain")
 include(":shared")
 include(":composeApp")

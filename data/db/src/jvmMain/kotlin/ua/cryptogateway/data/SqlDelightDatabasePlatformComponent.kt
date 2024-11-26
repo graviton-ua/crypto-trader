@@ -7,7 +7,7 @@ import me.tatarka.inject.annotations.Provides
 import ua.cryptogateway.inject.ApplicationScope
 import javax.sql.DataSource
 
-actual interface SqlDelightDatabasePlatformComponent {
+actual interface MsSqlDatabasePlatformComponent {
     @Provides
     @ApplicationScope
     fun provideHikariConfig(): HikariConfig = HikariConfig().apply {
