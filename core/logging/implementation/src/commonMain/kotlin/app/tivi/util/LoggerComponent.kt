@@ -1,14 +1,11 @@
-// Copyright 2022, Christopher Banes and the Tivi project contributors
-// SPDX-License-Identifier: Apache-2.0
-
 package app.tivi.util
 
-import app.tivi.app.ApplicationInfo
-import app.tivi.app.Flavor
-import app.tivi.appinitializers.AppInitializer
-import app.tivi.inject.ApplicationScope
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
+import ua.cryptogateway.app.ApplicationInfo
+import ua.cryptogateway.app.Flavor
+import ua.cryptogateway.appinitializers.AppInitializer
+import ua.cryptogateway.inject.ApplicationScope
 
 expect interface LoggerPlatformComponent
 

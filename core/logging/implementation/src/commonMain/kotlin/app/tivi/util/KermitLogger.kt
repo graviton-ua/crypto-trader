@@ -1,13 +1,10 @@
-// Copyright 2023, Christopher Banes and the Tivi project contributors
-// SPDX-License-Identifier: Apache-2.0
-
 package app.tivi.util
 
-import app.tivi.app.ApplicationInfo
-import app.tivi.app.Flavor
-import co.touchlab.kermit.Logger as Kermit
 import co.touchlab.kermit.Severity
 import me.tatarka.inject.annotations.Inject
+import ua.cryptogateway.app.ApplicationInfo
+import ua.cryptogateway.app.Flavor
+import co.touchlab.kermit.Logger as Kermit
 
 @Inject
 class KermitLogger(applicationInfo: ApplicationInfo) : Logger {
