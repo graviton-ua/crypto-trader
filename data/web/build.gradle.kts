@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.buildConfig)
 }
 
@@ -8,23 +9,18 @@ buildConfig {
 
     buildConfigField(
         type = String::class.java,
-        name = "TRAKT_DEBUG_CLIENT_SECRET",
-        value = provider { properties["TIVI_DEBUG_TRAKT_CLIENT_SECRET"]?.toString() ?: "" },
+        name = "KUNA_BASE_URL",
+        value = provider { properties["KUNA_BASE_URL"]?.toString() ?: "https://api.kuna.io" },
     )
     buildConfigField(
         type = String::class.java,
-        name = "TRAKT_DEBUG_CLIENT_ID",
-        value = provider { properties["TIVI_DEBUG_TRAKT_CLIENT_ID"]?.toString() ?: "" },
+        name = "KUNA_PUBLIC_KEY",
+        value = provider { properties["KUNA_PUBLIC_KEY"]?.toString() ?: "xFk60WymLUE1d8TzosFw3NWaOsWJok7R8t8SxNx2" },
     )
     buildConfigField(
         type = String::class.java,
-        name = "TRAKT_CLIENT_SECRET",
-        value = provider { properties["TIVI_TRAKT_CLIENT_SECRET"]?.toString() ?: "" },
-    )
-    buildConfigField(
-        type = String::class.java,
-        name = "TRAKT_CLIENT_ID",
-        value = provider { properties["TIVI_TRAKT_CLIENT_ID"]?.toString() ?: "" },
+        name = "KUNA_PRIVAT_KEY",
+        value = provider { properties["KUNA_PRIVAT_KEY"]?.toString() ?: "MxibPfs11MQhCHfSOos7feUuFJ0gZNx5njxOVxDm" },
     )
 }
 
@@ -38,12 +34,16 @@ kotlin {
                 implementation(projects.core.logging.api)
 
                 //api(libs.trakt.api)
-                //api(projects.data.traktauth)
+                api(projects.data.models.web)
 
-                implementation(libs.ktor.client.core)
+                api(libs.ktor.client.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.client.serialization.json)
+                implementation(libs.ktor.client.logging)
                 implementation(libs.ktor.client.auth)
 
                 api(libs.kotlinx.coroutines.core)
+                api(libs.kotlinx.serialization.json)
 
                 api(libs.kotlininject.runtime)
             }

@@ -80,6 +80,16 @@ suspend operator fun <R> Interactor<Unit, R>.invoke(
     timeout: Duration = Interactor.DefaultTimeout,
 ) = invoke(Unit, timeout)
 
+abstract class ResultInteractor<in P, R> {
+    operator fun invoke(params: P): Flow<R> = flow {
+        emit(doWork(params))
+    }
+
+    suspend fun executeSync(params: P): R = doWork(params)
+
+    protected abstract suspend fun doWork(params: P): R
+}
+
 //abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T : Any> : SubjectInteractor<P, PagingData<T>>() {
 //  interface Parameters<T : Any> {
 //    val pagingConfig: PagingConfig
@@ -87,7 +97,9 @@ suspend operator fun <R> Interactor<Unit, R>.invoke(
 //}
 
 @OptIn(ExperimentalCoroutinesApi::class)
-abstract class SubjectInteractor<P : Any, T> {
+abstract class SubjectInteractor<P : Any, T>(
+    distinctInputParam: Boolean = true,
+) {
     // Ideally this would be buffer = 0, since we use flatMapLatest below, BUT invoke is not
     // suspending. This means that we can't suspend while flatMapLatest cancels any
     // existing flows. The buffer of 1 means that we can use tryEmit() and buffer the value
@@ -98,14 +110,29 @@ abstract class SubjectInteractor<P : Any, T> {
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
-    val flow: Flow<T> = paramState
-        .distinctUntilChanged()
-        .flatMapLatest { createObservable(it) }
-        .distinctUntilChanged()
+    val flow: Flow<T> =
+        when (distinctInputParam) {
+            true -> paramState.distinctUntilChanged()
+            false -> paramState
+        }
+            .flatMapLatest { createObservable(it) }
+            .distinctUntilChanged()
 
     operator fun invoke(params: P) {
         paramState.tryEmit(params)
     }
 
-    protected abstract fun createObservable(params: P): Flow<T>
+    protected abstract suspend fun createObservable(params: P): Flow<T>
+}
+
+abstract class SuspendingWorkInteractor<P : Any, T>(
+    distinctInputParam: Boolean = true,
+) : SubjectInteractor<P, T>(
+    distinctInputParam = distinctInputParam
+) {
+    override suspend fun createObservable(params: P): Flow<T> = flow {
+        emit(doWork(params))
+    }
+
+    abstract suspend fun doWork(params: P): T
 }
