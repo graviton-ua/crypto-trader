@@ -8,11 +8,12 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.core.base)
-            api(projects.core.logging.api)
-            api(projects.core.preferences)
-            api(libs.kotlinx.coroutines.core)
-            implementation(libs.kermit)
+            api(libs.log4k)
+            implementation(libs.log4k.slf4j)
             implementation(libs.kotlininject.runtime)
+        }
+        jvmMain.dependencies {
+            implementation(libs.slf4j.simple)
         }
     }
 }

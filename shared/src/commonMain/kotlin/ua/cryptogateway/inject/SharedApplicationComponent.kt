@@ -12,7 +12,7 @@ import ua.cryptogateway.domain.ServicesComponent
 import ua.cryptogateway.domain.observers.ObserveFees
 import ua.cryptogateway.settings.PreferencesComponent
 import ua.cryptogateway.util.AppCoroutineDispatchers
-import ua.cryptogateway.util.LoggerComponent
+import ua.cryptogateway.logs.LoggerComponent
 
 expect interface SharedPlatformApplicationComponent
 

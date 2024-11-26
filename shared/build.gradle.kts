@@ -15,7 +15,7 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 //api(projects.core.analytics)
-                api(projects.core.logging.implementation)
+                api(projects.core.logging)
                 //api(projects.core.notifications.core)
                 //api(projects.core.performance)
                 //api(projects.core.permissions)

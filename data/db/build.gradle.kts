@@ -8,6 +8,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.core.base)
+            implementation(projects.core.logging)
             //api(projects.data.db)
 
             api(libs.kotlinx.datetime)

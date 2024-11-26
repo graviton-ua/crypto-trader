@@ -9,6 +9,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
+                implementation(projects.core.logging)
                 //implementation(projects.core.notifications.core)
                 //api(projects.common.ui.resources.strings)
 

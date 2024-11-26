@@ -31,7 +31,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
-                implementation(projects.core.logging.api)
+                implementation(projects.core.logging)
 
                 //api(libs.trakt.api)
                 api(projects.data.models.web)

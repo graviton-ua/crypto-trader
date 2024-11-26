@@ -30,8 +30,7 @@ dependencyResolutionManagement {
 
 include(
     ":core:base",
-    ":core:logging:api",
-    ":core:logging:implementation",
+    ":core:logging",
     ":core:preferences",
 )
 include(
