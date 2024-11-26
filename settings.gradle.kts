@@ -28,6 +28,11 @@ dependencyResolutionManagement {
     }
 }
 
-include(":composeApp")
-include(":server")
+include(
+    ":core:base",
+    ":core:logging:api",
+    ":core:logging:implementation",
+    ":core:preferences",
+)
 include(":shared")
+include(":composeApp")

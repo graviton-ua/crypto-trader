@@ -7,7 +7,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+            api(libs.kotlinx.coroutines.core)
+            api(libs.kotlinx.datetime)
         }
     }
 }

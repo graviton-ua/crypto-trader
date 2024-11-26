@@ -15,6 +15,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 import cryptogateway.composeapp.generated.resources.Res
 import cryptogateway.composeapp.generated.resources.compose_multiplatform
+import ua.cryptogateway.Greeting
 
 @Composable
 @Preview
