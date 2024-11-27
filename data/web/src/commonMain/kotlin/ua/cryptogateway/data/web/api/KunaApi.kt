@@ -1,22 +1,24 @@
 package ua.cryptogateway.data.web.api
 
-import ua.cryptogateway.data.models.web.KunaFee
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
 import me.tatarka.inject.annotations.Inject
+import ua.cryptogateway.data.models.web.KunaFee
 import ua.cryptogateway.data.models.web.KunaMe
-import ua.cryptogateway.data.web.BuildConfig
 import ua.cryptogateway.data.web.utils.asResult
+import ua.cryptogateway.data.web.utils.privateHeaders
 import ua.cryptogateway.util.AppCoroutineDispatchers
-import kotlin.experimental.and
-import kotlin.text.Charsets.UTF_8
 
+/**
+ * Class `KunaApi` handles various interactions with the Kuna API. This includes
+ * fetching timestamps, fees, trading pairs, currencies, order books, and user-specific data.
+ *
+ * @constructor Creates an instance of `KunaApi`.
+ * @param dispatchers The coroutine dispatchers used for executing the network requests.
+ * @param client The HTTP client instance used for making requests.
+ */
 @Inject
 class KunaApi(
     dispatchers: AppCoroutineDispatchers,
@@ -130,42 +132,20 @@ class KunaApi(
 
     // Private endpoints
 
+    /**
+     * Retrieves the user's personal information from the Kuna server.
+     *
+     * This is a suspension function that performs an HTTP GET request to the
+     * "/v4/private/me" endpoint of the Kuna API. The function uses a coroutine
+     * dispatcher to handle the network request asynchronously.
+     *
+     * @return [Result] containing the user's personal information wrapped in a [KunaMe] object.
+     */
     suspend fun getMe(): Result<KunaMe> = withContext(dispatcher) {
         client.get("/v4/private/me") {
-            header("public-key", BuildConfig.KUNA_PUBLIC_KEY)
-            header("account", "pro")
-            val nonce = Clock.System.now().toEpochMilliseconds()
-            header("nonce", nonce)
-            val jsonBody = Json.encodeToString(value = /*body ?:*/ JsonObject(content = emptyMap()))
-            header(
-                "signature",
-                createSignature(
-                    path = "/v4/private/me",
-                    nonce = nonce,
-                    body = jsonBody,
-                )
-            )
+            privateHeaders(path = "/v4/private/me", body = Unit)
         }.asResult<KunaResponse<KunaMe>>().map { it.data }
     }
 
 
-    private fun createSignature(
-        path: String,
-        nonce: Long,
-        body: String? = null,
-        privateKey: String = BuildConfig.KUNA_PRIVAT_KEY,
-    ): String {
-        // Serialize the body to JSON
-        val message = "$path$nonce$body"
-
-        // Assuming you're targeting JVM and using java.security for HMAC
-        val hmac = javax.crypto.Mac.getInstance("HmacSHA384")
-        val keySpec = javax.crypto.spec.SecretKeySpec(privateKey.toByteArray(UTF_8), "HmacSHA384")
-        hmac.init(keySpec)
-
-        val hash = hmac.doFinal(message.toByteArray(UTF_8))
-
-        // Convert the hash bytes to a hexadecimal string
-        return hash.joinToString("") { byte -> "%02x".format(byte /*and 0xFF.toByte()*/) }
-    }
 }

@@ -7,6 +7,9 @@ import ua.cryptogateway.inject.ApplicationScope
 import java.io.File
 import javax.sql.DataSource
 
+/**
+ * Interface for providing configurations and data sources specific to an SQL Server database platform.
+ */
 actual interface MsSqlDatabasePlatformComponent {
     @Provides
     @ApplicationScope
