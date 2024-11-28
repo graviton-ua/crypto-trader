@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ua.cryptogateway.data.models.db.OrdersGridEntity
 import ua.cryptogateway.data.schema.OrdersGridSchema
+import ua.cryptogateway.data.schema.OrdersGridSchema.deleteord
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -37,6 +38,17 @@ class OrdersGridService(
                         volume = row[OrdersGridSchema.volume],
                         pricebid = row[OrdersGridSchema.pricebid],
                         price = row[OrdersGridSchema.price],
+                        priceask = row[OrdersGridSchema.priceask],
+                        change = row[OrdersGridSchema.change],
+                        gecko = row[OrdersGridSchema.gecko],
+                        offset = row[OrdersGridSchema.offset],
+                        smashort = row[OrdersGridSchema.smashort],
+                        smalong = row[OrdersGridSchema.smalong],
+                        atr = row[OrdersGridSchema.atr],
+                        id = row[OrdersGridSchema.id],
+                        status = row[OrdersGridSchema.status],
+                        ordtype = row[OrdersGridSchema.ordtype],
+                        deleteord = row[OrdersGridSchema.deleteord]
                     )
                 }
         }
