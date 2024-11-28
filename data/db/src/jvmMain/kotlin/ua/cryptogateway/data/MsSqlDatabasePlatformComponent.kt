@@ -16,7 +16,7 @@ actual interface MsSqlDatabasePlatformComponent {
     fun provideHikariConfig(): HikariConfig = HikariConfig().apply {
         //jdbcUrl = "jdbc:sqlite:${databaseFile.absolutePath}",
         jdbcUrl =
-            "jdbc:sqlserver://localhost:1433;databaseName=kuna;encrypt=true;trustServerCertificate=true;" // Update with your database name
+            "jdbc:sqlserver://localhost:49476;databaseName=kuna;encrypt=true;trustServerCertificate=true;" // Update with your database name
         driverClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
         username = "kuna" // Replace with your username
         password = "kuna" // Replace with your password

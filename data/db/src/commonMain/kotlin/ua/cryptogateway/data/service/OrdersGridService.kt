@@ -29,7 +29,16 @@ class OrdersGridService(
         return dbQuery {
             OrdersGridSchema.selectAll()
                 //.where { Users.id eq id }
-                .map { OrdersGridEntity(it[OrdersGridSchema.pairname], it[OrdersGridSchema.side]) }
+                .map { row ->
+                    OrdersGridEntity(
+                        pairname = row[OrdersGridSchema.pairname],
+                        side = row[OrdersGridSchema.side],
+                        remvolume = row[OrdersGridSchema.remvolume],
+                        volume = row[OrdersGridSchema.volume],
+                        pricebid = row[OrdersGridSchema.pricebid],
+                        price = row[OrdersGridSchema.price],
+                    )
+                }
         }
     }
 
