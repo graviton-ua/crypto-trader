@@ -48,7 +48,9 @@ class OrdersGridService(
                         id = row[OrdersGridSchema.id],
                         status = row[OrdersGridSchema.status],
                         ordtype = row[OrdersGridSchema.ordtype],
-                        deleteord = row[OrdersGridSchema.deleteord]
+                        deleteord = row[OrdersGridSchema.deleteord],
+                        timemarket = row[OrdersGridSchema.timemarket],
+                        lost = row[OrdersGridSchema.lost]
                     )
                 }
         }

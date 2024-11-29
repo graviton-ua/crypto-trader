@@ -22,6 +22,6 @@ data class OrdersGridEntity(
     val status: String?,
     val ordtype: String?,
     val deleteord: Boolean?,
-//    val timemarket: LocalDateTime?,
-//    val lost: Boolean?
+    val timemarket: String?,
+    val lost: Boolean?
 )

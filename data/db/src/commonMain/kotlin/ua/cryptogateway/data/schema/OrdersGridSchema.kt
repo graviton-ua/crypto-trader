@@ -1,6 +1,5 @@
 package ua.cryptogateway.data.schema
 
-import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.Table
 
 object OrdersGridSchema : Table(name = "dbo.ordersgrid") {
@@ -21,6 +20,6 @@ object OrdersGridSchema : Table(name = "dbo.ordersgrid") {
     val status = varchar("status", 15).nullable()
     val ordtype = varchar("ordtype", 15).nullable()
     val deleteord = bool("deleteord").nullable()
-//    //val timemarket = time
-//    val lost = bool("lost").nullable()
+    val timemarket = varchar("timemarket",25).nullable()
+    val lost = bool("lost").nullable()
 }
