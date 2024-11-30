@@ -5,6 +5,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
+import ua.cryptogateway.data.web.models.KunaBalance
 import ua.cryptogateway.data.web.models.KunaFee
 import ua.cryptogateway.data.web.models.KunaMe
 import ua.cryptogateway.data.web.models.KunaTicker
@@ -146,5 +147,20 @@ class KunaApi(
         client.get("/v4/private/me") {
             privateHeaders(path = "/v4/private/me", body = Unit)
         }.asResult<KunaResponse<KunaMe>>().map { it.data }
+    }
+
+    /**
+     * Retrieves the user's current balance from the Kuna server.
+     *
+     * This is a suspension function that performs an HTTP GET request to the
+     * "/v4/private/getBalance" endpoint of the Kuna API. The function uses a
+     * coroutine dispatcher to handle the network request asynchronously.
+     *
+     * @return [Result] containing the user's balance wrapped in a [KunaBalance] object.
+     */
+    suspend fun getBalance(): Result<List<KunaBalance>> = withContext(dispatcher) {
+        client.get("/v4/private/getBalance") {
+            privateHeaders(path = "/v4/private/getBalance", body = Unit)
+        }.asResult<KunaResponse<List<KunaBalance>>>().map { it.data }
     }
 }

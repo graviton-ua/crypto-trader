@@ -3,8 +3,10 @@ package ua.cryptogateway.data.db
 import MigrationUtils
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ua.cryptogateway.appinitializers.AppSuspendedInitializer
+import ua.cryptogateway.data.db.schema.BalanceSchema
 import ua.cryptogateway.data.db.schema.TickerSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
@@ -16,7 +18,8 @@ import ua.cryptogateway.util.AppCoroutineDispatchers
 
     override suspend fun initialize() {
         newSuspendedTransaction(context = dispatcher, db = database) {
-            MigrationUtils.statementsRequiredForDatabaseMigration(TickerSchema).forEach { exec(it) }
+            SchemaUtils.createMissingTablesAndColumns(TickerSchema, BalanceSchema)
+            MigrationUtils.statementsRequiredForDatabaseMigration(TickerSchema, BalanceSchema).forEach { exec(it) }
         }
     }
 }

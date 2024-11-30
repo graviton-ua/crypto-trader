@@ -7,10 +7,10 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import saschpe.log4k.logged
-import ua.cryptogateway.data.db.dao.TickersDao
-import ua.cryptogateway.data.db.models.TickerEntity
+import ua.cryptogateway.data.db.dao.BalanceDao
+import ua.cryptogateway.data.db.models.BalanceEntity
 import ua.cryptogateway.data.web.api.KunaApi
-import ua.cryptogateway.data.web.models.KunaTicker
+import ua.cryptogateway.data.web.models.KunaBalance
 import ua.cryptogateway.domain.DataPuller
 import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
@@ -20,16 +20,16 @@ import kotlin.time.Duration.Companion.seconds
 
 @ApplicationScope
 @Inject
-class TickersPullService(
+class BalancePullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
-    private val dao: TickersDao,
+    private val dao: BalanceDao,
 ) {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
-    private val data = MutableStateFlow<List<KunaTicker>?>(null)
+    private val data = MutableStateFlow<List<KunaBalance>?>(null)
 
 
     init {
@@ -42,7 +42,7 @@ class TickersPullService(
         if (job != null) return
         job = scope.launch(dispatcher) {
             Log.debug(tag = TAG) { "DataPuller job started" }
-            DataPuller().pull(delay.value) { api.getTickers() }
+            DataPuller().pull(delay.value) { api.getBalance() }
                 .mapNotNull { it.getOrNull() }
                 .catch { Log.error(tag = TAG, throwable = it) }
                 .flowOn(dispatcher)
@@ -68,10 +68,10 @@ class TickersPullService(
         Log.debug(tag = TAG) { "updateTickersTable() job started" }
 
         data.filterNotNull()
-            .map { it.map(KunaTicker::toEntity) }
+            .map { it.map(KunaBalance::toEntity) }
             .collectLatest { list ->
                 Result.runCatching { dao.save(list) }
-                    .onSuccess { Log.info(tag = TAG) { "TickersTable updated" } }
+                    .onSuccess { Log.info(tag = TAG) { "BalanceTable updated" } }
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 
@@ -79,8 +79,8 @@ class TickersPullService(
 
 
     companion object {
-        private const val TAG = "TickersPullService"
+        private const val TAG = "BalancePullService"
     }
 }
 
-private fun KunaTicker.toEntity(): TickerEntity = TickerEntity(pairName, priceHigh, priceAsk, priceBid, priceLow, priceLast, change, timestamp)
+private fun KunaBalance.toEntity(): BalanceEntity = BalanceEntity(currency, entire, available, timestamp)
