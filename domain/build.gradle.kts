@@ -34,7 +34,7 @@ kotlin {
 
                 //implementation(projects.api.tmdb)
 
-                //api(libs.paging.common)
+                implementation(libs.kotlinx.datetime)
 
                 implementation(libs.kotlininject.runtime)
             }

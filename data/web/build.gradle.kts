@@ -33,8 +33,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logging)
 
-                //api(libs.trakt.api)
-                api(projects.data.models.web)
+                implementation(libs.kotlinx.datetime)
 
                 api(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)

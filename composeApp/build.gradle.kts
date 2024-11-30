@@ -23,9 +23,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(projects.domain)
             implementation(projects.shared)
-
-            implementation(projects.data.models.db)    // TODO: remove after test
-            implementation(projects.data.models.web)    // TODO: remove after test
         }
         desktopMain.dependencies {
             implementation(projects.shared)

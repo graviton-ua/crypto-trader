@@ -1,8 +1,5 @@
-package ua.cryptogateway.data.models.db
+package ua.cryptogateway.data.db.models
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class OrdersGridEntity(
     val pairname: String?,
     val side: String?,

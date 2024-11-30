@@ -1,4 +1,4 @@
-package ua.cryptogateway.data.schema
+package ua.cryptogateway.data.db.schema
 
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Table

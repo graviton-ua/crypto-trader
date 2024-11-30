@@ -10,9 +10,7 @@ kotlin {
             implementation(projects.core.base)
             implementation(projects.core.logging)
 
-            api(projects.data.models.db)
-
-            api(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.datetime)
             // Need to force upgrade these for recent Kotlin support
             //api(libs.kotlinx.atomicfu)
             api(libs.kotlinx.coroutines.core)

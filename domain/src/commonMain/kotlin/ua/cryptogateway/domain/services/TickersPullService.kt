@@ -7,9 +7,9 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import saschpe.log4k.logged
-import ua.cryptogateway.data.dao.TickersDao
-import ua.cryptogateway.data.models.db.TickerEntity
-import ua.cryptogateway.data.models.web.KunaTicker
+import ua.cryptogateway.data.db.dao.TickersDao
+import ua.cryptogateway.data.db.models.TickerEntity
+import ua.cryptogateway.data.web.models.KunaTicker
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.domain.DataPuller
 import ua.cryptogateway.inject.ApplicationCoroutineScope

@@ -1,10 +1,10 @@
-package ua.cryptogateway.data.dao
+package ua.cryptogateway.data.db.dao
 
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.selectAll
-import ua.cryptogateway.data.models.db.OrdersGridEntity
-import ua.cryptogateway.data.schema.OrdersGridSchema
+import ua.cryptogateway.data.db.models.OrdersGridEntity
+import ua.cryptogateway.data.db.schema.OrdersGridSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject

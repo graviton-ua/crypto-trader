@@ -1,4 +1,4 @@
-package ua.cryptogateway.data.schema
+package ua.cryptogateway.data.db.schema
 
 import org.jetbrains.exposed.sql.Table
 

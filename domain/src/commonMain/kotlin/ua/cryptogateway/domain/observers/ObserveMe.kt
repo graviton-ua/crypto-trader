@@ -2,7 +2,7 @@ package ua.cryptogateway.domain.observers
 
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import ua.cryptogateway.data.models.web.KunaMe
+import ua.cryptogateway.data.web.models.KunaMe
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.domain.SuspendingWorkInteractor
 import ua.cryptogateway.util.AppCoroutineDispatchers

@@ -5,9 +5,9 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import ua.cryptogateway.data.models.web.KunaFee
-import ua.cryptogateway.data.models.web.KunaMe
-import ua.cryptogateway.data.models.web.KunaTicker
+import ua.cryptogateway.data.web.models.KunaFee
+import ua.cryptogateway.data.web.models.KunaMe
+import ua.cryptogateway.data.web.models.KunaTicker
 import ua.cryptogateway.data.web.utils.asResult
 import ua.cryptogateway.data.web.utils.privateHeaders
 import ua.cryptogateway.util.AppCoroutineDispatchers

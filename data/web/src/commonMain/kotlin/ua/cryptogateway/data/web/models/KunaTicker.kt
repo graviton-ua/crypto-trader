@@ -1,4 +1,4 @@
-package ua.cryptogateway.data.models.web
+package ua.cryptogateway.data.web.models
 
 import kotlinx.datetime.Clock.System
 import kotlinx.datetime.Instant

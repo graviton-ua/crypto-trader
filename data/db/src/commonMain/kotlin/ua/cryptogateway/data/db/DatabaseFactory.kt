@@ -1,4 +1,4 @@
-package ua.cryptogateway.data
+package ua.cryptogateway.data.db
 
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.Database

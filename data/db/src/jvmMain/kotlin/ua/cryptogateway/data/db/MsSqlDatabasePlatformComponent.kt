@@ -1,4 +1,4 @@
-package ua.cryptogateway.data
+package ua.cryptogateway.data.db
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

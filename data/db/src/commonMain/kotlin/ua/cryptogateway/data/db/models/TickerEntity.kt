@@ -1,4 +1,4 @@
-package ua.cryptogateway.data.models.db
+package ua.cryptogateway.data.db.models
 
 import kotlinx.datetime.Instant
 

@@ -1,11 +1,11 @@
-package ua.cryptogateway.data.dao
+package ua.cryptogateway.data.db.dao
 
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.batchUpsert
 import org.jetbrains.exposed.sql.selectAll
-import ua.cryptogateway.data.models.db.TickerEntity
-import ua.cryptogateway.data.schema.TickerSchema
+import ua.cryptogateway.data.db.models.TickerEntity
+import ua.cryptogateway.data.db.schema.TickerSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject

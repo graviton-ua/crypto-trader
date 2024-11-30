@@ -1,4 +1,4 @@
-package ua.cryptogateway.data.dao
+package ua.cryptogateway.data.db.dao
 
 import kotlinx.coroutines.CoroutineDispatcher
 import org.jetbrains.exposed.sql.Database

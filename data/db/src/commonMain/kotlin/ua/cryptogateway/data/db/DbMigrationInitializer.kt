@@ -1,11 +1,11 @@
-package ua.cryptogateway.data
+package ua.cryptogateway.data.db
 
 import MigrationUtils
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ua.cryptogateway.appinitializers.AppSuspendedInitializer
-import ua.cryptogateway.data.schema.TickerSchema
+import ua.cryptogateway.data.db.schema.TickerSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject class DbMigrationInitializer(

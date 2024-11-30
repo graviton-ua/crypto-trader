@@ -36,9 +36,6 @@ include(
 include(
     ":data:db",
     ":data:web",
-    ":data:models:web",
-    ":data:models:db",
-    ":data:models:domain",
 )
 include(":domain")
 include(":shared")
