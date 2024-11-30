@@ -7,6 +7,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.data.models.web.KunaFee
 import ua.cryptogateway.data.models.web.KunaMe
+import ua.cryptogateway.data.models.web.KunaTicker
 import ua.cryptogateway.data.web.utils.asResult
 import ua.cryptogateway.data.web.utils.privateHeaders
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -78,10 +79,10 @@ class KunaApi(
      *
      * @return [HttpResponse] containing the data for specific trading pairs.
      */
-    suspend fun getTrickers(): HttpResponse = withContext(dispatcher) {
+    suspend fun getTickers(vararg pairs: String): Result<List<KunaTicker>> = withContext(dispatcher) {
         client.get("/v4/markets/public/tickers") {
-
-        }
+            if (pairs.isNotEmpty()) parameter("pairs", pairs.joinToString(","))
+        }.asResult<KunaResponse<List<KunaTicker>>>().map { it.data }
     }
 
     /**
@@ -146,6 +147,4 @@ class KunaApi(
             privateHeaders(path = "/v4/private/me", body = Unit)
         }.asResult<KunaResponse<KunaMe>>().map { it.data }
     }
-
-
 }

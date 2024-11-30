@@ -3,7 +3,7 @@ package ua.cryptogateway.domain.observers
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.data.models.db.OrdersGridEntity
-import ua.cryptogateway.data.service.OrdersGridDao
+import ua.cryptogateway.data.dao.OrdersGridDao
 import ua.cryptogateway.domain.SuspendingWorkInteractor
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
