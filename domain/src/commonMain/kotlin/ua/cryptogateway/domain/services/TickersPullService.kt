@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
+import saschpe.log4k.logged
 import ua.cryptogateway.data.dao.TickersDao
 import ua.cryptogateway.data.models.db.TickerEntity
 import ua.cryptogateway.data.models.web.KunaTicker
@@ -47,7 +48,7 @@ class TickersPullService(
                 .flowOn(dispatcher)
                 .collectLatest {
                     data.value = it
-                    Log.debug(tag = TAG) { it.joinToString("\n") }
+                    it.logged()
                 }
         }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
     }
@@ -76,7 +77,7 @@ class TickersPullService(
 
 
     companion object {
-        private const val TAG = "OrdersGridRefreshService"
+        private const val TAG = "TickersPullService"
     }
 }
 

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.inject.ApplicationCoroutineScope
-import ua.cryptogateway.settings.TiviPreferences.*
+import ua.cryptogateway.settings.TiviPreferences.Theme
 import ua.cryptogateway.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.seconds
 

@@ -21,9 +21,8 @@ kotlin {
 
             api(libs.exposed.core)
             api(libs.exposed.jdbc)
-            api(libs.exposed.kotlin.datetime)
-            //implementation(libs.sqldelight.primitive)
-            //implementation(libs.paging.common)
+            implementation(libs.exposed.migration)
+            implementation(libs.exposed.kotlin.datetime)
         }
 
         jvmMain {

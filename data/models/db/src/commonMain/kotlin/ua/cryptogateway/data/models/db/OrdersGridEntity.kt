@@ -1,6 +1,5 @@
 package ua.cryptogateway.data.models.db
 
-import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
