@@ -1,5 +1,6 @@
 package ua.hospes.cryptogateway
 
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -27,16 +28,11 @@ fun main() {
             observeMe.invoke(Unit)
         }
 
-        val observeOrdersGrid = applicationComponent.observeOrdersGrid
-        LaunchedEffect(observeOrdersGrid) {
-            observeOrdersGrid.flow.collectLatest {
-                Log.debug(it.toString())
-            }
+        val ordersPuller = applicationComponent.ordersGridPuller
+        DisposableEffect(ordersPuller) {
+            ordersPuller.start()
+            onDispose { ordersPuller.stop() }
         }
-        LaunchedEffect(observeOrdersGrid) {
-            observeOrdersGrid.invoke(Unit)
-        }
-
 
         Window(
             onCloseRequest = ::exitApplication,

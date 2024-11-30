@@ -3,14 +3,14 @@ package ua.cryptogateway.domain.observers
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.data.models.db.OrdersGridEntity
-import ua.cryptogateway.data.service.OrdersGridService
+import ua.cryptogateway.data.service.OrdersGridDao
 import ua.cryptogateway.domain.SuspendingWorkInteractor
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
 class ObserveOrdersGrid(
     dispatchers: AppCoroutineDispatchers,
-    private val service: OrdersGridService,
+    private val service: OrdersGridDao,
 ) : SuspendingWorkInteractor<Unit, List<OrdersGridEntity>>() {
     private val dispatcher = dispatchers.io
 

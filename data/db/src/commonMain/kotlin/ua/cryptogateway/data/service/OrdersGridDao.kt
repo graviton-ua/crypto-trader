@@ -10,7 +10,7 @@ import ua.cryptogateway.data.schema.OrdersGridSchema.deleteord
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
-class OrdersGridService(
+class OrdersGridDao(
     dispatchers: AppCoroutineDispatchers,
     private val database: Database,
 ) {

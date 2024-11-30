@@ -8,10 +8,8 @@ import ua.cryptogateway.appinitializers.AppInitializer
 @Inject
 class Log4KInitializer : AppInitializer {
     override fun initialize() {
-        println("Log4KInitializer: initialize")
         Log.loggers.clear()
         Log.loggers += SLF4JLogger()
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug")
-        println("Log4KInitializer: loggers: ${Log.loggers}")
     }
 }
