@@ -5,5 +5,5 @@ import ua.cryptogateway.domain.services.TickersPullService
 
 interface DomainComponent {
     val observeMe: ObserveMe    // TODO: Remove after testing
-    val ordersGridPuller: TickersPullService
+    val tickersPuller: TickersPullService
 }

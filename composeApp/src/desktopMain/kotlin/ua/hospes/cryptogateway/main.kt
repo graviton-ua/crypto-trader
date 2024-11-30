@@ -31,10 +31,10 @@ fun main() {
             applicationComponent.suspendedInitializers.initialize()
         }
 
-        val ordersPuller = applicationComponent.ordersGridPuller
-        DisposableEffect(ordersPuller) {
-            ordersPuller.start()
-            onDispose { ordersPuller.stop() }
+        val tickersPuller = applicationComponent.tickersPuller
+        DisposableEffect(tickersPuller) {
+            tickersPuller.start()
+            onDispose { tickersPuller.stop() }
         }
 
         Window(
