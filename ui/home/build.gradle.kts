@@ -16,6 +16,8 @@ kotlin {
             implementation(projects.core.logging)
             implementation(projects.core.composeInject)
             implementation(projects.domain)
+            implementation(projects.data.db)
+            implementation(projects.data.web)
 
             implementation(libs.kotlinx.serialization.json)
 

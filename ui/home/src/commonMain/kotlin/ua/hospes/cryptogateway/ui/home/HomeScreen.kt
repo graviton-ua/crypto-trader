@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.SavedStateHandle
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.cryptogateway.inject.injectViewModel
@@ -29,16 +28,20 @@ internal fun HomeScreen(
 private fun HomeScreen(
     viewModel: HomeViewModel,
 ) {
-    HomeScreen()
+    HomeScreen(
+        onClick = viewModel::onClick,
+    )
 }
 
 @Composable
-private fun HomeScreen() {
+private fun HomeScreen(
+    onClick: () -> Unit,
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Button(onClick = {}) {
+        Button(onClick = onClick) {
             Text("Click me!")
         }
     }
@@ -48,6 +51,8 @@ private fun HomeScreen() {
 @Composable
 private fun Preview() {
     MaterialTheme {
-        HomeScreen()
+        HomeScreen(
+            onClick = {},
+        )
     }
 }
