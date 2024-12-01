@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import saschpe.log4k.logged
+import ua.cryptogateway.data.db.dao.KunaListDao
 import ua.cryptogateway.data.db.dao.TickersDao
 import ua.cryptogateway.data.db.models.TickerEntity
 import ua.cryptogateway.data.web.api.KunaApi
@@ -24,7 +25,8 @@ class TickersPullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
-    private val dao: TickersDao,
+    private val kunaListDao: KunaListDao,
+    private val tickersDao: TickersDao,
 ) {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
@@ -42,7 +44,12 @@ class TickersPullService(
         if (job != null) return
         job = scope.launch(dispatcher) {
             Log.debug(tag = TAG) { "DataPuller job started" }
-            DataPuller().pull(delay.value) { api.getTickers() }
+            DataPuller().pull(delay.value) {
+                // Fetch active pairs form KunaList table first and then use active tickers as input params for fetching tickers info
+                val active = kunaListDao.getActiveTickers()
+                Log.info(tag = TAG) { "Active tickers: $active" }
+                api.getTickers(pairs = active.toTypedArray())
+            }
                 .mapNotNull { it.getOrNull() }
                 .catch { Log.error(tag = TAG, throwable = it) }
                 .flowOn(dispatcher)
@@ -70,7 +77,7 @@ class TickersPullService(
         data.filterNotNull()
             .map { it.map(KunaTicker::toEntity) }
             .collectLatest { list ->
-                Result.runCatching { dao.save(list) }
+                Result.runCatching { tickersDao.save(list) }
                     .onSuccess { Log.info(tag = TAG) { "TickersTable updated" } }
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
