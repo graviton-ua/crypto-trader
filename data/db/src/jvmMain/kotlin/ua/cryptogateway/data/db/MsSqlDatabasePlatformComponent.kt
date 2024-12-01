@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import me.tatarka.inject.annotations.Provides
 import ua.cryptogateway.inject.ApplicationScope
+import ua.cryptogateway.settings.TiviPreferences
 import java.io.File
 import javax.sql.DataSource
 
@@ -13,10 +14,12 @@ import javax.sql.DataSource
 actual interface MsSqlDatabasePlatformComponent {
     @Provides
     @ApplicationScope
-    fun provideHikariConfig(): HikariConfig = HikariConfig().apply {
+    fun provideHikariConfig(
+        tiviPreferences: TiviPreferences,
+    ): HikariConfig = HikariConfig().apply {
         //jdbcUrl = "jdbc:sqlite:${databaseFile.absolutePath}",
         jdbcUrl =
-            "jdbc:sqlserver://localhost:1433;databaseName=kuna;encrypt=true;trustServerCertificate=true;" // Update with your database name
+            "jdbc:sqlserver://localhost:${tiviPreferences.dbPort.getNotSuspended()};databaseName=kuna;encrypt=true;trustServerCertificate=true;" // Update with your database name
         driverClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
         username = "kuna" // Replace with your username
         password = "kuna" // Replace with your password

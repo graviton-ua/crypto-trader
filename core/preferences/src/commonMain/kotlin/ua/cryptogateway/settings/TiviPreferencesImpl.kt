@@ -22,6 +22,11 @@ class TiviPreferencesImpl(
     private val settings: ObservableSettings by settings
     private val flowSettings by lazy { settings.value.toFlowSettings(dispatchers.io) }
 
+    override val dbPort: Preference<String> by lazy {
+        StringPreference(KEY_DB_PORT, "1433")
+    }
+
+
     override val theme: Preference<Theme> by lazy {
         MappingPreference(KEY_THEME, Theme.SYSTEM, ::getThemeForStorageValue, ::themeToStorageValue)
     }
@@ -54,6 +59,31 @@ class TiviPreferencesImpl(
         BooleanPreference(KEY_NOTIFICATIONS)
     }
 
+    private inner class StringPreference(
+        private val key: String,
+        override val defaultValue: String = "",
+    ) : Preference<String> {
+        override suspend fun set(value: String) = withContext(dispatchers.io) {
+            settings[key] = value
+        }
+
+        override suspend fun get(): String = withContext(dispatchers.io) {
+            settings.getString(key, defaultValue)
+        }
+
+        override fun getNotSuspended(): String = settings.getString(key, defaultValue)
+
+        override val flow: StateFlow<String> by lazy {
+            flowSettings
+                .getStringFlow(key, defaultValue)
+                .stateIn(
+                    scope = coroutineScope,
+                    started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
+                    initialValue = defaultValue,
+                )
+        }
+    }
+
     private inner class BooleanPreference(
         private val key: String,
         override val defaultValue: Boolean = false,
@@ -65,6 +95,8 @@ class TiviPreferencesImpl(
         override suspend fun get(): Boolean = withContext(dispatchers.io) {
             settings.getBoolean(key, defaultValue)
         }
+
+        override fun getNotSuspended(): Boolean = settings.getBoolean(key, defaultValue)
 
         override val flow: StateFlow<Boolean> by lazy {
             flowSettings
@@ -90,6 +122,8 @@ class TiviPreferencesImpl(
         override suspend fun get(): V = withContext(dispatchers.io) {
             settings.getStringOrNull(key)?.let(toValue) ?: defaultValue
         }
+
+        override fun getNotSuspended(): V = settings.getStringOrNull(key)?.let(toValue) ?: defaultValue
 
         override val flow: Flow<V> by lazy {
             flowSettings.getStringOrNullFlow(key)
@@ -118,6 +152,7 @@ private fun getThemeForStorageValue(value: String) = when (value) {
     else -> Theme.SYSTEM
 }
 
+internal const val KEY_DB_PORT = "pref_db_port"
 internal const val KEY_THEME = "pref_theme"
 internal const val KEY_USE_DYNAMIC_COLORS = "pref_dynamic_colors"
 internal const val KEY_DATA_SAVER = "pref_data_saver"

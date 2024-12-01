@@ -2,6 +2,8 @@ package ua.cryptogateway.settings
 
 interface TiviPreferences {
 
+    val dbPort: Preference<String>
+
     val theme: Preference<Theme>
     val useDynamicColors: Preference<Boolean>
 
