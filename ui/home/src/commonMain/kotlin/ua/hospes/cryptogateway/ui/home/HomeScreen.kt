@@ -10,12 +10,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import ua.cryptogateway.inject.injectViewModel
 
 @Serializable
 data object HomeScreen
 
 @Composable
-internal fun HomeScreen() {
+internal fun HomeScreen(
+    diComponent: HomeComponent,
+) {
+    HomeScreen(
+        viewModel = injectViewModel { diComponent.homeViewModel() },
+    )
+}
+
+@Composable
+private fun HomeScreen(
+    viewModel: HomeViewModel,
+) {
+    HomeScreen()
+}
+
+@Composable
+private fun HomeScreen() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(),

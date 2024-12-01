@@ -32,6 +32,7 @@ include(
     ":core:base",
     ":core:logging",
     ":core:preferences",
+    ":core:compose-inject",
 )
 include(
     ":data:db",

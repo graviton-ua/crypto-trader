@@ -1,7 +1,8 @@
 package ua.cryptogateway.inject
 
-interface SharedUiComponent {
-//    AccountComponent,
+import ua.hospes.cryptogateway.ui.home.HomeComponent
+
+interface SharedUiComponent : HomeComponent {
 //    DiscoverComponent,
 //    EpisodeDetailsComponent,
 //    EpisodeTrackComponent,

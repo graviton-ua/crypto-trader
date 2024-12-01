@@ -5,9 +5,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
 fun NavGraphBuilder.addHomeScreen(
+    diComponent: HomeComponent,
     navController: NavController,
 ) {
     composable<HomeScreen> {
-        HomeScreen()
+        HomeScreen(
+            diComponent = diComponent,
+        )
     }
 }

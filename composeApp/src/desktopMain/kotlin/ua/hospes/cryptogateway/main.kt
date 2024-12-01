@@ -49,11 +49,11 @@ fun main() {
             onCloseRequest = ::exitApplication,
             title = "CryptoGateway",
         ) {
-            val component = remember(applicationComponent) {
-                WindowComponent.create(applicationComponent)
-            }
+            val uiComponent = remember(applicationComponent) { WindowComponent.create(applicationComponent) }
 
-            App()
+            App(
+                uiComponent = uiComponent,
+            )
         }
     }
 }

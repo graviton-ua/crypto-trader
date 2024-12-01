@@ -29,24 +29,10 @@ kotlin {
                 api(projects.domain)
                 //api(projects.tasks)
 
-//        api(projects.common.imageloading)
-//        api(projects.common.ui.compose)
-
-//        api(projects.ui.account)
-//        api(projects.ui.discover)
-//        api(projects.ui.episode.details)
-//        api(projects.ui.episode.track)
-//        api(projects.ui.library)
-//        api(projects.ui.popular)
-//        api(projects.ui.trending)
-//        api(projects.ui.recommended)
-//        api(projects.ui.search)
-//        api(projects.ui.show.details)
-//        api(projects.ui.show.seasons)
-//        api(projects.ui.root)
-//        api(projects.ui.settings)
-//        api(projects.ui.licenses)
-//        api(projects.ui.upnext)
+                //api(projects.common.imageloading)
+                //api(projects.common.ui.compose)
+                
+                api(projects.ui.home)
             }
         }
     }
