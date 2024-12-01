@@ -13,7 +13,8 @@ kotlin {
             implementation(libs.kotlininject.runtime)
         }
         jvmMain.dependencies {
-            implementation(libs.slf4j.simple)
+            //implementation(libs.slf4j.simple)
+            api(libs.logback.classic)
         }
     }
 }

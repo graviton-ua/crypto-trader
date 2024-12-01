@@ -5,6 +5,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import org.slf4j.LoggerFactory
 import ua.cryptogateway.inject.DesktopApplicationComponent
 import ua.cryptogateway.inject.WindowComponent
 import ua.cryptogateway.inject.create
@@ -27,6 +30,9 @@ fun main() {
     System.setProperty("skiko.renderApi", "OPENGL") //TODO: Fixes issue with G-Sync stuttering
     val applicationComponent = DesktopApplicationComponent.create()
     applicationComponent.initializers.initialize()
+
+    val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
+    rootLogger.level = Level.INFO
 
     application {
         LaunchedEffect(applicationComponent) {

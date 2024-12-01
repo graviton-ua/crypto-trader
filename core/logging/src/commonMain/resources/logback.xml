@@ -1,0 +1,15 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %-20.20logger{0} : %msg%n</pattern>
+            <!-- Optional color support -->
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %-20.20logger{0} : %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
