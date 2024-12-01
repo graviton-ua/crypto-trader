@@ -22,10 +22,8 @@ class TiviPreferencesImpl(
     private val settings: ObservableSettings by settings
     private val flowSettings by lazy { settings.value.toFlowSettings(dispatchers.io) }
 
-    override val dbPort: Preference<String> by lazy {
-        StringPreference(KEY_DB_PORT, "1433")
-    }
-
+    override val dbPort: Preference<String> by lazy { StringPreference(KEY_DB_PORT, "1433") }
+    override val loglevel: Preference<Int?> by lazy { IntPreference(KEY_LOG_LEVEL) }
 
     override val theme: Preference<Theme> by lazy {
         MappingPreference(KEY_THEME, Theme.SYSTEM, ::getThemeForStorageValue, ::themeToStorageValue)
@@ -76,6 +74,33 @@ class TiviPreferencesImpl(
         override val flow: StateFlow<String> by lazy {
             flowSettings
                 .getStringFlow(key, defaultValue)
+                .stateIn(
+                    scope = coroutineScope,
+                    started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
+                    initialValue = defaultValue,
+                )
+        }
+    }
+
+    private inner class IntPreference(
+        private val key: String,
+        override val defaultValue: Int? = null,
+    ) : Preference<Int?> {
+        override suspend fun set(value: Int?) = withContext(dispatchers.io) {
+            settings[key] = value
+        }
+
+        override suspend fun get(): Int? = withContext(dispatchers.io) {
+            if (defaultValue != null) settings.getInt(key, defaultValue) else settings.getIntOrNull(key)
+        }
+
+        override fun getNotSuspended(): Int? {
+            return if (defaultValue != null) settings.getInt(key, defaultValue) else settings.getIntOrNull(key)
+        }
+
+        override val flow: StateFlow<Int?> by lazy {
+            flowSettings
+                .let { if (defaultValue != null) it.getIntFlow(key, defaultValue) else it.getIntOrNullFlow(key) }
                 .stateIn(
                     scope = coroutineScope,
                     started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
@@ -153,6 +178,7 @@ private fun getThemeForStorageValue(value: String) = when (value) {
 }
 
 internal const val KEY_DB_PORT = "pref_db_port"
+internal const val KEY_LOG_LEVEL = "pref_log_level"
 internal const val KEY_THEME = "pref_theme"
 internal const val KEY_USE_DYNAMIC_COLORS = "pref_dynamic_colors"
 internal const val KEY_DATA_SAVER = "pref_data_saver"
