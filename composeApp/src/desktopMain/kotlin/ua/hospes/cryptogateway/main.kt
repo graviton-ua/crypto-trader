@@ -2,9 +2,11 @@ package ua.hospes.cryptogateway
 
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import ua.cryptogateway.inject.DesktopApplicationComponent
+import ua.cryptogateway.inject.WindowComponent
 import ua.cryptogateway.inject.create
 
 /**
@@ -47,6 +49,10 @@ fun main() {
             onCloseRequest = ::exitApplication,
             title = "CryptoGateway",
         ) {
+            val component = remember(applicationComponent) {
+                WindowComponent.create(applicationComponent)
+            }
+
             App()
         }
     }

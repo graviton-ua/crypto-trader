@@ -49,12 +49,6 @@ kotlin {
 //        api(projects.ui.upnext)
             }
         }
-
-        jvmMain {
-            dependencies {
-                api(libs.okhttp.okhttp)
-            }
-        }
     }
 }
 

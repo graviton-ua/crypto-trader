@@ -39,4 +39,8 @@ include(
 )
 include(":domain")
 include(":shared")
+include(
+    ":ui:home",
+    ":ui:settings",
+)
 include(":composeApp")
