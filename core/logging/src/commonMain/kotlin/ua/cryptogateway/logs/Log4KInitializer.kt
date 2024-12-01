@@ -10,7 +10,5 @@ class Log4KInitializer : AppInitializer {
     override fun initialize() {
         Log.loggers.clear()
         Log.loggers += SLF4JLogger()
-        // Not used anymore, kept for backward possible changes
-        //System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info")
     }
 }

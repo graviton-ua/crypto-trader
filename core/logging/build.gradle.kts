@@ -14,7 +14,7 @@ kotlin {
         }
         jvmMain.dependencies {
             //implementation(libs.slf4j.simple)
-            api(libs.logback.classic)
+            implementation(libs.logback.classic)
         }
     }
 }
