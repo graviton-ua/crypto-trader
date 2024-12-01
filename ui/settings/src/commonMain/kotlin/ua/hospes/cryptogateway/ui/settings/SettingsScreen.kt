@@ -9,12 +9,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import ua.cryptogateway.inject.injectViewModel
 
 @Serializable
 data object SettingsScreen
 
 @Composable
-internal fun SettingsScreen() {
+internal fun SettingsScreen(
+    diComponent: SettingsComponent,
+) {
+    SettingsScreen(
+        viewModel = injectViewModel { diComponent.settingsViewModel() },
+    )
+}
+
+@Composable
+private fun SettingsScreen(
+    viewModel: SettingsViewModel,
+) {
+    SettingsScreen()
+}
+
+@Composable
+private fun SettingsScreen() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(),

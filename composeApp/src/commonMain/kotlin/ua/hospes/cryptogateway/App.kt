@@ -13,8 +13,6 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import saschpe.log4k.Log
 import ua.cryptogateway.inject.SharedUiComponent
 import ua.hospes.cryptogateway.ui.home.HomeScreen
 import ua.hospes.cryptogateway.ui.home.addHomeScreen
@@ -54,7 +52,7 @@ fun App(
             startDestination = HomeScreen,
         ) {
             addHomeScreen(diComponent = uiComponent, navController = navController)
-            addSettingsScreen(navController = navController)
+            addSettingsScreen(diComponent = uiComponent, navController = navController)
         }
     }
 }

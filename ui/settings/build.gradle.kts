@@ -1,35 +1,34 @@
 plugins {
-  alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.composeMultiplatform)
-  alias(libs.plugins.composeCompiler)
-  alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
-  jvm()
+    jvm()
 
-  sourceSets {
-    val jvmMain by getting
+    sourceSets {
+        val jvmMain by getting
 
-    commonMain.dependencies {
-      implementation(compose.runtime)
-      implementation(compose.foundation)
-      implementation(compose.material3)
-      implementation(compose.ui)
-      implementation(compose.components.resources)
-      implementation(compose.components.uiToolingPreview)
+        commonMain.dependencies {
+            implementation(projects.core.base)
+            implementation(projects.core.logging)
+            implementation(projects.core.composeInject)
+            implementation(projects.domain)
 
-      implementation(libs.androidx.lifecycle.runtime.compose)
-      implementation(libs.androidx.lifecycle.viewmodel.compose)
-      implementation(libs.androidx.navigation.compose)
+            implementation(libs.kotlinx.serialization.json)
 
-      implementation(projects.domain)
-      implementation(projects.shared)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+
+            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.navigation.compose)
+        }
     }
-//    jvmMain.dependencies {
-//      implementation(projects.shared)
-//      implementation(compose.desktop.currentOs)
-//      implementation(libs.kotlinx.coroutines.swing)
-//    }
-  }
 }

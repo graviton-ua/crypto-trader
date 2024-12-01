@@ -33,6 +33,7 @@ kotlin {
                 //api(projects.common.ui.compose)
                 
                 api(projects.ui.home)
+                api(projects.ui.settings)
             }
         }
     }

@@ -5,9 +5,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
 fun NavGraphBuilder.addSettingsScreen(
+    diComponent: SettingsComponent,
     navController: NavController,
 ) {
     composable<SettingsScreen> {
-        SettingsScreen()
+        SettingsScreen(
+            diComponent = diComponent,
+        )
     }
 }

@@ -1,23 +1,9 @@
 package ua.cryptogateway.inject
 
 import ua.hospes.cryptogateway.ui.home.HomeComponent
+import ua.hospes.cryptogateway.ui.settings.SettingsComponent
 
-interface SharedUiComponent : HomeComponent {
-//    DiscoverComponent,
-//    EpisodeDetailsComponent,
-//    EpisodeTrackComponent,
-//    LibraryComponent,
-//    PopularShowsComponent,
-//    RecommendedShowsComponent,
-//    SearchComponent,
-//    SettingsComponent,
-//    LicensesComponent,
-//    ShowDetailsComponent,
-//    ShowSeasonsComponent,
-//    RootUiComponent,
-//    TrendingShowsComponent,
-//    UpNextComponent {
-
+interface SharedUiComponent : HomeComponent, SettingsComponent {
 //    val tiviContent: TiviContent
 //    val permissionsController: PermissionsController
 //
