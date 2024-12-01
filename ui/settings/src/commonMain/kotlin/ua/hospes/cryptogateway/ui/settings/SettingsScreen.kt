@@ -1,8 +1,7 @@
-package ua.hospes.cryptogateway.ui.home
+package ua.hospes.cryptogateway.ui.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +19,7 @@ internal fun SettingsScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Button(onClick = {}) {
-            Text("Click me!")
-        }
+        Text(text = "Setting screen")
     }
 }
 

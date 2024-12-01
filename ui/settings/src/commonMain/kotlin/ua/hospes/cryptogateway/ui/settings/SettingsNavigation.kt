@@ -1,4 +1,4 @@
-package ua.hospes.cryptogateway.ui.home
+package ua.hospes.cryptogateway.ui.settings
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
