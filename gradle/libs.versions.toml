@@ -13,7 +13,6 @@ hikari = "6.2.1"
 mssql = "12.8.1.jre11"
 exposed = "0.56.0"
 log4k = "1.4.0"
-slf4j = "2.0.16"
 multiplatformsettings = "1.1.1"
 
 [plugins]
@@ -61,8 +60,6 @@ exposed-kotlin-datetime = { group = "org.jetbrains.exposed", name="exposed-kotli
 # Multiplatform logging
 log4k = { group = "de.peilicke.sascha", name="log4k", version.ref = "log4k" }
 log4k-slf4j = { group = "de.peilicke.sascha", name="log4k-slf4j", version.ref = "log4k" }
-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.12" }
 
 multiplatformsettings-core = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformsettings" }
