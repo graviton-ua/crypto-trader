@@ -3,6 +3,7 @@ package ua.cryptogateway.settings
 interface TiviPreferences {
 
     val dbPort: Preference<String>
+    val loglevel: Preference<Int?>
 
     val theme: Preference<Theme>
     val useDynamicColors: Preference<Boolean>
@@ -21,9 +22,5 @@ interface TiviPreferences {
 
     val episodeAiringNotificationsEnabled: Preference<Boolean>
 
-    enum class Theme {
-        LIGHT,
-        DARK,
-        SYSTEM,
-    }
+    enum class Theme { LIGHT, DARK, SYSTEM }
 }
