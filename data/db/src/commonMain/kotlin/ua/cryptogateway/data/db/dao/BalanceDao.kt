@@ -21,8 +21,23 @@ class BalanceDao(
             .map { row ->
                 BalanceEntity(
                     currency = row[BalanceSchema.currency],
+                    balance = row[BalanceSchema.balance],
+                    lockBalance = row[BalanceSchema.lockBalance],
                     entire = row[BalanceSchema.entire],
-                    available = row[BalanceSchema.available],
+                    timestamp = row[BalanceSchema.timestamp]
+                )
+            }
+    }
+
+    suspend fun getCurrency(currency: String) = dbQuery {
+        BalanceSchema.selectAll()
+            .where { BalanceSchema.currency eq currency }
+            .map { row ->
+                BalanceEntity(
+                    currency = row[BalanceSchema.currency],
+                    balance = row[BalanceSchema.balance],
+                    lockBalance = row[BalanceSchema.lockBalance],
+                    entire = row[BalanceSchema.entire],
                     timestamp = row[BalanceSchema.timestamp]
                 )
             }
@@ -31,8 +46,9 @@ class BalanceDao(
     suspend fun save(entities: List<BalanceEntity>) = dbQuery {
         BalanceSchema.batchUpsert(entities) {
             this[BalanceSchema.currency] = it.currency
+            this[BalanceSchema.balance] = it.balance
+            this[BalanceSchema.lockBalance] = it.lockBalance
             this[BalanceSchema.entire] = it.entire
-            this[BalanceSchema.available] = it.available
             this[BalanceSchema.timestamp] = it.timestamp
         }
     }

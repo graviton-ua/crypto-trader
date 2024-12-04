@@ -4,7 +4,8 @@ import kotlinx.datetime.Instant
 
 data class BalanceEntity(
     val currency: String,
+    val balance: Double,
+    val lockBalance: Double,
     val entire: Double,
-    val available: Double,
     val timestamp: Instant,
 )

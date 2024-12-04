@@ -6,8 +6,9 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object BalanceSchema : Table("dbo.balance") {
     val currency = varchar("currency", 4)
-    val entire = double("entire")
-    val available = double("available")
+    val balance = double("balance")
+    val lockBalance = double("lockBalance")
+    val entire  = double("entire")
     val timestamp = timestamp("timestamp").clientDefault { Clock.System.now() }
 
     override val primaryKey = PrimaryKey(currency)
