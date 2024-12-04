@@ -14,7 +14,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class KunaBalance(
     @SerialName("currency") val currency: String,
-    @SerialName("entire") val entire: Double = 0.0, //TODO: What is entire ?!?!
-    @SerialName("balance") val available: Double,
+    @SerialName("balance") val balance: Double,
+    @SerialName("lockBalance") val lockBalance: Double,
+    val entire: Double = balance + lockBalance,
     val timestamp: Instant = Clock.System.now(),
 )
