@@ -5,10 +5,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import ua.cryptogateway.data.web.models.KunaBalance
-import ua.cryptogateway.data.web.models.KunaFee
-import ua.cryptogateway.data.web.models.KunaMe
-import ua.cryptogateway.data.web.models.KunaTicker
+import ua.cryptogateway.data.web.models.*
 import ua.cryptogateway.data.web.utils.asResult
 import ua.cryptogateway.data.web.utils.privateHeaders
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -147,6 +144,20 @@ class KunaApi(
         client.get("/v4/private/me") {
             privateHeaders(path = "/v4/private/me", body = Unit)
         }.asResult<KunaResponse<KunaMe>>().map { it.data }
+    }
+    /**
+     * Get active client orders Private.
+     *
+     * This is a suspension function that performs an HTTP GET request to the
+     * "/v4/order/private/active" endpoint of the Kuna API. The function uses a coroutine
+     * dispatcher to handle the network request asynchronously.
+     *
+     * @return [Result] containing the user's personal information wrapped in a [KunaMe] object.
+     */
+    suspend fun getActive(): Result<List<KunaActive>> = withContext(dispatcher) {
+        client.get("/v4/order/private/active") {
+            privateHeaders(path = "/v4/order/private/active", body = Unit)
+        }.asResult<KunaResponse<List<KunaActive>>>().map { it.data }
     }
 
     /**
