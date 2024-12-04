@@ -19,9 +19,9 @@ package ua.cryptogateway.data.db.models
 data class ActiveEntity(
     val id: String,
     val type: String,
-    val quantity: Int,
-    val executedQuantity: Int,
-    val cumulativeQuoteQty: Int,
+    val quantity: Double,
+    val executedQuantity: Double,
+    val cumulativeQuoteQty: Double,
     val cost: Double,
     val side: String,
     val pair: String,

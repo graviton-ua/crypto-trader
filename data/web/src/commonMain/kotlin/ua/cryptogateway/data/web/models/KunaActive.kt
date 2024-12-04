@@ -24,9 +24,9 @@ import kotlinx.serialization.Serializable
 data class KunaActive(
     @SerialName("id") val id: String,
     @SerialName("type") val type: String,
-    @SerialName("quantity") val quantity: Int,
-    @SerialName("executedQuantity") val executedQuantity: Int,
-    @SerialName("cumulativeQuoteQty") val cumulativeQuoteQty: Int,
+    @SerialName("quantity") val quantity: Double,
+    @SerialName("executedQuantity") val executedQuantity: Double,
+    @SerialName("cumulativeQuoteQty") val cumulativeQuoteQty: Double,
     @SerialName("cost") val cost: Double,
     @SerialName("side") val side: String,
     @SerialName("pair") val pair: String,

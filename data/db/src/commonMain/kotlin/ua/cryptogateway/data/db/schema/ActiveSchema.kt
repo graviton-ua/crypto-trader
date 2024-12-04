@@ -20,9 +20,9 @@ import org.jetbrains.exposed.sql.Table
 object ActiveSchema : Table("dbo.active") {
     val id = varchar("id", 36)
     val type = varchar("type", 12)
-    val quantity = integer("quantity")
-    val executedQuantity = integer("executedQuantity")
-    val cumulativeQuoteQty = integer("cumulativeQuoteQty")
+    val quantity = double("quantity")
+    val executedQuantity = double("executedQuantity")
+    val cumulativeQuoteQty = double("cumulativeQuoteQty")
     val cost = double("cost")
     val side = varchar("side",5)
     val pair = varchar("pair",15)
