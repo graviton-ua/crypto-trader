@@ -16,7 +16,7 @@ class TickersDao(
     override val dispatcher = dispatchers.io
 
 
-    suspend fun readAll(): List<TickerEntity> = dbQuery {
+    suspend fun getAll(): List<TickerEntity> = dbQuery {
         TickerSchema.selectAll()
             //.where { Users.id eq id }
             .map { row ->
@@ -31,6 +31,23 @@ class TickersDao(
                     timestamp = row[TickerSchema.timestamp],
                 )
             }
+    }
+
+    suspend fun getByPairName(pairName: String): TickerEntity? = dbQuery {
+        TickerSchema.selectAll()
+            .where { TickerSchema.pairName eq pairName }
+            .map { row ->
+                TickerEntity(
+                    pairName = row[TickerSchema.pairName],
+                    priceHigh = row[TickerSchema.priceHigh],
+                    priceAsk = row[TickerSchema.priceAsk],
+                    priceBid = row[TickerSchema.priceBid],
+                    priceLow = row[TickerSchema.priceLow],
+                    priceLast = row[TickerSchema.priceLast],
+                    change = row[TickerSchema.change],
+                    timestamp = row[TickerSchema.timestamp],
+                )
+            }.firstOrNull()
     }
 
 
