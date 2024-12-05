@@ -34,7 +34,7 @@ class BalancePullService(
 
     init {
         //start()
-        scope.updateTickersTable()
+        scope.updateBalanceTable()
     }
 
 
@@ -64,7 +64,7 @@ class BalancePullService(
     }
 
 
-    private fun CoroutineScope.updateTickersTable() = launch(dispatcher) {
+    private fun CoroutineScope.updateBalanceTable() = launch(dispatcher) {
         Log.debug(tag = TAG) { "updateTickersTable() job started" }
 
         data.filterNotNull()
