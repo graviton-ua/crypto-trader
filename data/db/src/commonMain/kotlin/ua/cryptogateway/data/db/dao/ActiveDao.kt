@@ -12,52 +12,33 @@ import ua.cryptogateway.util.AppCoroutineDispatchers
 class ActiveDao(
     dispatchers: AppCoroutineDispatchers,
     override val database: Database,
-) :Dao {
+) : Dao {
     override val dispatcher = dispatchers.io
 
-    suspend fun readAll(): List<ActiveEntity> = dbQuery {
-        ActiveSchema.selectAll()
-            .map { row ->
-                ActiveEntity(
-                    id = row[ActiveSchema.id],
-                    type = row[ActiveSchema.type],
-                    quantity = row[ActiveSchema.quantity],
-                    executedQuantity = row[ActiveSchema.executedQuantity],
-                    cumulativeQuoteQty = row[ActiveSchema.cumulativeQuoteQty],
-                    cost = row[ActiveSchema.cost],
-                    side = row[ActiveSchema.side],
-                    pair = row[ActiveSchema.pair],
-                    price = row[ActiveSchema.price],
-                    status = row[ActiveSchema.status],
-                    createdAt = row[ActiveSchema.createdAt],
-                    updatedAt = row[ActiveSchema.updatedAt]
-                )
-            }
-    }
-
-    suspend fun readOne(id: String): List<ActiveEntity> = dbQuery {
-        ActiveSchema.selectAll()
-            .where { ActiveSchema.id eq id }
-            .map { row ->
-                ActiveEntity(
-                    id = row[ActiveSchema.id],
-                    type = row[ActiveSchema.type],
-                    quantity = row[ActiveSchema.quantity],
-                    executedQuantity = row[ActiveSchema.executedQuantity],
-                    cumulativeQuoteQty = row[ActiveSchema.cumulativeQuoteQty],
-                    cost = row[ActiveSchema.cost],
-                    side = row[ActiveSchema.side],
-                    pair = row[ActiveSchema.pair],
-                    price = row[ActiveSchema.price],
-                    status = row[ActiveSchema.status],
-                    createdAt = row[ActiveSchema.createdAt],
-                    updatedAt = row[ActiveSchema.updatedAt]
-                )
-            }
+    suspend fun readAll(): Result<List<ActiveEntity>> = Result.runCatching {
+        dbQuery {
+            ActiveSchema.selectAll()
+                .map { row ->
+                    ActiveEntity(
+                        id = row[ActiveSchema.id],
+                        type = row[ActiveSchema.type],
+                        quantity = row[ActiveSchema.quantity],
+                        executedQuantity = row[ActiveSchema.executedQuantity],
+                        cumulativeQuoteQty = row[ActiveSchema.cumulativeQuoteQty],
+                        cost = row[ActiveSchema.cost],
+                        side = row[ActiveSchema.side],
+                        pair = row[ActiveSchema.pair],
+                        price = row[ActiveSchema.price],
+                        status = row[ActiveSchema.status],
+                        createdAt = row[ActiveSchema.createdAt],
+                        updatedAt = row[ActiveSchema.updatedAt]
+                    )
+                }
+        }
     }
 
     suspend fun save(orders: List<ActiveEntity>) = dbQuery {
-        ActiveSchema.batchUpsert(orders){
+        ActiveSchema.batchUpsert(orders) {
             this[ActiveSchema.id] = it.id
             this[ActiveSchema.type] = it.type
             this[ActiveSchema.quantity] = it.quantity
