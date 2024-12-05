@@ -33,17 +33,17 @@ fun main() {
             applicationComponent.suspendedInitializers.initialize()
         }
 
-        val balancePuller = applicationComponent.balancePuller
-        DisposableEffect(balancePuller) {
-            balancePuller.start()
-            onDispose { balancePuller.stop() }
-        }
-
-        val tickersPuller = applicationComponent.tickersPuller
-        DisposableEffect(tickersPuller) {
-            tickersPuller.start()
-            onDispose { tickersPuller.stop() }
-        }
+//        val balancePuller = applicationComponent.balancePuller
+//        DisposableEffect(balancePuller) {
+//            balancePuller.start()
+//            onDispose { balancePuller.stop() }
+//        }
+//
+//        val tickersPuller = applicationComponent.tickersPuller
+//        DisposableEffect(tickersPuller) {
+//            tickersPuller.start()
+//            onDispose { tickersPuller.stop() }
+//        }
 
         Window(
             onCloseRequest = ::exitApplication,
