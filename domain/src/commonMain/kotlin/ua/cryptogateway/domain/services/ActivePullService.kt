@@ -69,7 +69,7 @@ class ActivePullService(
             .map { it.map(KunaActive::toEntity) }
             .collectLatest { list ->
                 Result.runCatching { dao.save(list) }
-                    .onSuccess { Log.info(tag = TAG) { "BalanceTable updated" } }
+                    .onSuccess { Log.info(tag = TAG) { "ActiveTable updated" } }
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 
@@ -82,4 +82,4 @@ class ActivePullService(
 }
 
 private fun KunaActive.toEntity(): ActiveEntity = ActiveEntity(id, type, quantity, executedQuantity,
-    cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt)
+    cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt, cancel = false)
