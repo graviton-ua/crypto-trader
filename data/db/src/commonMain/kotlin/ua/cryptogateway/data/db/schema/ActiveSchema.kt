@@ -17,17 +17,20 @@ import org.jetbrains.exposed.sql.Table
 //    "updatedAt": "2023-07-11T07:04:20.131Z"                  // Date-time of the last update of the order, UTC
 //}
 
-object ActiveSchema : Table("dbo.active") {
+internal object ActiveSchema : Table("dbo.active") {
     val id = varchar("id", 36)
     val type = varchar("type", 12)
     val quantity = double("quantity")
     val executedQuantity = double("executedQuantity")
     val cumulativeQuoteQty = double("cumulativeQuoteQty")
     val cost = double("cost")
-    val side = varchar("side",5)
-    val pair = varchar("pair",15)
+    val side = varchar("side", 5)
+    val pair = varchar("pair", 15)
     val price = double("price")
-    val status = varchar("status",12)
-    val createdAt = varchar("createdAt",25)
-    val updatedAt = varchar("updatedAt",25)
+    val status = varchar("status", 12)
+    val createdAt = varchar("createdAt", 25)
+    val updatedAt = varchar("updatedAt", 25)
+    val cancel = bool("cancel")
+
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
