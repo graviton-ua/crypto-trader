@@ -2,10 +2,12 @@ package ua.cryptogateway.data.db.dao
 
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.batchUpsert
 import org.jetbrains.exposed.sql.selectAll
 import ua.cryptogateway.data.db.models.ActiveEntity
 import ua.cryptogateway.data.db.schema.ActiveSchema
+import ua.cryptogateway.data.db.schema.KunaListSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -31,10 +33,17 @@ class ActiveDao(
                         price = row[ActiveSchema.price],
                         status = row[ActiveSchema.status],
                         createdAt = row[ActiveSchema.createdAt],
-                        updatedAt = row[ActiveSchema.updatedAt]
+                        updatedAt = row[ActiveSchema.updatedAt],
+                        cancel = row[ActiveSchema.cancel]
                     )
                 }
         }
+    }
+
+    suspend fun readCancelID() = dbQuery {
+        ActiveSchema.selectAll()
+            .where { ActiveSchema.cancel eq true }
+            .map { row -> row[ActiveSchema.id].trim() }
     }
 
     suspend fun save(orders: List<ActiveEntity>) = dbQuery {
@@ -51,6 +60,7 @@ class ActiveDao(
             this[ActiveSchema.status] = it.status
             this[ActiveSchema.createdAt] = it.createdAt
             this[ActiveSchema.updatedAt] = it.updatedAt
+            this[ActiveSchema.cancel] = it.cancel
 
         }
     }
