@@ -1,13 +1,10 @@
 package ua.cryptogateway.data.db.dao
 
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.batchUpsert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import ua.cryptogateway.data.db.models.ActiveEntity
 import ua.cryptogateway.data.db.schema.ActiveSchema
-import ua.cryptogateway.data.db.schema.KunaListSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -40,13 +37,27 @@ class ActiveDao(
         }
     }
 
-    suspend fun readCancelID() = dbQuery {
-        ActiveSchema.selectAll()
-            .where { ActiveSchema.cancel eq true }
-            .map { row -> row[ActiveSchema.id].trim() }
+    suspend fun readCancelID() = Result.runCatching {
+        dbQuery {
+            ActiveSchema.selectAll()
+                .where { ActiveSchema.cancel eq true }
+                .map { row -> row[ActiveSchema.id].trim() }
+        }
+    }
+
+    suspend fun deleteActiveById(ids: List<String>) = Result.runCatching {
+        dbQuery {
+            ActiveSchema.deleteWhere { id inList ids }
+        }
     }
 
     suspend fun save(orders: List<ActiveEntity>) = dbQuery {
+        // before we save our new active orders list we need to mark all current orders
+        // with possibly cancelled orders, and new list should overwrite with false flags (to not cancel them)
+        ActiveSchema.update {
+            it[ActiveSchema.cancel] = true
+        }
+
         ActiveSchema.batchUpsert(orders) {
             this[ActiveSchema.id] = it.id
             this[ActiveSchema.type] = it.type
@@ -61,7 +72,6 @@ class ActiveDao(
             this[ActiveSchema.createdAt] = it.createdAt
             this[ActiveSchema.updatedAt] = it.updatedAt
             this[ActiveSchema.cancel] = it.cancel
-
         }
     }
 }

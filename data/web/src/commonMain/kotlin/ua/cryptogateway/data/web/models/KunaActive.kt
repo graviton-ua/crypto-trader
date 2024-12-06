@@ -34,4 +34,5 @@ data class KunaActive(
     @SerialName("status") val status: String,
     @SerialName("createdAt") val createdAt: String,
     @SerialName("updatedAt") val updatedAt: String,
+    val timestamp: Instant = Clock.System.now(),
 )

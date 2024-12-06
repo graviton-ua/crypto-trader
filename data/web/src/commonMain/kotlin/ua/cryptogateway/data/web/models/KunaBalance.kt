@@ -15,7 +15,7 @@ data class KunaBalance(
     @SerialName("currency") val currency: String,
     @SerialName("balance") val balance: Double,
     @SerialName("lockBalance") val lockBalance: Double,
-    //val timestamp: Instant = Clock.System.now(),
+    val timestamp: Instant = Clock.System.now(),
 ) {
     val entire: Double = balance + lockBalance
 

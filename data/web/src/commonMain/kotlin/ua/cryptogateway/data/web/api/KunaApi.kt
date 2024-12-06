@@ -3,9 +3,11 @@ package ua.cryptogateway.data.web.api
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.data.web.models.*
+import ua.cryptogateway.data.web.requests.CancelOrdersRequest
 import ua.cryptogateway.data.web.utils.asResult
 import ua.cryptogateway.data.web.utils.privateHeaders
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -145,6 +147,7 @@ class KunaApi(
             privateHeaders(path = "/v4/private/me", body = Unit)
         }.asResult<KunaResponse<KunaMe>>().map { it.data }
     }
+
     /**
      * Get active client orders Private.
      *
@@ -173,5 +176,15 @@ class KunaApi(
         client.get("/v4/private/getBalance") {
             privateHeaders(path = "/v4/private/getBalance", body = Unit)
         }.asResult<KunaResponse<List<KunaBalance>>>().map { it.data }
+    }
+
+
+    suspend fun cancelOrders(ordersId: List<String>): Result<List<KunaCancelledOrder>> = withContext(dispatcher) {
+        val request = CancelOrdersRequest(orderIds = ordersId)
+        client.post("/v4/order/private/cancel/multi") {
+            privateHeaders(path = "/v4/order/private/cancel/multi", body = request)
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.asResult<KunaResponse<List<KunaCancelledOrder>>>().map { it.data }
     }
 }

@@ -83,4 +83,4 @@ class BalancePullService(
     }
 }
 
-private fun KunaBalance.toEntity(): BalanceEntity = BalanceEntity(currency, balance, lockBalance, entire/*, timestamp*/)
+private fun KunaBalance.toEntity(): BalanceEntity = BalanceEntity(currency, balance, lockBalance, entire, timestamp)
