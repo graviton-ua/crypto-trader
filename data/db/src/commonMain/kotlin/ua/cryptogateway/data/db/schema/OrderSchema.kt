@@ -30,7 +30,7 @@ internal object OrderSchema : Table("dbo.active") {
     val status = varchar("status", 12)
     val createdAt = varchar("createdAt", 25)
     val updatedAt = varchar("updatedAt", 25)
-    val cancel = bool("cancel")
+    val cancel = bool("cancel").default(false)
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

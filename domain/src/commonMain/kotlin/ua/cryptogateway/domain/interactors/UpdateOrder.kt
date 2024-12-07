@@ -4,20 +4,17 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.OrderDao
-import ua.cryptogateway.data.db.models.OrderEntity
 import ua.cryptogateway.data.web.api.KunaApi
-import ua.cryptogateway.data.web.models.KunaOrder
 import ua.cryptogateway.data.web.requests.CreateOrderRequest
 import ua.cryptogateway.domain.ResultInteractor
-import ua.cryptogateway.domain.interactors.CreateOrder.Params.Type
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
-class CreateOrder(
+class UpdateOrder(
     dispatchers: AppCoroutineDispatchers,
     val api: KunaApi,
     val dao: OrderDao,
-) : ResultInteractor<CreateOrder.Params, Result<Unit>>() {
+) : ResultInteractor<UpdateOrder.Params, Result<Unit>>() {
     private val dispatcher = dispatchers.io
 
     override suspend fun doWork(params: Params): Result<Unit> = withContext(dispatcher) {
@@ -55,7 +52,7 @@ class CreateOrder(
 
 
     suspend operator fun invoke(
-        type: Type,
+        type: Params.Type,
         orderSide: String,
         pair: String,
         price: Double,
@@ -82,21 +79,4 @@ class CreateOrder(
     companion object {
         private const val TAG = "CreateOrder"
     }
-}
-
-internal fun KunaOrder.toEntity(): OrderEntity {
-    return OrderEntity(
-        id = id,
-        type = type,
-        quantity = quantity,
-        executedQuantity = executedQuantity,
-        cumulativeQuoteQty = 0.0,
-        cost = 0.0,
-        side = side,
-        pair = pair,
-        price = price,
-        status = status,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
-    )
 }

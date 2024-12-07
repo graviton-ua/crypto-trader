@@ -3,6 +3,7 @@ package ua.cryptogateway.data.db.dao
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import ua.cryptogateway.data.db.models.OrderEntity
 import ua.cryptogateway.data.db.schema.OrderSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -53,7 +54,9 @@ class OrderDao(
 
     suspend fun save(entity: OrderEntity) = Result.runCatching {
         dbQuery {
-            OrderSchema.upsert {
+            OrderSchema.upsert(
+                onUpdateExclude = listOf(OrderSchema.cancel),
+            ) {
                 it[OrderSchema.id] = entity.id
                 it[OrderSchema.type] = entity.type
                 it[OrderSchema.quantity] = entity.quantity
@@ -66,19 +69,17 @@ class OrderDao(
                 it[OrderSchema.status] = entity.status
                 it[OrderSchema.createdAt] = entity.createdAt
                 it[OrderSchema.updatedAt] = entity.updatedAt
-                it[OrderSchema.cancel] = entity.cancel
             }
         }
     }
 
-    suspend fun save(orders: List<OrderEntity>) = dbQuery {
-        // before we save our new active orders list we need to mark all current orders
-        // with possibly cancelled orders, and new list should overwrite with false flags (to not cancel them)
-        OrderSchema.update {
-            it[OrderSchema.cancel] = true
-        }
+    suspend fun saveActive(orders: List<OrderEntity>) = dbQuery {
+        OrderSchema.deleteWhere { OrderSchema.id notInList orders.map { it.id } }
 
-        OrderSchema.batchUpsert(orders) {
+        OrderSchema.batchUpsert(
+            data = orders,
+            onUpdateExclude = listOf(OrderSchema.cancel),
+        ) {
             this[OrderSchema.id] = it.id
             this[OrderSchema.type] = it.type
             this[OrderSchema.quantity] = it.quantity
@@ -91,7 +92,6 @@ class OrderDao(
             this[OrderSchema.status] = it.status
             this[OrderSchema.createdAt] = it.createdAt
             this[OrderSchema.updatedAt] = it.updatedAt
-            this[OrderSchema.cancel] = it.cancel
         }
     }
 }

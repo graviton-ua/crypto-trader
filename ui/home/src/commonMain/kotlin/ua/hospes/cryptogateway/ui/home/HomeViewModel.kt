@@ -122,10 +122,10 @@ class HomeViewModel(
 //            .getOrNull() ?: return@launch
 //        println("listOfNewOrders: $listOfNewOrders")
 
-        createOrder(
-            type = CreateOrder.Params.Type.Limit,
-            orderSide = "Ask", pair = "DOGE_USDT", price = 0.6, quantity = 0.01,
-        )
+//        createOrder(
+//            type = CreateOrder.Params.Type.Limit,
+//            orderSide = "Ask", pair = "DOGE_USDT", price = 0.6, quantity = 0.01,
+//        )
 
     }
 

@@ -68,7 +68,7 @@ class ActiveOrdersPullService(
         data.filterNotNull()
             .map { it.map(KunaActiveOrder::toEntity) }
             .collectLatest { list ->
-                Result.runCatching { dao.save(list) }
+                Result.runCatching { dao.saveActive(list) }
                     .onSuccess { Log.info(tag = TAG) { "ActiveTable updated" } }
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
@@ -82,4 +82,4 @@ class ActiveOrdersPullService(
 }
 
 private fun KunaActiveOrder.toEntity(): OrderEntity = OrderEntity(id, type, quantity, executedQuantity,
-    cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt, cancel = false)
+    cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt)

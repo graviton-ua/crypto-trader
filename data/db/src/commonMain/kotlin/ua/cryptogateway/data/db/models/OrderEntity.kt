@@ -29,5 +29,5 @@ data class OrderEntity(
     val status: String,
     val createdAt: String,
     val updatedAt: String,
-    val cancel: Boolean,
+    val cancel: Boolean? = null,
 )
