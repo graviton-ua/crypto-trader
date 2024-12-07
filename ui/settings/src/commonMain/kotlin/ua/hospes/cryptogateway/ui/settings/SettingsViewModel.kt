@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
+import ua.cryptogateway.domain.interactors.CreateOrder
 import ua.cryptogateway.settings.TiviPreferences
 import ua.cryptogateway.util.AppCoroutineDispatchers
 

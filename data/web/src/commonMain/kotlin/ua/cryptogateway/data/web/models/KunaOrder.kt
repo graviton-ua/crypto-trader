@@ -16,10 +16,11 @@ import kotlinx.serialization.Serializable
 //    "updatedAt": "2023-07-11T08:01:30.550Z"           // Date-time of the last update of the order, UTC
 //}
 @Serializable
-data class KunaCreateOrder(
+data class KunaOrder(
     @SerialName("id") val id: String,
     @SerialName("type") val type: String,
     @SerialName("quantity") val quantity: Double,
+    @SerialName("side") val side: String,
     @SerialName("executedQuantity") val executedQuantity: Double,
     @SerialName("pair") val pair: String,
     @SerialName("price") val price: Double,

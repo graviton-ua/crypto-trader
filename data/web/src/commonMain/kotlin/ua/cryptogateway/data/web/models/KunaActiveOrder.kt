@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
 //}
 
 @Serializable
-data class KunaActive(
+data class KunaActiveOrder(
     @SerialName("id") val id: String,
     @SerialName("type") val type: String,
     @SerialName("quantity") val quantity: Double,

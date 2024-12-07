@@ -7,10 +7,10 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import saschpe.log4k.logged
-import ua.cryptogateway.data.db.dao.ActiveDao
-import ua.cryptogateway.data.db.models.ActiveEntity
+import ua.cryptogateway.data.db.dao.OrderDao
+import ua.cryptogateway.data.db.models.OrderEntity
 import ua.cryptogateway.data.web.api.KunaApi
-import ua.cryptogateway.data.web.models.KunaActive
+import ua.cryptogateway.data.web.models.KunaActiveOrder
 import ua.cryptogateway.domain.DataPuller
 import ua.cryptogateway.inject.ApplicationScope
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -21,16 +21,16 @@ import kotlin.time.Duration.Companion.seconds
 
 @ApplicationScope
 @Inject
-class ActivePullService(
+class ActiveOrdersPullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
-    private val dao: ActiveDao,
+    private val dao: OrderDao,
 ) {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
-    private val data = MutableStateFlow<List<KunaActive>?>(null)
+    private val data = MutableStateFlow<List<KunaActiveOrder>?>(null)
 
     init {
         //start()
@@ -41,7 +41,7 @@ class ActivePullService(
         if (job != null) return
         job = scope.launch(dispatcher) {
             Log.debug(tag = TAG) { "DataPuller job started" }
-            DataPuller().pull(delay.value) { api.getActive() }
+            DataPuller().pull(delay.value) { api.getActiveOrders() }
                 .mapNotNull { it.getOrNull() }
                 .catch { Log.error(tag = TAG, throwable = it) }
                 .flowOn(dispatcher)
@@ -66,7 +66,7 @@ class ActivePullService(
         Log.debug(tag = TAG) { "updateActiveTable() job started" }
 
         data.filterNotNull()
-            .map { it.map(KunaActive::toEntity) }
+            .map { it.map(KunaActiveOrder::toEntity) }
             .collectLatest { list ->
                 Result.runCatching { dao.save(list) }
                     .onSuccess { Log.info(tag = TAG) { "ActiveTable updated" } }
@@ -81,5 +81,5 @@ class ActivePullService(
     }
 }
 
-private fun KunaActive.toEntity(): ActiveEntity = ActiveEntity(id, type, quantity, executedQuantity,
+private fun KunaActiveOrder.toEntity(): OrderEntity = OrderEntity(id, type, quantity, executedQuantity,
     cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt, cancel = false)

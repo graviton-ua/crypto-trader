@@ -11,6 +11,6 @@ import ua.cryptogateway.appinitializers.AppInitializer
 class LogbackInitializer : AppInitializer {
     override fun initialize() {
         val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
-        rootLogger.level = Level.INFO
+        rootLogger.level = Level.DEBUG
     }
 }

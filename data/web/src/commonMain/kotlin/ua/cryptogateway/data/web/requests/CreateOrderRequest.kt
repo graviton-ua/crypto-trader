@@ -4,18 +4,19 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
-// Body to create a Market order to buy BTC using "quantity"
 //{
-//    "type": "Market",
+//    "type": "Limit",
 //    "orderSide": "Bid",
 //    "pair": "BTC_USDT",
-//    "quantity": "0.06"
-//} // I want to buy 0.06 BTC
+//    "price": "26440.46",
+//    "quantity": "0.06",   //"quantity": 0.06,
+//}
 
 @Serializable
 data class CreateOrderRequest(
-    @SerialName("type") val type: String,
-    @SerialName("orderSide") val orderSide: String,
-    @SerialName("pair") val pair: String,
-    @SerialName("quantity") val quantity: Double,
+    val type: String,
+    val orderSide: String,
+    val pair: String,
+    val price: Double,
+    val quantity: Double,
 )

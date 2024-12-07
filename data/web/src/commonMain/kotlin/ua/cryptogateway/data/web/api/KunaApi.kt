@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.data.web.models.*
 import ua.cryptogateway.data.web.requests.CancelOrdersRequest
+import ua.cryptogateway.data.web.requests.CreateOrderRequest
 import ua.cryptogateway.data.web.utils.asResult
 import ua.cryptogateway.data.web.utils.privateHeaders
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -157,10 +158,10 @@ class KunaApi(
      *
      * @return [Result] containing the user's personal information wrapped in a [KunaMe] object.
      */
-    suspend fun getActive(): Result<List<KunaActive>> = withContext(dispatcher) {
+    suspend fun getActiveOrders(): Result<List<KunaActiveOrder>> = withContext(dispatcher) {
         client.get("/v4/order/private/active") {
             privateHeaders(path = "/v4/order/private/active", body = Unit)
-        }.asResult<KunaResponse<List<KunaActive>>>().map { it.data }
+        }.asResult<KunaResponse<List<KunaActiveOrder>>>().map { it.data }
     }
 
     /**
@@ -178,6 +179,17 @@ class KunaApi(
         }.asResult<KunaResponse<List<KunaBalance>>>().map { it.data }
     }
 
+    /**
+     *  Methods to work with Order on Kuna backend
+     */
+
+    suspend fun createOrder(request: CreateOrderRequest): Result<KunaOrder> = withContext(dispatcher) {
+        client.post("/v4/order/private/create") {
+            privateHeaders(path = "/v4/order/private/create", body = request)
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.asResult<KunaResponse<KunaOrder>>().map { it.data }
+    }
 
     suspend fun cancelOrders(ordersId: List<String>): Result<List<KunaCancelledOrder>> = withContext(dispatcher) {
         val request = CancelOrdersRequest(orderIds = ordersId)
