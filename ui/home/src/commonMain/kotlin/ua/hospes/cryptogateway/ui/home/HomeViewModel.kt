@@ -40,9 +40,9 @@ class HomeViewModel(
 //            .getOrNull() ?: return@launch
 //        println("listOfNewOrders: $listOfNewOrders")
 
-        createOrder.market(
-            orderSide = Side.Ask, pair = "DOGE_USDT", quantity = 0.6,
-        )
+//        createOrder.market(
+//            orderSide = Side.Ask, pair = "DOGE_USDT", quantity = 0.6,
+//        )
 
         val tt = api.getOrderBook("DOGE_USDT", level = 5)
             .onSuccess { Log.info(tag = TAG) { "Book: $it" } }

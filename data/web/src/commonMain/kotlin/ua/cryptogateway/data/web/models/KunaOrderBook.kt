@@ -1,7 +1,12 @@
 package ua.cryptogateway.data.web.models
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.*
 
 
 //{
@@ -29,12 +34,53 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class KunaOrderBook(
-    @SerialName("asks") val asks: List<List<Double>>,
-    @SerialName("bids") val bids: List<List<Double>>,
+    @SerialName("asks") val asks: List<Order>,
+    @SerialName("bids") val bids: List<Order>,
 ) {
-    @Serializable
+    @Serializable(with = KunaOrderBookOrderSerializer::class)
     data class Order(
         val price: Double,
         val quantity: Double,
     )
+}
+
+
+internal object KunaOrderBookOrderSerializer : KSerializer<KunaOrderBook.Order> {
+    @OptIn(ExperimentalSerializationApi::class)
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("KunaOrderBook.Order") {
+        element<Double>("price")
+        element<Double>("quantity")
+    }
+
+
+    override fun deserialize(decoder: Decoder): KunaOrderBook.Order {
+        val input = decoder as? JsonDecoder
+            ?: throw SerializationException("This class can be loaded only by Json")
+
+        // Decode the array
+        val jsonArray = input.decodeJsonElement().jsonArray
+
+        if (jsonArray.size != 2) {
+            throw SerializationException("Expected a JSON array with 2 elements, but got ${jsonArray.size}")
+        }
+
+        val price = jsonArray[0].jsonPrimitive.double
+        val quantity = jsonArray[1].jsonPrimitive.double
+
+        return KunaOrderBook.Order(price, quantity)
+    }
+
+
+    override fun serialize(encoder: Encoder, value: KunaOrderBook.Order) {
+        val output = encoder as? JsonEncoder
+            ?: throw SerializationException("This class can be saved only by Json")
+
+        val jsonArray = JsonArray(
+            listOf(
+                JsonPrimitive(value.price),
+                JsonPrimitive(value.quantity)
+            )
+        )
+        output.encodeJsonElement(jsonArray)
+    }
 }
