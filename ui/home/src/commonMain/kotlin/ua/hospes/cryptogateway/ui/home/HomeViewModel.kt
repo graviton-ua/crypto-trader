@@ -7,13 +7,15 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import ua.cryptogateway.data.web.api.KunaApi
+import ua.cryptogateway.domain.interactors.CreateOrder
+import ua.cryptogateway.domain.interactors.CreateOrder.Params.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
 class HomeViewModel(
     dispatchers: AppCoroutineDispatchers,
     private val api: KunaApi,
-
+    private val createOrder: CreateOrder,
 ) : ViewModel() {
     private val dispatcher = dispatchers.io
 
@@ -38,11 +40,13 @@ class HomeViewModel(
 //            .getOrNull() ?: return@launch
 //        println("listOfNewOrders: $listOfNewOrders")
 
-//        createOrder(
-//            type = CreateOrder.Params.Type.Limit,
-//            orderSide = "Ask", pair = "DOGE_USDT", price = 0.6, quantity = 0.01,
-//        )
+        createOrder.market(
+            orderSide = Side.Ask, pair = "DOGE_USDT", quantity = 0.6,
+        )
 
+        val tt = api.getOrderBook("DOGE_USDT", level = 5)
+            .onSuccess { Log.info(tag = TAG) { "Book: $it" } }
+            .onFailure { Log.error(tag = TAG, throwable = it) }
     }
 
 

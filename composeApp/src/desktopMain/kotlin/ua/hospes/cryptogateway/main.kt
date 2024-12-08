@@ -45,11 +45,11 @@ fun main() {
 //            onDispose { tickersPuller.stop() }
 //        }
 //
-        val activeOrderPuller = applicationComponent.activeOrdersPuller
-        DisposableEffect(activeOrderPuller){
-            activeOrderPuller.start()
-            onDispose { activeOrderPuller.stop() }
-        }
+//        val activeOrderPuller = applicationComponent.activeOrdersPuller
+//        DisposableEffect(activeOrderPuller){
+//            activeOrderPuller.start()
+//            onDispose { activeOrderPuller.stop() }
+//        }
 
         Window(
             onCloseRequest = ::exitApplication,

@@ -110,10 +110,11 @@ class KunaApi(
      *
      * @return [HttpResponse] containing the public order book data.
      */
-    suspend fun getOrderBook(): HttpResponse = withContext(dispatcher) {
+    suspend fun getOrderBook(pair: String, level: Int? = 10): Result<KunaOrderBook> = withContext(dispatcher) {
         client.get("/v4/order/public/book") {
-
-        }
+            url { appendPathSegments(pair) }
+            if (level != null) parameter("level", level)
+        }.asResult<KunaResponse<KunaOrderBook>>().map { it.data }
     }
 
     /**

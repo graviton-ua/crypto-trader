@@ -28,8 +28,13 @@ import kotlinx.serialization.Serializable
 //}
 
 @Serializable
-data class KunaBookAsk(
-    @SerialName("sellPrice") val price: Double,
-    @SerialName("volume") val volume: Double,
-    @SerialName("sumVolume") val sumVolume: Double
-)
+data class KunaOrderBook(
+    @SerialName("asks") val asks: List<List<Double>>,
+    @SerialName("bids") val bids: List<List<Double>>,
+) {
+    @Serializable
+    data class Order(
+        val price: Double,
+        val quantity: Double,
+    )
+}

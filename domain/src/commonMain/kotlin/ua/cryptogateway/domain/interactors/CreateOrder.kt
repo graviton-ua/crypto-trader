@@ -9,7 +9,6 @@ import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaOrder
 import ua.cryptogateway.data.web.requests.CreateOrderRequest
 import ua.cryptogateway.domain.ResultInteractor
-import ua.cryptogateway.domain.interactors.CreateOrder.Params.Type
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -26,13 +25,22 @@ class CreateOrder(
 //        val newOrderRequest = CreateOrderRequest(
 //            type = "Limit", orderSide = "Ask", pair = "DOGE_USDT", price = 0.6, quantity = 0.01
 //        )
-        val newOrderRequest = CreateOrderRequest(
-            type = params.type.code,
-            orderSide = params.orderSide,
-            pair = params.pair,
-            price = params.price,
-            quantity = params.quantity,
-        )
+        val newOrderRequest = when (params) {
+            is Params.Limit -> CreateOrderRequest(
+                type = params.type.code,
+                orderSide = params.orderSide.code,
+                pair = params.pair,
+                price = params.price,
+                quantity = params.quantity,
+            )
+
+            is Params.Market -> CreateOrderRequest(
+                type = params.type.code,
+                orderSide = params.orderSide.code,
+                pair = params.pair,
+                quantity = params.quantity,
+            )
+        }
 
         val newOrder = api.createOrder(request = newOrderRequest)
             .onSuccess {
@@ -54,22 +62,45 @@ class CreateOrder(
     }
 
 
-    suspend operator fun invoke(
-        type: Type,
-        orderSide: String,
+    suspend fun limit(
+        orderSide: Params.Side,
         pair: String,
-        price: Double,
         quantity: Double,
-    ) = executeSync(Params(type, orderSide, pair, price, quantity))
+        price: Double,
+    ) = executeSync(Params.Limit(orderSide, pair, quantity, price))
+
+    suspend fun market(
+        orderSide: Params.Side,
+        pair: String,
+        quantity: Double,
+    ) = executeSync(Params.Market(orderSide, pair, quantity))
+
+    sealed interface Params {
+        val type: Type
+
+        data class Limit(
+            val orderSide: Side,
+            val pair: String,
+            val quantity: Double,
+            val price: Double,
+        ) : Params {
+            override val type: Type = Type.Limit
+        }
+
+        data class Market(
+            val orderSide: Side,
+            val pair: String,
+            val quantity: Double,
+        ) : Params {
+            override val type: Type = Type.Market
+        }
 
 
-    data class Params(
-        val type: Type,
-        val orderSide: String,
-        val pair: String,
-        val price: Double,
-        val quantity: Double,
-    ) {
+        enum class Side(val code: String) {
+            Ask("Ask"),
+            Bid("Bid"),
+        }
+
         enum class Type(val code: String) {
             Limit("Limit"),
             Market("Market"),

@@ -20,6 +20,7 @@ kotlin {
 
             api(libs.exposed.core)
             api(libs.exposed.jdbc)
+            implementation(libs.exposed.json)
             implementation(libs.exposed.migration)
             implementation(libs.exposed.kotlin.datetime)
         }
