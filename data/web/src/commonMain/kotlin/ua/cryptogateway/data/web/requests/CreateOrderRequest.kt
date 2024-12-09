@@ -16,6 +16,6 @@ data class CreateOrderRequest(
     val type: String,
     val orderSide: String,
     val pair: String,
-    val price: Double? = null,
-    val quantity: Double,
+    val price: String? = null,
+    val quantity: String,
 )

@@ -65,14 +65,14 @@ class CreateOrder(
     suspend fun limit(
         orderSide: Params.Side,
         pair: String,
-        quantity: Double,
-        price: Double,
+        quantity: String,
+        price: String,
     ) = executeSync(Params.Limit(orderSide, pair, quantity, price))
 
     suspend fun market(
         orderSide: Params.Side,
         pair: String,
-        quantity: Double,
+        quantity: String,
     ) = executeSync(Params.Market(orderSide, pair, quantity))
 
     sealed interface Params {
@@ -81,8 +81,8 @@ class CreateOrder(
         data class Limit(
             val orderSide: Side,
             val pair: String,
-            val quantity: Double,
-            val price: Double,
+            val quantity: String,
+            val price: String,
         ) : Params {
             override val type: Type = Type.Limit
         }
@@ -90,7 +90,7 @@ class CreateOrder(
         data class Market(
             val orderSide: Side,
             val pair: String,
-            val quantity: Double,
+            val quantity: String,
         ) : Params {
             override val type: Type = Type.Market
         }

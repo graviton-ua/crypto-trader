@@ -40,13 +40,13 @@ class HomeViewModel(
 //            .getOrNull() ?: return@launch
 //        println("listOfNewOrders: $listOfNewOrders")
 
-//        createOrder.market(
-//            orderSide = Side.Ask, pair = "DOGE_USDT", quantity = 0.6,
-//        )
-
-        val tt = api.getOrderBook("DOGE_USDT", level = 5)
-            .onSuccess { Log.info(tag = TAG) { "Book: $it" } }
-            .onFailure { Log.error(tag = TAG, throwable = it) }
+        createOrder.limit(
+            orderSide = Side.Ask, pair = "DOGE_USDT", price = "0.6", quantity = "0.01"
+        )
+    //{"errors":[{"code":"WrongRequestException","message":"price must be a number string"},{"code":"WrongRequestException","message":"quantity must be a number string"}]}
+//        val tt = api.getOrderBook("DOGE_USDT", level = 5)
+//            .onSuccess { Log.info(tag = TAG) { "Book: $it" } }
+//            .onFailure { Log.error(tag = TAG, throwable = it) }
     }
 
 

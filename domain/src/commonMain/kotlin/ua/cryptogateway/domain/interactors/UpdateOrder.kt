@@ -55,8 +55,8 @@ class UpdateOrder(
         type: Params.Type,
         orderSide: String,
         pair: String,
-        price: Double,
-        quantity: Double,
+        price: String,
+        quantity: String,
     ) = executeSync(Params(type, orderSide, pair, price, quantity))
 
 
@@ -64,8 +64,8 @@ class UpdateOrder(
         val type: Type,
         val orderSide: String,
         val pair: String,
-        val price: Double,
-        val quantity: Double,
+        val price: String,
+        val quantity: String,
     ) {
         enum class Type(val code: String) {
             Limit("Limit"),
