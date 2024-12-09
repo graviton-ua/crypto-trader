@@ -5,7 +5,9 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.batchUpsert
 import org.jetbrains.exposed.sql.selectAll
 import ua.cryptogateway.data.db.models.TickerEntity
+import ua.cryptogateway.data.db.models.UpdateActiveOrdersEntity
 import ua.cryptogateway.data.db.schema.TickerSchema
+import ua.cryptogateway.data.db.schema.UpdateActiveOrdersSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -61,6 +63,15 @@ class TickersDao(
             this[TickerSchema.priceLast] = it.priceLast
             this[TickerSchema.change] = it.change
             this[TickerSchema.timestamp] = it.timestamp
+        }
+    }
+
+    suspend fun updateActiveOrders(tickers: List<UpdateActiveOrdersEntity>) = dbQuery {
+        UpdateActiveOrdersSchema.batchUpsert(tickers) {
+            this[UpdateActiveOrdersSchema.pairName] = it.pairName
+            this[UpdateActiveOrdersSchema.priceAsk] = it.priceAsk
+            this[UpdateActiveOrdersSchema.priceBid] = it.priceBid
+            this[UpdateActiveOrdersSchema.change] = it.change
         }
     }
 }
