@@ -22,9 +22,6 @@ class CreateOrder(
     override suspend fun doWork(params: Params): Result<Unit> = withContext(dispatcher) {
         //if (params.quantity > 1) return@withContext Result.failure(IllegalArgumentException("Too big quantity"))
 
-//        val newOrderRequest = CreateOrderRequest(
-//            type = "Limit", orderSide = "Ask", pair = "DOGE_USDT", price = 0.6, quantity = 0.01
-//        )
         val newOrderRequest = when (params) {
             is Params.Limit -> CreateOrderRequest(
                 type = params.type.code,
@@ -97,8 +94,8 @@ class CreateOrder(
 
 
         enum class Side(val code: String) {
-            Ask("Ask"),
-            Bid("Bid"),
+            Sell("Ask"),
+            Buy("Bid"),
         }
 
         enum class Type(val code: String) {
