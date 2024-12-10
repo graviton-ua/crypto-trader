@@ -27,15 +27,15 @@ class CreateOrder(
                 type = params.type.code,
                 orderSide = params.orderSide.code,
                 pair = params.pair,
-                price = params.price,
-                quantity = params.quantity,
+                price = params.price.toString(),
+                quantity = params.quantity.toString(),
             )
 
             is Params.Market -> CreateOrderRequest(
                 type = params.type.code,
                 orderSide = params.orderSide.code,
                 pair = params.pair,
-                quantity = params.quantity,
+                quantity = params.quantity.toString(),
             )
         }
 
@@ -62,14 +62,14 @@ class CreateOrder(
     suspend fun limit(
         orderSide: Params.Side,
         pair: String,
-        quantity: String,
-        price: String,
+        quantity: Double,
+        price: Double,
     ) = executeSync(Params.Limit(orderSide, pair, quantity, price))
 
     suspend fun market(
         orderSide: Params.Side,
         pair: String,
-        quantity: String,
+        quantity: Double,
     ) = executeSync(Params.Market(orderSide, pair, quantity))
 
     sealed interface Params {
@@ -78,8 +78,8 @@ class CreateOrder(
         data class Limit(
             val orderSide: Side,
             val pair: String,
-            val quantity: String,
-            val price: String,
+            val quantity: Double,
+            val price: Double,
         ) : Params {
             override val type: Type = Type.Limit
         }
@@ -87,7 +87,7 @@ class CreateOrder(
         data class Market(
             val orderSide: Side,
             val pair: String,
-            val quantity: String,
+            val quantity: Double,
         ) : Params {
             override val type: Type = Type.Market
         }
