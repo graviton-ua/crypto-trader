@@ -1,9 +1,9 @@
 package ua.cryptogateway.appinitializers
 
-fun interface AppInitializer {
+interface AppInitializer {
     fun initialize()
 }
 
-fun interface AppSuspendedInitializer {
+interface AppSuspendedInitializer {
     suspend fun initialize()
 }

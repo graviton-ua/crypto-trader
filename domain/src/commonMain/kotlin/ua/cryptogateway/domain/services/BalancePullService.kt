@@ -25,7 +25,7 @@ class BalancePullService(
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
     private val dao: BalanceDao,
-) {
+) : ServiceInitializer {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
@@ -38,7 +38,7 @@ class BalancePullService(
     }
 
 
-    fun start() {
+    override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
             Log.debug(tag = TAG) { "DataPuller job started" }
@@ -53,12 +53,12 @@ class BalancePullService(
         }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
     }
 
-    fun stop() {
+    override fun stop() {
         job?.cancel()
         job = null
     }
 
-    fun restart() {
+    override fun restart() {
         stop()
         start()
     }

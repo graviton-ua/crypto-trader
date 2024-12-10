@@ -27,7 +27,7 @@ class TickersPullService(
     private val api: KunaApi,
     private val kunaListDao: KunaListDao,
     private val tickersDao: TickersDao,
-) {
+) : ServiceInitializer {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
@@ -40,7 +40,7 @@ class TickersPullService(
     }
 
 
-    fun start() {
+    override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
             Log.debug(tag = TAG) { "DataPuller job started" }
@@ -60,12 +60,12 @@ class TickersPullService(
         }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
     }
 
-    fun stop() {
+    override fun stop() {
         job?.cancel()
         job = null
     }
 
-    fun restart() {
+    override fun restart() {
         stop()
         start()
     }

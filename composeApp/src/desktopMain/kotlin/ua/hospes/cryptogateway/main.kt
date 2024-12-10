@@ -33,28 +33,10 @@ fun main() {
             applicationComponent.suspendedInitializers.initialize()
         }
 
-//        val balancePuller = applicationComponent.balancePuller
-//        DisposableEffect(balancePuller) {
-//            balancePuller.start()
-//            onDispose { balancePuller.stop() }
-//        }
-//
-//        val tickersPuller = applicationComponent.tickersPuller
-//        DisposableEffect(tickersPuller) {
-//            tickersPuller.start()
-//            onDispose { tickersPuller.stop() }
-//        }
-//
-//        val activeOrderPuller = applicationComponent.activeOrdersPuller
-//        DisposableEffect(activeOrderPuller){
-//            activeOrderPuller.start()
-//            onDispose { activeOrderPuller.stop() }
-//        }
-
-        val tradeBookPuller = applicationComponent.tradeBookPuller
-        DisposableEffect(tradeBookPuller){
-            tradeBookPuller.start()
-            onDispose { tradeBookPuller.stop() }
+        val services = applicationComponent.services
+        DisposableEffect(services) {
+            services.start()
+            onDispose { services.stop() }
         }
 
         Window(

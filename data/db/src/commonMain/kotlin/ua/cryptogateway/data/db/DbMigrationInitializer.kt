@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import ua.cryptogateway.appinitializers.AppSuspendedInitializer
 import ua.cryptogateway.data.db.schema.BalanceSchema
-import ua.cryptogateway.data.db.schema.OrderBookSchema
+import ua.cryptogateway.data.db.schema.OrderSchema
 import ua.cryptogateway.data.db.schema.TickerSchema
 import ua.cryptogateway.data.db.schema.TradeBookSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -23,7 +23,7 @@ class DbMigrationInitializer(
         newSuspendedTransaction(context = dispatcher, db = database) {
 
             SchemaUtils.createMissingTablesAndColumns(
-                TickerSchema, BalanceSchema, TradeBookSchema
+                OrderSchema, TickerSchema, BalanceSchema, TradeBookSchema,
             )
 
             MigrationUtils.statementsRequiredForDatabaseMigration(

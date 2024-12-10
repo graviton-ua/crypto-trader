@@ -27,7 +27,7 @@ class TradeBookPullService(
     private val api: KunaApi,
     private val daoTradeBook: TradeBookDao,
     private val kunaListDao: KunaListDao,
-) {
+) : ServiceInitializer {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
@@ -38,7 +38,7 @@ class TradeBookPullService(
         scope.updateTradesBookTable()
     }
 
-    fun start() {
+    override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
             Log.debug(tag = TAG) { "DataPuller job started" }
@@ -71,12 +71,12 @@ class TradeBookPullService(
         }
     }
 
-    fun stop() {
+    override fun stop() {
         job?.cancel()
         job = null
     }
 
-    fun restart() {
+    override fun restart() {
         stop()
         start()
     }

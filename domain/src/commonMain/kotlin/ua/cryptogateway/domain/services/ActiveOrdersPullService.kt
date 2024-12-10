@@ -12,9 +12,9 @@ import ua.cryptogateway.data.db.models.OrderEntity
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaActiveOrder
 import ua.cryptogateway.domain.DataPuller
+import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
 import ua.cryptogateway.util.AppCoroutineDispatchers
-import ua.cryptogateway.inject.ApplicationCoroutineScope
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -26,7 +26,7 @@ class ActiveOrdersPullService(
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
     private val dao: OrderDao,
-) {
+) : ServiceInitializer {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
@@ -37,7 +37,7 @@ class ActiveOrdersPullService(
         scope.updateActiveTable()
     }
 
-    fun start() {
+    override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
             Log.debug(tag = TAG) { "DataPuller job started" }
@@ -52,12 +52,12 @@ class ActiveOrdersPullService(
         }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
     }
 
-    fun stop() {
+    override fun stop() {
         job?.cancel()
         job = null
     }
 
-    fun restart() {
+    override fun restart() {
         stop()
         start()
     }
@@ -81,5 +81,7 @@ class ActiveOrdersPullService(
     }
 }
 
-private fun KunaActiveOrder.toEntity(): OrderEntity = OrderEntity(id, type, quantity, executedQuantity,
-    cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt)
+private fun KunaActiveOrder.toEntity(): OrderEntity = OrderEntity(
+    id, type, quantity, executedQuantity,
+    cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt
+)

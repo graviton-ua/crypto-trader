@@ -11,6 +11,7 @@ import ua.cryptogateway.data.db.MsSqlDatabaseComponent
 import ua.cryptogateway.data.web.KtorComponent
 import ua.cryptogateway.domain.DomainComponent
 import ua.cryptogateway.logs.LoggerComponent
+import ua.cryptogateway.serviceinitializers.ServiceInitializers
 import ua.cryptogateway.settings.PreferencesComponent
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
@@ -48,6 +49,7 @@ interface SharedApplicationComponent :
 
     val initializers: AppInitializers
     val suspendedInitializers: AppSuspendedInitializers
+    val services: ServiceInitializers
     val dispatchers: AppCoroutineDispatchers
     //val deepLinker: DeepLinker
 

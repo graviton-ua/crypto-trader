@@ -1,13 +1,19 @@
 package ua.cryptogateway.domain
 
-import ua.cryptogateway.domain.services.ActiveOrdersPullService
-import ua.cryptogateway.domain.services.BalancePullService
-import ua.cryptogateway.domain.services.TickersPullService
-import ua.cryptogateway.domain.services.TradeBookPullService
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
+import ua.cryptogateway.domain.services.*
 
 interface DomainComponent {
-    val balancePuller: BalancePullService
-    val tickersPuller: TickersPullService
-    val activeOrdersPuller: ActiveOrdersPullService
-    val tradeBookPuller: TradeBookPullService
+    @Provides @IntoSet
+    fun provideBalancePullService(impl: BalancePullService): ServiceInitializer = impl
+
+    @Provides @IntoSet
+    fun provideTickersPullService(impl: TickersPullService): ServiceInitializer = impl
+
+    @Provides @IntoSet
+    fun provideActiveOrdersPullService(impl: ActiveOrdersPullService): ServiceInitializer = impl
+
+    @Provides @IntoSet
+    fun provideTradeBookPullService(impl: TradeBookPullService): ServiceInitializer = impl
 }
