@@ -3,8 +3,11 @@ package ua.hospes.cryptogateway
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import ua.cryptogateway.inject.DesktopApplicationComponent
 import ua.cryptogateway.inject.WindowComponent
 import ua.cryptogateway.inject.create
@@ -40,6 +43,8 @@ fun main() {
         }
 
         Window(
+            state = rememberWindowState(size = DpSize(400.dp, 460.dp)),
+            resizable = false,
             onCloseRequest = ::exitApplication,
             title = "CryptoGateway",
         ) {

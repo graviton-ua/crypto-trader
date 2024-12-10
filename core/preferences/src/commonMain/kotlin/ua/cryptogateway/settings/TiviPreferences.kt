@@ -26,15 +26,8 @@ interface TiviPreferences {
         DEBUG, INFO, WARNING, ERROR;
 
         companion object {
-            internal fun toInt(level: LogLevel): Int {
-                println("toInt(level: $level)")
-                return level.ordinal
-            }
-
-            internal fun fromInt(ordinal: Int): LogLevel {
-                println("fromInt($ordinal)")
-                return LogLevel.entries[ordinal % LogLevel.entries.size]
-            }
+            internal fun toInt(level: LogLevel): Int = level.ordinal
+            internal fun fromInt(ordinal: Int): LogLevel = LogLevel.entries[ordinal % LogLevel.entries.size]
         }
     }
 

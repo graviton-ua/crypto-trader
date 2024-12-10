@@ -99,7 +99,9 @@ internal fun LogLevelDropdown(
             onValueChange = {},
             label = { Text("Log level") },
             readOnly = true,
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
         )
         ExposedDropdownMenu(
             expanded = expanded.value,
