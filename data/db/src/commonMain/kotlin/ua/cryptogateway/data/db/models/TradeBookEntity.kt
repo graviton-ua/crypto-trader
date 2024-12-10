@@ -1,5 +1,6 @@
 package ua.cryptogateway.data.db.models
 
+import kotlinx.datetime.Instant
 
 data class TradeBookEntity(
     val id: String,
@@ -8,5 +9,5 @@ data class TradeBookEntity(
     val matchPrice: Double,
     val matchQuantity: Double,
     val side: String,
-    val createdAt: String
+    val createdAt: Instant
 )

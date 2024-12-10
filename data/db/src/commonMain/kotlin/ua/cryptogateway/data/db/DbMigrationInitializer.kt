@@ -9,6 +9,7 @@ import ua.cryptogateway.appinitializers.AppSuspendedInitializer
 import ua.cryptogateway.data.db.schema.BalanceSchema
 import ua.cryptogateway.data.db.schema.OrderBookSchema
 import ua.cryptogateway.data.db.schema.TickerSchema
+import ua.cryptogateway.data.db.schema.TradeBookSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -20,8 +21,14 @@ class DbMigrationInitializer(
 
     override suspend fun initialize() {
         newSuspendedTransaction(context = dispatcher, db = database) {
-            SchemaUtils.createMissingTablesAndColumns(TickerSchema, BalanceSchema)
-            MigrationUtils.statementsRequiredForDatabaseMigration(TickerSchema, BalanceSchema).forEach { exec(it) }
+
+            SchemaUtils.createMissingTablesAndColumns(
+                TickerSchema, BalanceSchema, TradeBookSchema
+            )
+
+            MigrationUtils.statementsRequiredForDatabaseMigration(
+                TickerSchema, BalanceSchema, TradeBookSchema
+            ).forEach { exec(it) }
         }
     }
 }

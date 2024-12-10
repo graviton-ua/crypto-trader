@@ -1,8 +1,8 @@
 package ua.cryptogateway.data.web.models
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
 
 //{
 //    "id": "3e5591ba-2778-4d85-8851-54284045ea44",       // Unique identifier of a trade
@@ -21,5 +21,5 @@ data class KunaTradesBook(
     @SerialName("matchPrice") val matchPrice: Double,
     @SerialName("matchQuantity") val matchQuantity: Double,
     @SerialName("side") val side: String,
-    @SerialName("createdAt") val createdAt:String
+    @SerialName("createdAt") val createdAt: Instant
 )

@@ -51,6 +51,12 @@ fun main() {
 //            onDispose { activeOrderPuller.stop() }
 //        }
 
+        val tradeBookPuller = applicationComponent.tradeBookPuller
+        DisposableEffect(tradeBookPuller){
+            tradeBookPuller.start()
+            onDispose { tradeBookPuller.stop() }
+        }
+
         Window(
             onCloseRequest = ::exitApplication,
             title = "CryptoGateway",
