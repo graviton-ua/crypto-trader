@@ -4,17 +4,16 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.domain.ResultInteractor
 import ua.cryptogateway.settings.TiviPreferences
-import ua.cryptogateway.settings.TiviPreferences.LogLevel
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
-class SetLogLevel(
+class GetDbPort(
     dispatchers: AppCoroutineDispatchers,
     private val preferences: TiviPreferences,
-) : ResultInteractor<LogLevel, Unit>() {
+) : ResultInteractor<Unit, String>() {
     private val dispatcher = dispatchers.io
 
-    override suspend fun doWork(params: LogLevel) = withContext(dispatcher) {
-        preferences.loglevel.set(params)
+    override suspend fun doWork(params: Unit): String = withContext(dispatcher) {
+        preferences.dbPort.get()
     }
 }

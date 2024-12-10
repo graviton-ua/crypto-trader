@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.inject.ApplicationCoroutineScope
+import ua.cryptogateway.settings.TiviPreferences.LogLevel
 import ua.cryptogateway.settings.TiviPreferences.Theme
 import ua.cryptogateway.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.seconds
@@ -23,11 +24,9 @@ class TiviPreferencesImpl(
     private val flowSettings by lazy { settings.value.toFlowSettings(dispatchers.io) }
 
     override val dbPort: Preference<String> by lazy { StringPreference(KEY_DB_PORT, "1433") }
-    override val loglevel: Preference<Int?> by lazy { IntPreference(KEY_LOG_LEVEL) }
+    override val loglevel: Preference<LogLevel> by lazy { MappingIntPreference(KEY_LOG_LEVEL, LogLevel.INFO, LogLevel::fromInt, LogLevel::toInt) }
 
-    override val theme: Preference<Theme> by lazy {
-        MappingPreference(KEY_THEME, Theme.SYSTEM, ::getThemeForStorageValue, ::themeToStorageValue)
-    }
+    override val theme: Preference<Theme> by lazy { MappingPreference(KEY_THEME, Theme.SYSTEM, ::getThemeForStorageValue, ::themeToStorageValue) }
 
     override val useDynamicColors: Preference<Boolean> by lazy {
         BooleanPreference(KEY_USE_DYNAMIC_COLORS, true)
@@ -150,12 +149,40 @@ class TiviPreferencesImpl(
 
         override fun getNotSuspended(): V = settings.getStringOrNull(key)?.let(toValue) ?: defaultValue
 
-        override val flow: Flow<V> by lazy {
+        override val flow: StateFlow<V> by lazy {
             flowSettings.getStringOrNullFlow(key)
                 .map { it?.let(toValue) ?: defaultValue }
-                .shareIn(
+                .stateIn(
                     scope = coroutineScope,
                     started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
+                    initialValue = defaultValue,
+                )
+        }
+    }
+
+    private inner class MappingIntPreference<V>(
+        private val key: String,
+        override val defaultValue: V,
+        private val toValue: (Int) -> V,
+        private val fromValue: (V) -> Int,
+    ) : Preference<V> {
+        override suspend fun set(value: V) = withContext(dispatchers.io) {
+            settings[key] = fromValue(value)
+        }
+
+        override suspend fun get(): V = withContext(dispatchers.io) {
+            settings.getIntOrNull(key)?.let(toValue) ?: defaultValue
+        }
+
+        override fun getNotSuspended(): V = settings.getIntOrNull(key)?.let(toValue) ?: defaultValue
+
+        override val flow: StateFlow<V> by lazy {
+            flowSettings.getIntOrNullFlow(key)
+                .map { it?.let(toValue) ?: defaultValue }
+                .stateIn(
+                    scope = coroutineScope,
+                    started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
+                    initialValue = defaultValue,
                 )
         }
     }

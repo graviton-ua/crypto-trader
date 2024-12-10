@@ -3,47 +3,56 @@ package ua.hospes.cryptogateway.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
-import ua.cryptogateway.domain.interactors.CreateOrder
-import ua.cryptogateway.settings.TiviPreferences
+import ua.cryptogateway.domain.interactors.GetDbPort
+import ua.cryptogateway.domain.interactors.SetDbPort
+import ua.cryptogateway.domain.interactors.SetLogLevel
+import ua.cryptogateway.domain.observers.ObserveLogLevel
+import ua.cryptogateway.settings.TiviPreferences.LogLevel
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @OptIn(FlowPreview::class)
 @Inject
 class SettingsViewModel(
     dispatchers: AppCoroutineDispatchers,
-    private val tiviPreferences: TiviPreferences,
+    getDbPort: GetDbPort,
+    observeLogLevel: ObserveLogLevel,
+    setDbPort: SetDbPort,
+    private val setLogLevel: SetLogLevel,
 ) : ViewModel() {
 
-    private val _port = MutableStateFlow("")
-    val port: StateFlow<String> = _port
+    private val port = MutableStateFlow("")
+    private val logLevel = observeLogLevel.flow.onStart { emit(LogLevel.INFO) }
+
+    val state: StateFlow<SettingsViewState> = combine(port, logLevel) { port, logLevel ->
+        SettingsViewState(port, logLevel)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = SettingsViewState.Init,
+    )
 
     init {
+        observeLogLevel()
+
         viewModelScope.launch(dispatchers.io) {
-            _port.value = tiviPreferences.dbPort.get()
+            port.value = getDbPort.executeSync(Unit)
         }
 
         viewModelScope.launch(dispatchers.io) {
-            tiviPreferences.dbPort.flow.collectLatest {
-                Log.info(tag = TAG) { "DB port: $it" }
-            }
-        }
-
-        viewModelScope.launch(dispatchers.io) {
-            _port.debounce(500).collectLatest {
-                tiviPreferences.dbPort.set(it)
+            port.debounce(500).collectLatest {
+                setDbPort.executeSync(it)
             }
         }
     }
 
-    fun onUpdatePort(text: String) = with(_port) { value = text }
+    fun onUpdatePort(text: String) = with(port) { value = text }
 
+    fun onLogLevelSelect(level: LogLevel) {
+        viewModelScope.launch { setLogLevel.executeSync(level) }
+    }
 
     companion object {
         private const val TAG = "SettingsViewModel"

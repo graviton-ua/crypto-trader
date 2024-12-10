@@ -3,7 +3,7 @@ package ua.cryptogateway.settings
 interface TiviPreferences {
 
     val dbPort: Preference<String>
-    val loglevel: Preference<Int?>
+    val loglevel: Preference<LogLevel>
 
     val theme: Preference<Theme>
     val useDynamicColors: Preference<Boolean>
@@ -21,6 +21,22 @@ interface TiviPreferences {
     val developerHideArtwork: Preference<Boolean>
 
     val episodeAiringNotificationsEnabled: Preference<Boolean>
+
+    enum class LogLevel {
+        DEBUG, INFO, WARNING, ERROR;
+
+        companion object {
+            internal fun toInt(level: LogLevel): Int {
+                println("toInt(level: $level)")
+                return level.ordinal
+            }
+
+            internal fun fromInt(ordinal: Int): LogLevel {
+                println("fromInt($ordinal)")
+                return LogLevel.entries[ordinal % LogLevel.entries.size]
+            }
+        }
+    }
 
     enum class Theme { LIGHT, DARK, SYSTEM }
 }

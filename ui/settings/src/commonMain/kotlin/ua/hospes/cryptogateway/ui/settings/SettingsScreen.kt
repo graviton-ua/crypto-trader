@@ -1,8 +1,6 @@
 package ua.hospes.cryptogateway.ui.settings
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,11 +8,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.cryptogateway.inject.injectViewModel
+import ua.cryptogateway.settings.TiviPreferences.LogLevel
 
 @Serializable
 data object SettingsScreen
@@ -32,35 +32,50 @@ internal fun SettingsScreen(
 private fun SettingsScreen(
     viewModel: SettingsViewModel,
 ) {
-    val port by viewModel.port.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     SettingsScreen(
-        port = port,
+        state = state,
         onPortUpdate = viewModel::onUpdatePort,
+        onLogLevelSelect = viewModel::onLogLevelSelect,
     )
 }
 
 @Composable
 private fun SettingsScreen(
-    port: String,
+    state: SettingsViewState,
     onPortUpdate: (String) -> Unit,
+    onLogLevelSelect: (LogLevel) -> Unit,
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(text = "Setting screen")
-        OutlinedTextField(
-            value = port,
-            onValueChange = onPortUpdate,
-            label = { Text("Database connection port") },
-            singleLine = true,
-            modifier = Modifier.defaultMinSize(minWidth = 240.dp),
-        )
-        LogLevelDropdown(
-            selected = "DEBUG",
-            onSelectItem = {},
-            items = listOf("DEBUG", "INFO", "WARN", "ERROR"),
-        )
+    Scaffold(
+        containerColor = Color.Transparent,
+        modifier = Modifier.fillMaxSize(),
+    ) { paddings ->
+        Box(
+            contentAlignment = Alignment.TopCenter,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier
+                    .widthIn(min = 320.dp, max = 720.dp)
+                    .padding(paddings)
+                    .padding(24.dp),
+            ) {
+                Text(text = "Setting screen")
+                OutlinedTextField(
+                    value = state.port,
+                    onValueChange = onPortUpdate,
+                    label = { Text("Database connection port") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                LogLevelDropdown(
+                    selected = state.logLevel,
+                    onSelectItem = onLogLevelSelect,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
     }
 }
 
@@ -68,10 +83,10 @@ private fun SettingsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LogLevelDropdown(
-    selected: String,
-    onSelectItem: (String) -> Unit,
+    selected: LogLevel,
+    onSelectItem: (LogLevel) -> Unit,
     modifier: Modifier = Modifier,
-    items: List<String> = emptyList(),
+    items: List<LogLevel> = LogLevel.entries,
 ) {
     val expanded = remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
@@ -80,8 +95,9 @@ internal fun LogLevelDropdown(
         modifier = modifier,
     ) {
         OutlinedTextField(
-            value = selected,
+            value = selected.name,
             onValueChange = {},
+            label = { Text("Log level") },
             readOnly = true,
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
         )
@@ -92,7 +108,7 @@ internal fun LogLevelDropdown(
         ) {
             items.forEach { item ->
                 DropdownMenuItem(
-                    text = { Text(text = item) },
+                    text = { Text(text = item.name) },
                     onClick = {
                         onSelectItem(item)
                         expanded.value = false
@@ -109,8 +125,9 @@ internal fun LogLevelDropdown(
 private fun Preview() {
     MaterialTheme {
         SettingsScreen(
-            port = "1234",
+            state = SettingsViewState.Init,
             onPortUpdate = {},
+            onLogLevelSelect = {},
         )
     }
 }

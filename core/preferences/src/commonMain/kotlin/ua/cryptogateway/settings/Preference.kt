@@ -1,11 +1,11 @@
 package ua.cryptogateway.settings
 
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface Preference<T> {
     val defaultValue: T
 
-    val flow: Flow<T>
+    val flow: StateFlow<T>
     suspend fun set(value: T)
     suspend fun get(): T
     fun getNotSuspended(): T
