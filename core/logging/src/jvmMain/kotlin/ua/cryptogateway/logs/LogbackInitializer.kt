@@ -22,8 +22,6 @@ class LogbackInitializer(
 
     override fun initialize() {
         val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
-        rootLogger.level = prefs.loglevel.getNotSuspended().toLogLevel()
-
         scope.launch(dispatcher) {
             prefs.loglevel.flow
                 .collectLatest { value -> rootLogger.level = value.toLogLevel() }
