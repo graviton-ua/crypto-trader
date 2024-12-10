@@ -126,14 +126,15 @@ class KunaApi(
      *
      * @return [HttpResponse] containing the public trades book data.
      */
-    suspend fun getTradesBook(): HttpResponse = withContext(dispatcher) {
+    suspend fun getTradesBook(pair: String, limit: Int? = 1): Result<List<KunaTradesBook>> = withContext(dispatcher) {
         client.get("/v4/trade/public/book") {
-
-        }
+            url { appendPathSegments(pair) }
+            if (limit != null) parameter("limit", limit)
+        }.asResult<KunaResponse<List<KunaTradesBook>>>().map { it.data }
     }
 
 
-    // Private endpoints
+    //----------------- Private endpoints -----------------------------------
 
     /**
      * Retrieves the user's personal information from the Kuna server.
