@@ -6,4 +6,9 @@ interface Service {
     fun restart()
 }
 
-interface ServiceInitializer : Service
+interface ServiceInitializer : Service {
+    override fun restart() {
+        stop()
+        start()
+    }
+}

@@ -58,11 +58,6 @@ class BalancePullService(
         job = null
     }
 
-    override fun restart() {
-        stop()
-        start()
-    }
-
 
     private fun CoroutineScope.updateBalanceTable() = launch(dispatcher) {
         Log.debug(tag = TAG) { "updateTickersTable() job started" }

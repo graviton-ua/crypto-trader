@@ -57,10 +57,6 @@ class ActiveOrdersPullService(
         job = null
     }
 
-    override fun restart() {
-        stop()
-        start()
-    }
 
     private fun CoroutineScope.updateActiveTable() = launch(dispatcher) {
         Log.debug(tag = TAG) { "updateActiveTable() job started" }

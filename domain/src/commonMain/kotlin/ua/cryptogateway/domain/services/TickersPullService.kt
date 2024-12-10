@@ -65,11 +65,6 @@ class TickersPullService(
         job = null
     }
 
-    override fun restart() {
-        stop()
-        start()
-    }
-
 
     private fun CoroutineScope.updateTickersTable() = launch(dispatcher) {
         Log.debug(tag = TAG) { "updateTickersTable() job started" }

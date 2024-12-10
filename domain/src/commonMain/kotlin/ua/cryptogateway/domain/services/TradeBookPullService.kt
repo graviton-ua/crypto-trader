@@ -76,10 +76,6 @@ class TradeBookPullService(
         job = null
     }
 
-    override fun restart() {
-        stop()
-        start()
-    }
 
     private fun CoroutineScope.updateTradesBookTable() = launch(dispatcher) {
         Log.debug(tag = TAG) { "updateTradesBook() job started" }
