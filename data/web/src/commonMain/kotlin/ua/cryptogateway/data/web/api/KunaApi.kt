@@ -182,6 +182,21 @@ class KunaApi(
     }
 
     /**
+     * Retrieves the user's trades history from the Kuna server.
+     *
+     * This is a suspension function that performs an HTTP GET request to the
+     * "/v4/private/getBalance" endpoint of the Kuna API. The function uses a
+     * coroutine dispatcher to handle the network request asynchronously.
+     *
+     * @return [Result] containing the user's balance wrapped in a [KunaBalance] object.
+     */
+    suspend fun geHistory(): Result<List<KunaHistory>> = withContext(dispatcher) {
+        client.get("/v4/trade/private/history") {
+            privateHeaders(path = "/v4/trade/private/history", body = Unit)
+        }.asResult<KunaResponse<List<KunaHistory>>>().map { it.data }
+    }
+
+    /**
      *  Methods to work with Order on Kuna backend
      */
 
