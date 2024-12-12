@@ -65,7 +65,7 @@ class ActiveOrdersPullService(
             .map { it.map(KunaActiveOrder::toEntity) }
             .collectLatest { list ->
                 Result.runCatching { dao.saveActive(list) }
-                    .onSuccess { Log.info(tag = TAG) { "ActiveTable updated" } }
+//                    .onSuccess { Log.info(tag = TAG) { "ActiveTable updated" } }
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 

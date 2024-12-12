@@ -47,7 +47,7 @@ class TickersPullService(
             DataPuller().pull(delay.value) {
                 // Fetch active pairs form KunaList table first and then use active tickers as input params for fetching tickers info
                 val active = kunaListDao.getActiveTickers()
-                Log.info(tag = TAG) { "Active tickers: $active" }
+//                Log.info(tag = TAG) { "Active tickers: $active" }
                 api.getTickers(pairs = active.toTypedArray())
             }
                 .mapNotNull { it.getOrNull() }
@@ -73,7 +73,7 @@ class TickersPullService(
             .map { it.map(KunaTicker::toEntity) }
             .collectLatest { list ->
                 Result.runCatching { tickersDao.save(list) }
-                    .onSuccess { Log.info(tag = TAG) { "TickersTable updated" } }
+//                    .onSuccess { Log.info(tag = TAG) { "TickersTable updated" } }
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 

@@ -66,7 +66,7 @@ class BalancePullService(
             .map { it.map(KunaBalance::toEntity) }
             .collectLatest { list ->
                 Result.runCatching { dao.save(list) }
-                    .onSuccess { Log.info(tag = TAG) { "BalanceTable updated" } }
+//                    .onSuccess { Log.info(tag = TAG) { "BalanceTable updated" } }
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 

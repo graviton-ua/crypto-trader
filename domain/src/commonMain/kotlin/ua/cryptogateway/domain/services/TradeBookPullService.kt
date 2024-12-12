@@ -45,12 +45,12 @@ class TradeBookPullService(
             DataPuller().pull(delay.value) {
                 // Fetch active pairs form KunaList table first and then use active tickers as input params for fetching TradesBookTable
                 val active = kunaListDao.getActiveTickers()
-                Log.info(tag = TAG) { "Active tickers: $active" }
+//                Log.info(tag = TAG) { "Active tickers: $active" }
                 active.flatMap { pair ->
                     api.getTradesBook(pair, 1)
-                        .onSuccess { value ->
-                            Log.info(tag = TAG) { "getTradesBook: $value" }
-                        }
+//                        .onSuccess { value ->
+//                            Log.info(tag = TAG) { "getTradesBook: $value" }
+//                        }
                         .onFailure { exception ->
                             Log.error(tag = TAG, throwable = exception) { "getTradesBook: Some error happen" }
                         }
@@ -80,11 +80,18 @@ class TradeBookPullService(
     private fun CoroutineScope.updateTradesBookTable() = launch(dispatcher) {
         Log.debug(tag = TAG) { "updateTradesBook() job started" }
 
-        data.filterNotNull()
-            .map { it.map(KunaTradesBook::toEntity) }
+        data
+            .filterNotNull()
+//            .also {
+//                Log.info(tag = TAG) { "Flow: $it" }
+//            }
+            .map { it ->
+//                Log.info(tag = TAG) { "List: $it" }
+                it.map(KunaTradesBook::toEntity)
+            }
             .collectLatest { list ->
-                Result.runCatching { daoTradeBook.save(list) }
-                    .onSuccess { Log.info(tag = TAG) { "TradesBook updated" } }
+                daoTradeBook.save(list)
+//                    .onSuccess { Log.info(tag = TAG) { "TradesBook updated" } }
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 
