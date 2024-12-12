@@ -14,15 +14,17 @@ class TradeBookDao(
 ) : Dao {
     override val dispatcher = dispatchers.io
 
-    suspend fun save(order: List<TradeBookEntity>) = dbQuery {
-        TradeBookSchema.batchUpsert(order) {
-            this[TradeBookSchema.id] = it.id
-            this[TradeBookSchema.pair] = it.pair
-            this[TradeBookSchema.quoteQuantity] = it.quoteQuantity
-            this[TradeBookSchema.matchPrice] = it.matchPrice
-            this[TradeBookSchema.matchQuantity] = it.matchQuantity
-            this[TradeBookSchema.side] = it.side
-            this[TradeBookSchema.createdAt] = it.createdAt
+    suspend fun save(order: List<TradeBookEntity>) = Result.runCatching {
+        dbQuery {
+            TradeBookSchema.batchUpsert(order) {
+                this[TradeBookSchema.id] = it.id
+                this[TradeBookSchema.pair] = it.pair
+                this[TradeBookSchema.quoteQuantity] = it.quoteQuantity
+                this[TradeBookSchema.matchPrice] = it.matchPrice
+                this[TradeBookSchema.matchQuantity] = it.matchQuantity
+                this[TradeBookSchema.side] = it.side
+                this[TradeBookSchema.createdAt] = it.createdAt
+            }
         }
     }
 }
