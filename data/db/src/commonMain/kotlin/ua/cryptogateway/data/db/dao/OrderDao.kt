@@ -5,6 +5,8 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import ua.cryptogateway.data.db.models.OrderEntity
+import ua.cryptogateway.model.Side
+import ua.cryptogateway.data.db.models.OrderType
 import ua.cryptogateway.data.db.schema.OrderSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
@@ -15,7 +17,7 @@ class OrderDao(
 ) : Dao {
     override val dispatcher = dispatchers.io
 
-    suspend fun readAll(): Result<List<OrderEntity>> = Result.runCatching {
+    suspend fun getAll(): Result<List<OrderEntity>> = Result.runCatching {
         dbQuery {
             OrderSchema.selectAll()
                 .map { row ->
@@ -38,7 +40,34 @@ class OrderDao(
         }
     }
 
-    suspend fun readCancelID() = Result.runCatching {
+    suspend fun get(
+        side: Side,
+        type: OrderType,
+    ): Result<List<OrderEntity>> = Result.runCatching {
+        dbQuery {
+            OrderSchema.selectAll()
+                .where { (OrderSchema.side eq side) and (OrderSchema.type eq type) }
+                .map { row ->
+                    OrderEntity(
+                        id = row[OrderSchema.id],
+                        type = row[OrderSchema.type],
+                        quantity = row[OrderSchema.quantity],
+                        executedQuantity = row[OrderSchema.executedQuantity],
+                        cumulativeQuoteQty = row[OrderSchema.cumulativeQuoteQty],
+                        cost = row[OrderSchema.cost],
+                        side = row[OrderSchema.side],
+                        pair = row[OrderSchema.pair],
+                        price = row[OrderSchema.price],
+                        status = row[OrderSchema.status],
+                        createdAt = row[OrderSchema.createdAt],
+                        updatedAt = row[OrderSchema.updatedAt],
+                        cancel = row[OrderSchema.cancel]
+                    )
+                }
+        }
+    }
+
+    suspend fun getCancelID() = Result.runCatching {
         dbQuery {
             OrderSchema.selectAll()
                 .where { OrderSchema.cancel eq true }

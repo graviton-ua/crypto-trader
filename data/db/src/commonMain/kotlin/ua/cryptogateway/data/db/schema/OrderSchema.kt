@@ -1,6 +1,8 @@
 package ua.cryptogateway.data.db.schema
 
 import org.jetbrains.exposed.sql.Table
+import ua.cryptogateway.data.db.columns.SideColumnType
+import ua.cryptogateway.data.db.columns.OrderTypeColumnType
 
 //{
 //    "id": "5992a049-8612-409d-8599-2c3d7298b106",            // Unique identifier of an order
@@ -19,12 +21,12 @@ import org.jetbrains.exposed.sql.Table
 
 internal object OrderSchema : Table("dbo.active") {
     val id = varchar("id", 36)
-    val type = varchar("type", 12)
+    val type = registerColumn("type", OrderTypeColumnType())
     val quantity = double("quantity")
     val executedQuantity = double("executedQuantity")
     val cumulativeQuoteQty = double("cumulativeQuoteQty")
     val cost = double("cost")
-    val side = varchar("side", 5)
+    val side = registerColumn("side", SideColumnType())
     val pair = varchar("pair", 15)
     val price = double("price")
     val status = varchar("status", 12)

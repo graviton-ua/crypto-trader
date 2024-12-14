@@ -1,5 +1,7 @@
 package ua.cryptogateway.data.db.models
 
+import ua.cryptogateway.model.Side
+
 
 //{
 //    "id": "5992a049-8612-409d-8599-2c3d7298b106",            // Unique identifier of an order
@@ -18,12 +20,12 @@ package ua.cryptogateway.data.db.models
 
 data class OrderEntity(
     val id: String,
-    val type: String,
+    val type: OrderType,
     val quantity: Double,
     val executedQuantity: Double,
     val cumulativeQuoteQty: Double,
     val cost: Double,
-    val side: String,
+    val side: Side,
     val pair: String,
     val price: Double,
     val status: String,
