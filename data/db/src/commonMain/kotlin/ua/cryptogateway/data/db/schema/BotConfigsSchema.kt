@@ -10,7 +10,7 @@ object BotConfigsSchema : Table("dbo.botconfigs") {
     // Type or orders to create sell/buy
     val side = registerColumn("side", SideColumnType())
 
-    // Amount of base asset to buy or sell for orders
+    // Amount of base asset to safe on balance
     val fond = double("fond")
 
     // Start price from which first order should be created for sell/buy

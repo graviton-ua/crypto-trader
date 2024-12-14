@@ -3,7 +3,7 @@ package ua.cryptogateway.data.db.schema
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object HistorySchema :Table("dbo.hystory") {
+object HistorySchema :Table("dbo.history") {
     val id = varchar("id",36)
     val orderId = varchar("orderId",36)
     val pair = varchar("pair",15)

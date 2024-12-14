@@ -5,10 +5,12 @@ import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.models.OrderEntity
+import ua.cryptogateway.data.db.models.OrderType
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaOrder
 import ua.cryptogateway.data.web.requests.CreateOrderRequest
 import ua.cryptogateway.domain.ResultInteractor
+import ua.cryptogateway.model.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -25,7 +27,7 @@ class CreateOrder(
         val newOrderRequest = when (params) {
             is Params.Limit -> CreateOrderRequest(
                 type = params.type.code,
-                orderSide = params.orderSide.code,
+                orderSide = params.side.code,
                 pair = params.pair,
                 price = params.price.toString(),
                 quantity = params.quantity.toString(),
@@ -33,7 +35,7 @@ class CreateOrder(
 
             is Params.Market -> CreateOrderRequest(
                 type = params.type.code,
-                orderSide = params.orderSide.code,
+                orderSide = params.side.code,
                 pair = params.pair,
                 quantity = params.quantity.toString(),
             )
@@ -60,49 +62,36 @@ class CreateOrder(
 
 
     suspend fun limit(
-        orderSide: Params.Side,
+        side: Side,
         pair: String,
         quantity: Double,
         price: Double,
-    ) = executeSync(Params.Limit(orderSide, pair, quantity, price))
+    ) = executeSync(Params.Limit(side, pair, quantity, price))
 
     suspend fun market(
-        orderSide: Params.Side,
+        side: Side,
         pair: String,
         quantity: Double,
-    ) = executeSync(Params.Market(orderSide, pair, quantity))
+    ) = executeSync(Params.Market(side, pair, quantity))
 
     sealed interface Params {
-        val type: Type
+        val type: OrderType
 
         data class Limit(
-            val orderSide: Side,
+            val side: Side,
             val pair: String,
             val quantity: Double,
             val price: Double,
         ) : Params {
-            override val type: Type = Type.Limit
+            override val type: OrderType = OrderType.Limit
         }
 
         data class Market(
-            val orderSide: Side,
+            val side: Side,
             val pair: String,
             val quantity: Double,
         ) : Params {
-            override val type: Type = Type.Market
-        }
-
-
-        enum class Side(val code: String) {
-            Sell("Ask"),
-            Buy("Bid"),
-        }
-
-        enum class Type(val code: String) {
-            Limit("Limit"),
-            Market("Market"),
-            StopLossLimit("StopLossLimit"),
-            TakeProfitLimit("TakeProfitLimit"),
+            override val type: OrderType = OrderType.Market
         }
     }
 
@@ -115,12 +104,12 @@ class CreateOrder(
 internal fun KunaOrder.toEntity(): OrderEntity {
     return OrderEntity(
         id = id,
-        type = type,
+        type = OrderType.fromKunaString(type),
         quantity = quantity,
         executedQuantity = executedQuantity,
         cumulativeQuoteQty = 0.0,
         cost = 0.0,
-        side = side,
+        side = Side.fromKunaString(side),
         pair = pair,
         price = price,
         status = status,

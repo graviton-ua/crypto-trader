@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import saschpe.log4k.logged
-import ua.cryptogateway.data.db.dao.KunaListDao
+import ua.cryptogateway.data.db.dao.BotConfigsDao
 import ua.cryptogateway.data.db.dao.TradeBookDao
 import ua.cryptogateway.data.db.models.TradeBookEntity
 import ua.cryptogateway.data.web.api.KunaApi
@@ -26,7 +26,7 @@ class TradeBookPullService(
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
     private val daoTradeBook: TradeBookDao,
-    private val kunaListDao: KunaListDao,
+    private val botConfigsDao: BotConfigsDao,
 ) : ServiceInitializer {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
@@ -44,7 +44,7 @@ class TradeBookPullService(
             Log.debug(tag = TAG) { "DataPuller job started" }
             DataPuller().pull(delay.value) {
                 // Fetch active pairs form KunaList table first and then use active tickers as input params for fetching TradesBookTable
-                val active = kunaListDao.getActiveTickers()
+                val active = botConfigsDao.getActiveTickers()
 //                Log.info(tag = TAG) { "Active tickers: $active" }
                 active.flatMap { pair ->
                     api.getTradesBook(pair, 1)

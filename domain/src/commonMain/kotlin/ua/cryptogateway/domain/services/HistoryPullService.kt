@@ -62,16 +62,16 @@ class HistoryPullService(
 
         data
             .filterNotNull()
-//            .also {
-//                Log.info(tag = TAG) { "Flow: $it" }
-//            }
+            .also {
+                Log.info(tag = TAG) { "Flow: $it" }
+            }
             .map { it ->
-//                Log.info(tag = TAG) { "List: $it" }
+                Log.info(tag = TAG) { "List: $it" }
                 it.map(KunaHistory::toEntity)
             }
             .collectLatest { list ->
                 daoHistory.save(list)
-//                    .onSuccess { Log.info(tag = TAG) { "History updated" } }
+                    .onSuccess { Log.info(tag = TAG) { "History updated" } }
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 

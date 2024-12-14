@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import saschpe.log4k.logged
-import ua.cryptogateway.data.db.dao.KunaListDao
+import ua.cryptogateway.data.db.dao.BotConfigsDao
 import ua.cryptogateway.data.db.dao.TickersDao
 import ua.cryptogateway.data.db.models.TickerEntity
 import ua.cryptogateway.data.web.api.KunaApi
@@ -25,7 +25,7 @@ class TickersPullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
-    private val kunaListDao: KunaListDao,
+    private val botConfigsDao: BotConfigsDao,
     private val tickersDao: TickersDao,
 ) : ServiceInitializer {
     private val dispatcher = dispatchers.io
@@ -46,7 +46,7 @@ class TickersPullService(
             Log.debug(tag = TAG) { "DataPuller job started" }
             DataPuller().pull(delay.value) {
                 // Fetch active pairs form KunaList table first and then use active tickers as input params for fetching tickers info
-                val active = kunaListDao.getActiveTickers()
+                val active = botConfigsDao.getActiveTickers()
 //                Log.info(tag = TAG) { "Active tickers: $active" }
                 api.getTickers(pairs = active.toTypedArray())
             }

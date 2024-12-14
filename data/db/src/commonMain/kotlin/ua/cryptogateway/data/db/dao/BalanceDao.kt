@@ -29,18 +29,20 @@ class BalanceDao(
             }
     }
 
-    suspend fun getCurrency(currency: String) = dbQuery {
-        BalanceSchema.selectAll()
-            .where { BalanceSchema.currency eq currency }
-            .map { row ->
-                BalanceEntity(
-                    currency = row[BalanceSchema.currency],
-                    balance = row[BalanceSchema.balance],
-                    lockBalance = row[BalanceSchema.lockBalance],
-                    entire = row[BalanceSchema.entire],
-                    timestamp = row[BalanceSchema.timestamp]
-                )
-            }
+    suspend fun getCurrency(currency: String) = Result.runCatching {
+        dbQuery {
+            BalanceSchema.selectAll()
+                .where { BalanceSchema.currency eq currency }
+                .map { row ->
+                    BalanceEntity(
+                        currency = row[BalanceSchema.currency],
+                        balance = row[BalanceSchema.balance],
+                        lockBalance = row[BalanceSchema.lockBalance],
+                        entire = row[BalanceSchema.entire],
+                        timestamp = row[BalanceSchema.timestamp]
+                    )
+                }.firstOrNull()
+        }
     }
 
     suspend fun save(entities: List<BalanceEntity>) = dbQuery {

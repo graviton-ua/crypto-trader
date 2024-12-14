@@ -97,7 +97,6 @@ class KunaApi(
      */
     suspend fun getCurrencies(): HttpResponse = withContext(dispatcher) {
         client.get("/v4/public/currencies") {
-
         }
     }
 

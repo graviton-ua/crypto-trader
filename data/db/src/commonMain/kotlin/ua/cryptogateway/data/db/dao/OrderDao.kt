@@ -5,9 +5,8 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import ua.cryptogateway.data.db.models.OrderEntity
-import ua.cryptogateway.model.Side
-import ua.cryptogateway.data.db.models.OrderType
 import ua.cryptogateway.data.db.schema.OrderSchema
+import ua.cryptogateway.model.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -42,11 +41,10 @@ class OrderDao(
 
     suspend fun get(
         side: Side,
-        type: OrderType,
     ): Result<List<OrderEntity>> = Result.runCatching {
         dbQuery {
             OrderSchema.selectAll()
-                .where { (OrderSchema.side eq side) and (OrderSchema.type eq type) }
+                .where { OrderSchema.side eq side }
                 .map { row ->
                     OrderEntity(
                         id = row[OrderSchema.id],

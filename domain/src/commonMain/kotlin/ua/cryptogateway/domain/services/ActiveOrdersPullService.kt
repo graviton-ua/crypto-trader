@@ -9,11 +9,13 @@ import saschpe.log4k.Log
 import saschpe.log4k.logged
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.models.OrderEntity
+import ua.cryptogateway.data.db.models.OrderType
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaActiveOrder
 import ua.cryptogateway.domain.DataPuller
 import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
+import ua.cryptogateway.model.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -78,6 +80,6 @@ class ActiveOrdersPullService(
 }
 
 private fun KunaActiveOrder.toEntity(): OrderEntity = OrderEntity(
-    id, type, quantity, executedQuantity,
-    cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt
+    id, OrderType.fromKunaString(type), quantity, executedQuantity,
+    cumulativeQuoteQty, cost, Side.fromKunaString(side), pair, price, status, createdAt, updatedAt
 )
