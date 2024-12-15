@@ -23,7 +23,7 @@ data object ConfigsScreen
 internal fun ConfigsScreen(
     diComponent: ConfigsComponent,
     navigateConfigEdit: (BotConfigModel?) -> Unit,
-    resultConfigEdit: OpenResultRecipient<Unit>,
+    resultConfigEdit: OpenResultRecipient<Boolean>,
 ) {
     ConfigsScreen(
         viewModel = injectViewModel { diComponent.configsViewModel() },
@@ -36,7 +36,7 @@ internal fun ConfigsScreen(
 private fun ConfigsScreen(
     viewModel: ConfigsViewModel,
     navigateConfigEdit: (BotConfigModel?) -> Unit,
-    resultConfigEdit: OpenResultRecipient<Unit>,
+    resultConfigEdit: OpenResultRecipient<Boolean>,
 ) {
     resultConfigEdit.onNavResult { viewModel.refreshList() }
 

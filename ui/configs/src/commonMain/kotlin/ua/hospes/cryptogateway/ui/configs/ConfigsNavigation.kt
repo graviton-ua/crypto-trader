@@ -17,7 +17,7 @@ fun NavGraphBuilder.addConfigsScreen(
         ConfigsScreen(
             diComponent = diComponent,
             navigateConfigEdit = { navController.navigate(ConfigEditDialog(config = it)) },
-            resultConfigEdit = resultRecipient<ConfigEditDialog, Unit>(it),
+            resultConfigEdit = resultRecipient<ConfigEditDialog, Boolean>(it),
         )
     }
 }
@@ -34,7 +34,7 @@ fun NavGraphBuilder.addConfigEditDialog(
             diComponent = diComponent,
             savedStateHandle = it.savedStateHandle,
             navigateUp = navController::navigateUp,
-            resultNavigator = resultBackNavigator<ConfigEditDialog, Unit>(navController = navController),
+            resultNavigator = resultBackNavigator<ConfigEditDialog, Boolean>(navController = navController),
         )
     }
 }
