@@ -14,7 +14,7 @@ import ua.cryptogateway.domain.ResultInteractor
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
-class PlaceSellLimitOrders(
+class PlaceBuyLimitOrders(
     dispatchers: AppCoroutineDispatchers,
     private val api: KunaApi,
     private val configsDao: BotConfigsDao,
@@ -22,11 +22,11 @@ class PlaceSellLimitOrders(
     private val orderDao: OrderDao,
 
     private val createOrder: CreateOrder,
-) : ResultInteractor<PlaceSellLimitOrders.Params, Unit>() {
+) : ResultInteractor<PlaceBuyLimitOrders.Params, Unit>() {
     private val dispatcher = dispatchers.io
 
     override suspend fun doWork(params: Params): Unit = withContext(dispatcher) {
-        val configs = configsDao.getActive().filter { it.side == Order.Side.Sell }
+        val configs = configsDao.getActive().filter { it.side == Order.Side.Buy }
 
         configs.forEach { config ->
             val balance = balanceDao.getCurrency(currency = config.baseAsset)
@@ -41,7 +41,7 @@ class PlaceSellLimitOrders(
                 .getOrNull() ?: return@forEach
             val bookPrice = book.bids.minBy { it.price }.price
 
-            val activeOrders = orderDao.get(side = Order.Side.Sell)
+            val activeOrders = orderDao.get(side = Order.Side.Buy)
                 .onFailure { Log.warn(it, TAG) { "Can't get active orders from table" } }
                 .getOrNull() ?: return@forEach
             when {
@@ -121,16 +121,17 @@ class PlaceSellLimitOrders(
             val price = priceStart + priceStart * item * priceStep / 100
             val quantity = sellQuantity + sellQuantity * item * sizeStep / 100
             CreateOrderRequest(
-                Order.Type.Limit, Order.Side.Sell, pair, price, quantity
+                Order.Type.Limit, Order.Side.Buy, pair, price, quantity
             )
         }
+
         Log.info(tag = TAG) {
             "Orders to create on web:\n" + requests.joinToString("\n")
         }
 
         requests.forEach {
-//            api.createOrder(newOrder)
-//                .onFailure { Log.warn(it, TAG) { "Order wasn't created" } }
+            api.createOrder(it)
+                .onFailure { Log.warn(it, TAG) { "Order wasn't created" } }
         }
     }
 

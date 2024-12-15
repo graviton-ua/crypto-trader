@@ -19,4 +19,18 @@ data class CreateOrderRequest(
     val pair: String,
     val price: String? = null,
     val quantity: String,
-)
+) {
+    constructor(
+        type: Order.Type,
+        orderSide: Order.Side,
+        pair: String,
+        price: Double? = null,
+        quantity: Double,
+    ) : this(
+        type = type,
+        orderSide = orderSide,
+        pair = pair,
+        price = price?.let { String.format("%.6f", it) },
+        quantity = quantity.let { String.format("%.6f", it) },
+    )
+}

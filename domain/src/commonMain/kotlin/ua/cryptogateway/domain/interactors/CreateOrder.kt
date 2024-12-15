@@ -28,15 +28,15 @@ class CreateOrder(
                 type = params.type,
                 orderSide = params.side,
                 pair = params.pair,
-                price = params.price.toString(),
-                quantity = params.quantity.toString(),
+                price = params.price,
+                quantity = params.quantity,
             )
 
             is Params.Market -> CreateOrderRequest(
                 type = params.type,
                 orderSide = params.side,
                 pair = params.pair,
-                quantity = params.quantity.toString(),
+                quantity = params.quantity,
             )
         }
 

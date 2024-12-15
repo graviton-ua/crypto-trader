@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import ua.cryptogateway.data.db.models.BotConfigEntity
 import ua.cryptogateway.data.db.schema.BotConfigsSchema
-import ua.cryptogateway.model.Side
+import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -96,7 +96,7 @@ class BotConfigsDao(
     suspend fun getActiveTickers() = dbQuery {
         BotConfigsSchema.selectAll()
 //            .where { (BotConfigsSchema.active eq true) and (BotConfigsSchema.side eq Side.fromKunaString("AAA")) }
-            .where { (BotConfigsSchema.active eq true) and (BotConfigsSchema.side eq Side.Sell) }
+            .where { (BotConfigsSchema.active eq true) and (BotConfigsSchema.side eq Order.Side.Sell) }
             .map { row -> (row[BotConfigsSchema.baseAsset] + "_" + row[BotConfigsSchema.quoteAsset]).trim() }
     }
 }
