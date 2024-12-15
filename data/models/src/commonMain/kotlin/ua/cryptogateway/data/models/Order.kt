@@ -23,7 +23,7 @@ interface Order {
     }
 
     /**
-     * Represents the type of an order in a trading system.
+     * Represents the type of order in a trading system.
      *
      * This enum class is used to specify the various types of orders
      * that can be placed in a trading environment.

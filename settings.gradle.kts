@@ -43,6 +43,7 @@ include(":domain")
 include(":shared")
 include(
     ":ui:home",
+    ":ui:configs",
     ":ui:settings",
 )
 include(":composeApp")

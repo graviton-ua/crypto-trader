@@ -18,7 +18,6 @@ import ua.cryptogateway.util.AppCoroutineDispatchers
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-
 @ApplicationScope
 @Inject
 class ActiveOrdersPullService(
@@ -49,7 +48,11 @@ class ActiveOrdersPullService(
                     data.value = it
                     it.logged()
                 }
-        }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
+        }.also {
+            it.invokeOnCompletion {
+                Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null
+            }
+        }
     }
 
     override fun stop() {

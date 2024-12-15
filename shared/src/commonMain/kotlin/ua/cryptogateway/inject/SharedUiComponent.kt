@@ -1,9 +1,12 @@
 package ua.cryptogateway.inject
 
+import ua.hospes.cryptogateway.ui.configs.ConfigsComponent
 import ua.hospes.cryptogateway.ui.home.HomeComponent
 import ua.hospes.cryptogateway.ui.settings.SettingsComponent
 
-interface SharedUiComponent : HomeComponent, SettingsComponent {
+interface SharedUiComponent : HomeComponent,
+    ConfigsComponent,
+    SettingsComponent {
 //    val tiviContent: TiviContent
 //    val permissionsController: PermissionsController
 //

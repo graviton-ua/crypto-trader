@@ -7,20 +7,20 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlin.system.measureTimeMillis
 import kotlin.time.Duration
 
-internal class DataPuller() {
-    @OptIn(DelicateCoroutinesApi::class)
-    fun <T> pull(delay: Duration, task: suspend () -> T): Flow<T> {
-        return channelFlow {
-            while (!isClosedForSend) {
-                val elapsedTime = measureTimeMillis {
-                    val data = task()
-                    if (!isClosedForSend) send(data) else return@channelFlow
-                }
+internal class DataPuller {
+    fun <T> pull(delay: Duration, task: suspend () -> T): Flow<T> = puller(delay, task)
+}
 
-                // Calculate remaining delay to maintain consistent interval
-                val delayTime = (delay.inWholeMilliseconds - elapsedTime).coerceAtLeast(0)
-                delay(delayTime)
-            }
+@OptIn(DelicateCoroutinesApi::class)
+fun <T> puller(delay: Duration, task: suspend () -> T): Flow<T> = channelFlow {
+    while (!isClosedForSend) {
+        val elapsedTime = measureTimeMillis {
+            val data = task()
+            if (!isClosedForSend) send(data) else return@channelFlow
         }
+
+        // Calculate remaining delay to maintain consistent interval
+        val delayTime = (delay.inWholeMilliseconds - elapsedTime).coerceAtLeast(0)
+        delay(delayTime)
     }
 }

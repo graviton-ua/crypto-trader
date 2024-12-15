@@ -31,8 +31,9 @@ kotlin {
 
                 //api(projects.common.imageloading)
                 //api(projects.common.ui.compose)
-                
+
                 api(projects.ui.home)
+                api(projects.ui.configs)
                 api(projects.ui.settings)
             }
         }
