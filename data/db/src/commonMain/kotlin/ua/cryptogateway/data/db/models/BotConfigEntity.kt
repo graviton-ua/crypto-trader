@@ -12,8 +12,10 @@ data class BotConfigEntity(
 
     val startPrice: Double,
     val priceStep: Double,
+    val biasPrice: Double,
     val minSize: Double,
     val orderSize: Int,
+    val sizeStep: Double,
     val orderAmount: Int,
     val priceForce: Boolean,
     val market: Boolean,

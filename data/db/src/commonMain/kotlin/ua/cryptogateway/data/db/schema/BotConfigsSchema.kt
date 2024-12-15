@@ -16,8 +16,10 @@ object BotConfigsSchema : Table("dbo.botconfigs") {
     // Start price from which first order should be created for sell/buy
     val startPrice = double("startPrice")
     val priceStep = double("priceStep")
+    val biasPrice = double("biasPrice")
     val minSize = double("minSize")
     val orderSize = integer("orderSize")
+    val sizeStep = double("sizeStep")
     val orderAmount = integer("orderAmount")
     val priceForce = bool("priceForce")
     val market = bool("market")

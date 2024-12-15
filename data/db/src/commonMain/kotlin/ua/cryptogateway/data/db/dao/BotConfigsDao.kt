@@ -2,9 +2,11 @@ package ua.cryptogateway.data.db.dao
 
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import ua.cryptogateway.data.db.models.BotConfigEntity
 import ua.cryptogateway.data.db.schema.BotConfigsSchema
+import ua.cryptogateway.model.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -34,8 +36,10 @@ class BotConfigsDao(
                     fond = row[BotConfigsSchema.fond],
                     startPrice = row[BotConfigsSchema.startPrice],
                     priceStep = row[BotConfigsSchema.priceStep],
+                    biasPrice = row[BotConfigsSchema.biasPrice],
                     minSize = row[BotConfigsSchema.minSize],
                     orderSize = row[BotConfigsSchema.orderSize],
+                    sizeStep = row[BotConfigsSchema.sizeStep],
                     orderAmount = row[BotConfigsSchema.orderAmount],
                     priceForce = row[BotConfigsSchema.priceForce],
                     market = row[BotConfigsSchema.market],
@@ -67,8 +71,10 @@ class BotConfigsDao(
                     fond = row[BotConfigsSchema.fond],
                     startPrice = row[BotConfigsSchema.startPrice],
                     priceStep = row[BotConfigsSchema.priceStep],
+                    biasPrice = row[BotConfigsSchema.biasPrice],
                     minSize = row[BotConfigsSchema.minSize],
                     orderSize = row[BotConfigsSchema.orderSize],
+                    sizeStep = row[BotConfigsSchema.sizeStep],
                     orderAmount = row[BotConfigsSchema.orderAmount],
                     priceForce = row[BotConfigsSchema.priceForce],
                     market = row[BotConfigsSchema.market],
@@ -89,7 +95,8 @@ class BotConfigsDao(
      */
     suspend fun getActiveTickers() = dbQuery {
         BotConfigsSchema.selectAll()
-            .where { BotConfigsSchema.active eq true }
+//            .where { (BotConfigsSchema.active eq true) and (BotConfigsSchema.side eq Side.fromKunaString("AAA")) }
+            .where { (BotConfigsSchema.active eq true) and (BotConfigsSchema.side eq Side.Sell) }
             .map { row -> (row[BotConfigsSchema.baseAsset] + "_" + row[BotConfigsSchema.quoteAsset]).trim() }
     }
 }
