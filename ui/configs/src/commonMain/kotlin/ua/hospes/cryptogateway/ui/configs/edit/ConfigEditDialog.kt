@@ -94,6 +94,7 @@ private fun ConfigEditDialog(
         onBasePrecChange = viewModel::onBasePrecChange,
         onQuotePrecChange = viewModel::onQuotePrecChange,
         onActiveChange = viewModel::onActiveChange,
+        onDelete = viewModel::onDelete,
         onSave = viewModel::onSave,
     )
 }
@@ -119,6 +120,7 @@ private fun ConfigEditDialog(
     onBasePrecChange: (TextFieldValue) -> Unit,
     onQuotePrecChange: (TextFieldValue) -> Unit,
     onActiveChange: (Boolean) -> Unit,
+    onDelete: () -> Unit,
     onSave: () -> Unit,
 ) {
     Column(
@@ -271,9 +273,17 @@ private fun ConfigEditDialog(
             // Bottom panel with buttons
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.End),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
+                OutlinedButton(
+                    onClick = onDelete,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                ) { Text("Delete") }
+
+                Spacer(modifier = Modifier.weight(1f))
+
                 AppCheckbox(
                     checked = state.active,
                     onCheckedChange = onActiveChange,
@@ -315,6 +325,7 @@ private fun Preview() {
             onBasePrecChange = {},
             onQuotePrecChange = {},
             onActiveChange = {},
+            onDelete = {},
             onSave = {},
         )
     }

@@ -1,6 +1,7 @@
 package ua.hospes.cryptogateway.ui.configs.edit
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import ua.cryptogateway.data.models.Order
 
@@ -11,18 +12,18 @@ data class ConfigEditViewState(
     val baseAsset: TextFieldValue = TextFieldValue(),
     val quoteAsset: TextFieldValue = TextFieldValue(),
     val side: Order.Side = Order.Side.Sell,
-    val fond: TextFieldValue = TextFieldValue(),
-    val startPrice: TextFieldValue = TextFieldValue(),
-    val priceStep: TextFieldValue = TextFieldValue(),
-    val biasPrice: TextFieldValue = TextFieldValue(),
-    val minSize: TextFieldValue = TextFieldValue(),
-    val orderSize: TextFieldValue = TextFieldValue(),
-    val sizeStep: TextFieldValue = TextFieldValue(),
-    val orderAmount: TextFieldValue = TextFieldValue(),
+    val fond: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
+    val startPrice: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
+    val priceStep: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
+    val biasPrice: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
+    val minSize: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
+    val orderSize: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
+    val sizeStep: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
+    val orderAmount: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
     val priceForce: Boolean = false,
     val market: Boolean = false,
-    val basePrec: TextFieldValue = TextFieldValue(),
-    val quotePrec: TextFieldValue = TextFieldValue(),
+    val basePrec: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
+    val quotePrec: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
     val active: Boolean = false,
 ) {
     companion object {

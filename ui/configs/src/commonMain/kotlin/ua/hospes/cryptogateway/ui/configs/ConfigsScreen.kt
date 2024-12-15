@@ -3,10 +3,14 @@ package ua.hospes.cryptogateway.ui.configs
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
@@ -57,6 +61,16 @@ private fun ConfigsScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Crypto Bot configs") },
+                actions = {
+                    OutlinedButton(
+                        onClick = { onConfigEdit(null) },
+                        modifier = Modifier.padding(end = 8.dp)
+                            .pointerHoverIcon(PointerIcon.Hand),
+                    ) {
+                        Text("Add new", modifier = Modifier.padding(end = 8.dp))
+                        Icon(imageVector = Icons.Default.AddCircle, contentDescription = "Add")
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
             )
         },

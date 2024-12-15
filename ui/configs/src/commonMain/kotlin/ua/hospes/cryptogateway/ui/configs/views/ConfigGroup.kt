@@ -12,9 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ua.cryptogateway.domain.models.BotConfigModel
+import ua.hospes.cryptogateway.ui.common.theme.AppTheme
 
 @Composable
 internal fun ConfigGroup(
@@ -44,7 +44,7 @@ internal fun ConfigGroup(
                     state = it,
                     onEdit = onEdit,
                     modifier = Modifier.fillMaxWidth()
-                        .background(color = if (i % 2 != 0) Color.LightGray else Color.Transparent)
+                        .background(color = if (i % 2 == 0) AppTheme.colors.even else AppTheme.colors.odd)
                         .padding(horizontal = 8.dp),
                 )
             }

@@ -1,10 +1,8 @@
 package ua.cryptogateway.data.db.dao
 
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.upsert
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import ua.cryptogateway.data.db.models.BotConfigEntity
 import ua.cryptogateway.data.db.schema.BotConfigsSchema
 import ua.cryptogateway.data.models.Order
@@ -150,6 +148,16 @@ class BotConfigsDao(
                 it[BotConfigsSchema.basePrec] = basePrec
                 it[BotConfigsSchema.quotePrec] = quotePrec
                 it[BotConfigsSchema.active] = active
+            }
+        }
+    }
+
+    suspend fun delete(
+        baseAsset: String, quoteAsset: String, side: Order.Side,
+    ) = Result.runCatching {
+        dbQuery {
+            BotConfigsSchema.deleteWhere {
+                (BotConfigsSchema.baseAsset eq baseAsset) and (BotConfigsSchema.quoteAsset eq quoteAsset) and (BotConfigsSchema.side eq side)
             }
         }
     }

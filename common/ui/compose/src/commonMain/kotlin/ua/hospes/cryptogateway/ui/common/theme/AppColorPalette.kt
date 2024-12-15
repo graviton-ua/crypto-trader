@@ -104,7 +104,7 @@ object AppColorPalette {
     val ExtraLightYellow = Color(0xFFFEF7DF)
 
     // Alert colors
-    val AlertRed = Color(0xFFEA5455)
+    val AlertRed = Color(0xFFFF0000)
     val AlertGreen = Color(0xFF21B881)
 
     // Base colors

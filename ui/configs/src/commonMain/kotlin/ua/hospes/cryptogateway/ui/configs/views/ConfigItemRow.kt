@@ -1,9 +1,12 @@
 package ua.hospes.cryptogateway.ui.configs.views
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -38,15 +41,15 @@ internal fun ConfigItemRow(
         orderSize = { Text(text = state.orderSize.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
         sizeStep = { Text(text = state.sizeStep.formatDouble(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
         orderAmount = { Text(text = state.orderAmount.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
-        priceForce = { Text(text = state.priceForce.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
-        market = { Text(text = state.market.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        priceForce = { CheckCrossBox(value = state.priceForce, modifier = Modifier.width(60.dp)) },
+        market = { CheckCrossBox(value = state.market, modifier = Modifier.width(60.dp)) },
         basePrec = { Text(text = state.basePrec.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
         quotePrec = { Text(text = state.quotePrec.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
-        active = { Text(text = state.active.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        active = { CheckCrossBox(value = state.active, modifier = Modifier.width(60.dp)) },
         actions = {
             IconButton(
                 onClick = onClickEdit,
-                colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                //colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary),
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
             ) {
                 Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
@@ -56,6 +59,16 @@ internal fun ConfigItemRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     )
+}
+
+@Composable
+private fun CheckCrossBox(
+    value: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val color = if (value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+    val icon = if (value) Icons.Default.Check else Icons.Default.Close
+    Box(contentAlignment = Alignment.Center, modifier = modifier) { Icon(imageVector = icon, contentDescription = null, tint = color) }
 }
 
 

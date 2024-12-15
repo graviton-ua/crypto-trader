@@ -27,7 +27,8 @@ interface AppColorsScheme {
     val onSurface: Color
     val onError: Color
 
-    val brenger: Color
+    val even: Color
+    val odd: Color
     val link: Color
 
     val isLight: Boolean
@@ -60,7 +61,7 @@ object AppLightColorsScheme : AppColorsScheme {
     override val tertiarySurface: Color = AppColorPalette.Curious50
     override val background: Color = AppColorPalette.White
     override val surface: Color = background
-    override val error: Color = AppColorPalette.Attention500
+    override val error: Color = AppColorPalette.AlertRed
     override val onPrimary: Color = AppColorPalette.White
     override val onPrimarySurface: Color = AppColorPalette.Black
     override val onSecondary: Color = AppColorPalette.White
@@ -70,7 +71,8 @@ object AppLightColorsScheme : AppColorsScheme {
     override val onBackground: Color = AppColorPalette.Black
     override val onSurface: Color = onBackground
     override val onError: Color = AppColorPalette.White
-    override val brenger: Color = AppColorPalette.Brenger
+    override val even: Color = Color.Transparent
+    override val odd: Color = AppColorPalette.Grey50
     override val link: Color = primary
     override val isLight: Boolean = true
 }
@@ -88,7 +90,7 @@ object AppDarkColorsScheme : AppColorsScheme {
     override val tertiarySurface: Color = AppColorPalette.Curious50
     override val background: Color = AppColorPalette.White
     override val surface: Color = background
-    override val error: Color = AppColorPalette.Attention500
+    override val error: Color = AppColorPalette.AlertRed
     override val onPrimary: Color = AppColorPalette.White
     override val onPrimarySurface: Color = AppColorPalette.Black
     override val onSecondary: Color = AppColorPalette.White
@@ -98,7 +100,8 @@ object AppDarkColorsScheme : AppColorsScheme {
     override val onBackground: Color = AppColorPalette.Black
     override val onSurface: Color = onBackground
     override val onError: Color = AppColorPalette.White
-    override val brenger: Color = AppColorPalette.Brenger
+    override val even: Color = Color.Transparent
+    override val odd: Color = AppColorPalette.Grey50
     override val link: Color = primary
     override val isLight: Boolean = true
 }
