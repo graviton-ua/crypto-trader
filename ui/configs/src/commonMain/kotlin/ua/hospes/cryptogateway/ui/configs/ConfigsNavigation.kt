@@ -1,5 +1,6 @@
 package ua.hospes.cryptogateway.ui.configs
 
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -15,6 +16,7 @@ fun NavGraphBuilder.addConfigsScreen(
     composable<ConfigsScreen> {
         ConfigsScreen(
             diComponent = diComponent,
+            navigateConfigEdit = { navController.navigate(ConfigEditDialog(config = it)) },
             resultConfigEdit = resultRecipient<ConfigEditDialog, Unit>(it),
         )
     }
@@ -24,9 +26,14 @@ fun NavGraphBuilder.addConfigEditDialog(
     diComponent: ConfigsComponent,
     navController: NavController,
 ) {
-    dialog<ConfigEditDialog> {
+    dialog<ConfigEditDialog>(
+        typeMap = ConfigEditDialog.typeMap,
+        dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
         ConfigEditDialog(
             diComponent = diComponent,
+            savedStateHandle = it.savedStateHandle,
+            navigateUp = navController::navigateUp,
             resultNavigator = resultBackNavigator<ConfigEditDialog, Unit>(navController = navController),
         )
     }

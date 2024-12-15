@@ -1,8 +1,10 @@
 package ua.cryptogateway.domain.models
 
+import kotlinx.serialization.Serializable
 import ua.cryptogateway.data.db.models.BotConfigEntity
 import ua.cryptogateway.data.models.Order
 
+@Serializable
 data class BotConfigModel(
     val baseAsset: String,
     val quoteAsset: String,

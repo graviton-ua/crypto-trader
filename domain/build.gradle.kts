@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -16,6 +17,7 @@ kotlin {
                 implementation(projects.data.db)
                 implementation(projects.data.web)
 
+                implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.datetime)
 
                 implementation(libs.kotlininject.runtime)

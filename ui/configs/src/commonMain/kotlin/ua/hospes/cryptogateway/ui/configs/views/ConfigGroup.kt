@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,12 +38,13 @@ internal fun ConfigGroup(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 8.dp)
             )
+            HorizontalDivider()
             items.forEachIndexed { i, it ->
                 ConfigItemRow(
                     state = it,
                     onEdit = onEdit,
                     modifier = Modifier.fillMaxWidth()
-                        .background(color = if (i % 2 == 0) Color.LightGray else Color.Transparent)
+                        .background(color = if (i % 2 != 0) Color.LightGray else Color.Transparent)
                         .padding(horizontal = 8.dp),
                 )
             }

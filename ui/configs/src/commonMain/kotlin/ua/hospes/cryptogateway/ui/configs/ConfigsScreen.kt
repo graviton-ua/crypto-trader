@@ -1,8 +1,8 @@
 package ua.hospes.cryptogateway.ui.configs
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import ua.cryptogateway.domain.models.BotConfigModel
 import ua.cryptogateway.inject.injectViewModel
 import ua.hospes.cryptogateway.ui.common.navigation.OpenResultRecipient
 import ua.hospes.cryptogateway.ui.configs.views.ConfigGroup
@@ -21,10 +22,12 @@ data object ConfigsScreen
 @Composable
 internal fun ConfigsScreen(
     diComponent: ConfigsComponent,
+    navigateConfigEdit: (BotConfigModel?) -> Unit,
     resultConfigEdit: OpenResultRecipient<Unit>,
 ) {
     ConfigsScreen(
         viewModel = injectViewModel { diComponent.configsViewModel() },
+        navigateConfigEdit = navigateConfigEdit,
         resultConfigEdit = resultConfigEdit,
     )
 }
@@ -32,6 +35,7 @@ internal fun ConfigsScreen(
 @Composable
 private fun ConfigsScreen(
     viewModel: ConfigsViewModel,
+    navigateConfigEdit: (BotConfigModel?) -> Unit,
     resultConfigEdit: OpenResultRecipient<Unit>,
 ) {
     resultConfigEdit.onNavResult { viewModel.refreshList() }
@@ -39,7 +43,7 @@ private fun ConfigsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     ConfigsScreen(
         state = state,
-        onClick = {},
+        onConfigEdit = navigateConfigEdit,
     )
 }
 
@@ -47,7 +51,7 @@ private fun ConfigsScreen(
 @Composable
 private fun ConfigsScreen(
     state: ConfigsViewState,
-    onClick: () -> Unit,
+    onConfigEdit: (BotConfigModel?) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -58,18 +62,17 @@ private fun ConfigsScreen(
         },
         modifier = Modifier.fillMaxSize(),
     ) { paddings ->
-        Column(
+        LazyColumn(
             verticalArrangement = Arrangement.spacedBy(24.dp),
+            contentPadding = PaddingValues(24.dp),
             modifier = Modifier.fillMaxSize()
-                .padding(paddings)
-                .padding(24.dp)
-                .verticalScroll(rememberScrollState()),
+                .padding(paddings),
         ) {
-            state.groups.forEach {
+            items(items = state.groups.toList()) { (asset, items) ->
                 ConfigGroup(
-                    baseAsset = it.key,
-                    items = it.value,
-                    onEdit = {},
+                    baseAsset = asset,
+                    items = items,
+                    onEdit = onConfigEdit,
                 )
             }
         }
@@ -82,7 +85,7 @@ private fun Preview() {
     MaterialTheme {
         ConfigsScreen(
             state = ConfigsViewState.Init,
-            onClick = {},
+            onConfigEdit = {},
         )
     }
 }
