@@ -68,6 +68,9 @@ class ObserveBotConfigs(
     }
 
 
+    suspend fun silentRefresh() = silentRefreshChannel.emit(Unit)
+
+
     operator fun invoke() = invoke(Params())
 
     data class Params(val timer: kotlin.time.Duration = 10.seconds)

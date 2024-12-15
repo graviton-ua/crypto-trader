@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import ua.cryptogateway.inject.SharedUiComponent
 import ua.hospes.cryptogateway.ui.common.theme.AppTheme
 import ua.hospes.cryptogateway.ui.configs.ConfigsScreen
+import ua.hospes.cryptogateway.ui.configs.addConfigEditDialog
 import ua.hospes.cryptogateway.ui.configs.addConfigsScreen
 import ua.hospes.cryptogateway.ui.home.HomeScreen
 import ua.hospes.cryptogateway.ui.home.addHomeScreen
@@ -70,6 +71,7 @@ fun App(
             ) {
                 addHomeScreen(diComponent = uiComponent, navController = navController)
                 addConfigsScreen(diComponent = uiComponent, navController = navController)
+                addConfigEditDialog(diComponent = uiComponent, navController = navController)
                 addSettingsScreen(diComponent = uiComponent, navController = navController)
             }
         }

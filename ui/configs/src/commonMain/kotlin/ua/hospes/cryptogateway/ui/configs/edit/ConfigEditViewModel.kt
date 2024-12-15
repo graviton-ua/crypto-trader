@@ -1,17 +1,20 @@
-package ua.hospes.cryptogateway.ui.configs
+package ua.hospes.cryptogateway.ui.configs.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.domain.observers.ObserveBotConfigs
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
-class ConfigsViewModel(
+class ConfigEditViewModel(
     dispatchers: AppCoroutineDispatchers,
-    private val observeBotConfigs: ObserveBotConfigs,
+    observeBotConfigs: ObserveBotConfigs,
 ) : ViewModel() {
     private val dispatcher = dispatchers.io
 
@@ -20,22 +23,19 @@ class ConfigsViewModel(
     val state = combine(
         botConfigs, flowOf(123),
     ) { configs, _ ->
-        ConfigsViewState(
+        ConfigEditViewState(
             groups = configs,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ConfigsViewState.Init,
+        initialValue = ConfigEditViewState.Init,
     )
 
 
     init {
         observeBotConfigs()
     }
-
-
-    fun refreshList() = viewModelScope.launch { observeBotConfigs.silentRefresh() }.let { }
 
 
     companion object {

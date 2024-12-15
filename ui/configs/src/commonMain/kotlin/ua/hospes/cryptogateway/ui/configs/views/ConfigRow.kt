@@ -2,38 +2,41 @@ package ua.hospes.cryptogateway.ui.configs.views
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 internal fun ConfigRow(
-    baseAsset: @Composable () -> Unit,
-    quoteAsset: @Composable () -> Unit,
-    side: @Composable () -> Unit,
-    fond: @Composable () -> Unit,
-    startPrice: @Composable () -> Unit,
-    priceStep: @Composable () -> Unit,
-    biasPrice: @Composable () -> Unit,
-    minSize: @Composable () -> Unit,
-    orderSize: @Composable () -> Unit,
-    sizeStep: @Composable () -> Unit,
-    orderAmount: @Composable () -> Unit,
-    priceForce: @Composable () -> Unit,
-    market: @Composable () -> Unit,
-    basePrec: @Composable () -> Unit,
-    quotePrec: @Composable () -> Unit,
-    active: @Composable () -> Unit,
+    baseAsset: @Composable RowScope.() -> Unit,
+    quoteAsset: @Composable RowScope.() -> Unit,
+    side: @Composable RowScope.() -> Unit,
+    fond: @Composable RowScope.() -> Unit,
+    startPrice: @Composable RowScope.() -> Unit,
+    priceStep: @Composable RowScope.() -> Unit,
+    biasPrice: @Composable RowScope.() -> Unit,
+    minSize: @Composable RowScope.() -> Unit,
+    orderSize: @Composable RowScope.() -> Unit,
+    sizeStep: @Composable RowScope.() -> Unit,
+    orderAmount: @Composable RowScope.() -> Unit,
+    priceForce: @Composable RowScope.() -> Unit,
+    market: @Composable RowScope.() -> Unit,
+    basePrec: @Composable RowScope.() -> Unit,
+    quotePrec: @Composable RowScope.() -> Unit,
+    active: @Composable RowScope.() -> Unit,
+    actions: (@Composable RowScope.() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    verticalAlignment: Alignment.Vertical = Alignment.Top,
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalArrangement,
         modifier = modifier,
     ) {
         baseAsset()
@@ -52,6 +55,8 @@ internal fun ConfigRow(
         basePrec()
         quotePrec()
         active()
+
+        actions?.invoke(this)
     }
 }
 

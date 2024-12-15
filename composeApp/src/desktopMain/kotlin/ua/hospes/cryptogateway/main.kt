@@ -43,7 +43,7 @@ fun main() {
         }
 
         Window(
-            state = rememberWindowState(size = DpSize(1200.dp, 660.dp)),
+            state = rememberWindowState(size = DpSize(1300.dp, 660.dp)),
             resizable = true,
             onCloseRequest = ::exitApplication,
             title = "CryptoGateway",

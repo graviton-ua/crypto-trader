@@ -1,36 +1,63 @@
 package ua.hospes.cryptogateway.ui.configs.views
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.domain.models.BotConfigModel
+import ua.hospes.cryptogateway.ui.common.formatDouble
 
 @Composable
 internal fun ConfigItemRow(
     state: BotConfigModel,
+    onEdit: (BotConfigModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val onClickEdit = remember(state, onEdit) { { onEdit(state) } }
     ConfigRow(
-        baseAsset = { Text(text = state.baseAsset) },
-        quoteAsset = { Text(text = state.quoteAsset) },
-        side = { Text(text = state.side.name) },
-        fond = { Text(text = state.fond.let { String.format("%.8f", it) }) },
-        startPrice = { Text(text = state.startPrice.let { String.format("%.8f", it) }) },
-        priceStep = { Text(text = state.priceStep.let { String.format("%.8f", it) }) },
-        biasPrice = { Text(text = state.biasPrice.let { String.format("%.8f", it) }) },
-        minSize = { Text(text = state.minSize.let { String.format("%.8f", it) }) },
-        orderSize = { Text(text = state.orderSize.toString()) },
-        sizeStep = { Text(text = state.sizeStep.let { String.format("%.8f", it) }) },
-        orderAmount = { Text(text = state.orderAmount.toString()) },
-        priceForce = { Text(text = state.priceForce.toString()) },
-        market = { Text(text = state.market.toString()) },
-        basePrec = { Text(text = state.basePrec.toString()) },
-        quotePrec = { Text(text = state.quotePrec.toString()) },
-        active = { Text(text = state.active.toString()) },
+        baseAsset = { Text(text = state.baseAsset, modifier = Modifier.width(60.dp)) },
+        quoteAsset = { Text(text = state.quoteAsset, modifier = Modifier.width(60.dp)) },
+        side = { Text(text = state.side.name, modifier = Modifier.width(60.dp)) },
+        fond = { Text(text = state.fond.formatDouble(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        startPrice = { Text(text = state.startPrice.formatDouble(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        priceStep = { Text(text = state.priceStep.formatDouble(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        biasPrice = { Text(text = state.biasPrice.formatDouble(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        minSize = { Text(text = state.minSize.formatDouble(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        orderSize = { Text(text = state.orderSize.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        sizeStep = { Text(text = state.sizeStep.formatDouble(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        orderAmount = { Text(text = state.orderAmount.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        priceForce = { Text(text = state.priceForce.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        market = { Text(text = state.market.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        basePrec = { Text(text = state.basePrec.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        quotePrec = { Text(text = state.quotePrec.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        active = { Text(text = state.active.toString(), textAlign = TextAlign.End, modifier = Modifier.width(60.dp)) },
+        actions = {
+            IconButton(
+                onClick = onClickEdit,
+                colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+            ) {
+                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
+            }
+        },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     )
 }
@@ -59,6 +86,7 @@ private fun Preview() {
                 quotePrec = 8,
                 active = true,
             ),
+            onEdit = {},
             modifier = Modifier.fillMaxWidth(),
         )
     }

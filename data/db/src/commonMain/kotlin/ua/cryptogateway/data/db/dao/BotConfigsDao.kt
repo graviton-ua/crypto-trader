@@ -4,6 +4,7 @@ import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.upsert
 import ua.cryptogateway.data.db.models.BotConfigEntity
 import ua.cryptogateway.data.db.schema.BotConfigsSchema
 import ua.cryptogateway.data.models.Order
@@ -98,5 +99,58 @@ class BotConfigsDao(
 //            .where { (BotConfigsSchema.active eq true) and (BotConfigsSchema.side eq Side.fromKunaString("AAA")) }
             .where { (BotConfigsSchema.active eq true) and (BotConfigsSchema.side eq Order.Side.Sell) }
             .map { row -> (row[BotConfigsSchema.baseAsset] + "_" + row[BotConfigsSchema.quoteAsset]).trim() }
+    }
+
+
+    suspend fun save(entity: BotConfigEntity) = Result.runCatching {
+        dbQuery {
+            BotConfigsSchema.upsert {
+                it[BotConfigsSchema.baseAsset] = entity.baseAsset
+                it[BotConfigsSchema.quoteAsset] = entity.quoteAsset
+                it[BotConfigsSchema.side] = entity.side
+                it[BotConfigsSchema.fond] = entity.fond
+                it[BotConfigsSchema.startPrice] = entity.startPrice
+                it[BotConfigsSchema.priceStep] = entity.priceStep
+                it[BotConfigsSchema.biasPrice] = entity.biasPrice
+                it[BotConfigsSchema.minSize] = entity.minSize
+                it[BotConfigsSchema.orderSize] = entity.orderSize
+                it[BotConfigsSchema.sizeStep] = entity.sizeStep
+                it[BotConfigsSchema.orderAmount] = entity.orderAmount
+                it[BotConfigsSchema.priceForce] = entity.priceForce
+                it[BotConfigsSchema.market] = entity.market
+                it[BotConfigsSchema.basePrec] = entity.basePrec
+                it[BotConfigsSchema.quotePrec] = entity.quotePrec
+                it[BotConfigsSchema.active] = entity.active
+            }
+        }
+    }
+
+    suspend fun save(
+        baseAsset: String, quoteAsset: String, side: Order.Side,
+        fond: Double, startPrice: Double, priceStep: Double,
+        biasPrice: Double, minSize: Double, orderSize: Int,
+        sizeStep: Double, orderAmount: Int, priceForce: Boolean,
+        market: Boolean, basePrec: Int, quotePrec: Int, active: Boolean,
+    ) = Result.runCatching {
+        dbQuery {
+            BotConfigsSchema.upsert {
+                it[BotConfigsSchema.baseAsset] = baseAsset
+                it[BotConfigsSchema.quoteAsset] = quoteAsset
+                it[BotConfigsSchema.side] = side
+                it[BotConfigsSchema.fond] = fond
+                it[BotConfigsSchema.startPrice] = startPrice
+                it[BotConfigsSchema.priceStep] = priceStep
+                it[BotConfigsSchema.biasPrice] = biasPrice
+                it[BotConfigsSchema.minSize] = minSize
+                it[BotConfigsSchema.orderSize] = orderSize
+                it[BotConfigsSchema.sizeStep] = sizeStep
+                it[BotConfigsSchema.orderAmount] = orderAmount
+                it[BotConfigsSchema.priceForce] = priceForce
+                it[BotConfigsSchema.market] = market
+                it[BotConfigsSchema.basePrec] = basePrec
+                it[BotConfigsSchema.quotePrec] = quotePrec
+                it[BotConfigsSchema.active] = active
+            }
+        }
     }
 }

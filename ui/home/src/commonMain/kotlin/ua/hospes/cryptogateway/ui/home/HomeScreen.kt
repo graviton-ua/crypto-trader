@@ -1,10 +1,9 @@
 package ua.hospes.cryptogateway.ui.home
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,16 +32,27 @@ private fun HomeScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
     onClick: () -> Unit,
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Button(onClick = onClick) {
-            Text("Click me!")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Home") },
+            )
+        },
+        modifier = Modifier.fillMaxSize(),
+    ) { paddings ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+                .padding(paddings),
+        ) {
+            Button(onClick = onClick) {
+                Text("Click me!")
+            }
         }
     }
 }

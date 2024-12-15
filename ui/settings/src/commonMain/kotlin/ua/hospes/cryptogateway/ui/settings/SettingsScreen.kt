@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
@@ -40,6 +39,7 @@ private fun SettingsScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsScreen(
     state: SettingsViewState,
@@ -47,7 +47,11 @@ private fun SettingsScreen(
     onLogLevelSelect: (LogLevel) -> Unit,
 ) {
     Scaffold(
-        containerColor = Color.Transparent,
+        topBar = {
+            TopAppBar(
+                title = { Text("Settings") },
+            )
+        },
         modifier = Modifier.fillMaxSize(),
     ) { paddings ->
         Box(
@@ -61,7 +65,6 @@ private fun SettingsScreen(
                     .padding(paddings)
                     .padding(24.dp),
             ) {
-                Text(text = "Setting screen")
                 OutlinedTextField(
                     value = state.port,
                     onValueChange = onPortUpdate,

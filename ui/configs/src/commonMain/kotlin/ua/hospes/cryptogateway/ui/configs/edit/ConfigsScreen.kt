@@ -1,4 +1,4 @@
-package ua.hospes.cryptogateway.ui.configs
+package ua.hospes.cryptogateway.ui.configs.edit
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,32 +12,31 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.cryptogateway.inject.injectViewModel
-import ua.hospes.cryptogateway.ui.common.navigation.OpenResultRecipient
+import ua.hospes.cryptogateway.ui.common.navigation.ResultBackNavigator
+import ua.hospes.cryptogateway.ui.configs.ConfigsComponent
 import ua.hospes.cryptogateway.ui.configs.views.ConfigGroup
 
 @Serializable
-data object ConfigsScreen
+data object ConfigEditDialog
 
 @Composable
-internal fun ConfigsScreen(
+internal fun ConfigEditDialog(
     diComponent: ConfigsComponent,
-    resultConfigEdit: OpenResultRecipient<Unit>,
+    resultNavigator: ResultBackNavigator<Unit>,
 ) {
-    ConfigsScreen(
-        viewModel = injectViewModel { diComponent.configsViewModel() },
-        resultConfigEdit = resultConfigEdit,
+    ConfigEditDialog(
+        viewModel = injectViewModel { diComponent.configEditViewModel() },
+        resultNavigator = resultNavigator,
     )
 }
 
 @Composable
-private fun ConfigsScreen(
-    viewModel: ConfigsViewModel,
-    resultConfigEdit: OpenResultRecipient<Unit>,
+private fun ConfigEditDialog(
+    viewModel: ConfigEditViewModel,
+    resultNavigator: ResultBackNavigator<Unit>,
 ) {
-    resultConfigEdit.onNavResult { viewModel.refreshList() }
-
     val state by viewModel.state.collectAsStateWithLifecycle()
-    ConfigsScreen(
+    ConfigEditDialog(
         state = state,
         onClick = {},
     )
@@ -45,8 +44,8 @@ private fun ConfigsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ConfigsScreen(
-    state: ConfigsViewState,
+private fun ConfigEditDialog(
+    state: ConfigEditViewState,
     onClick: () -> Unit,
 ) {
     Scaffold(
@@ -80,8 +79,8 @@ private fun ConfigsScreen(
 @Composable
 private fun Preview() {
     MaterialTheme {
-        ConfigsScreen(
-            state = ConfigsViewState.Init,
+        ConfigEditDialog(
+            state = ConfigEditViewState.Init,
             onClick = {},
         )
     }

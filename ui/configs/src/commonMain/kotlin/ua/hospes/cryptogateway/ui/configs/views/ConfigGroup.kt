@@ -1,12 +1,16 @@
 package ua.hospes.cryptogateway.ui.configs.views
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ua.cryptogateway.domain.models.BotConfigModel
@@ -15,22 +19,31 @@ import ua.cryptogateway.domain.models.BotConfigModel
 internal fun ConfigGroup(
     baseAsset: String,
     items: List<BotConfigModel>,
+    onEdit: (BotConfigModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
     ) {
-        Text(text = baseAsset)
+        Text(text = baseAsset, modifier = Modifier.fillMaxWidth())
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .border(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant, shape = MaterialTheme.shapes.medium)
+                .background(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
+                .clip(shape = MaterialTheme.shapes.medium),
         ) {
-            ConfigTitleRow(modifier = Modifier.fillMaxWidth())
+            ConfigTitleRow(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            )
             items.forEachIndexed { i, it ->
                 ConfigItemRow(
                     state = it,
+                    onEdit = onEdit,
                     modifier = Modifier.fillMaxWidth()
-                        .background(color = if (i % 2 != 0) Color.LightGray else Color.Transparent),
+                        .background(color = if (i % 2 == 0) Color.LightGray else Color.Transparent)
+                        .padding(horizontal = 8.dp),
                 )
             }
         }
