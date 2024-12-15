@@ -15,7 +15,6 @@ import ua.cryptogateway.data.web.models.KunaActiveOrder
 import ua.cryptogateway.domain.DataPuller
 import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
-import ua.cryptogateway.data.models.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -81,5 +80,5 @@ class ActiveOrdersPullService(
 
 private fun KunaActiveOrder.toEntity(): OrderEntity = OrderEntity(
     id, OrderType.fromKunaString(type), quantity, executedQuantity,
-    cumulativeQuoteQty, cost, Side.fromKunaString(side), pair, price, status, createdAt, updatedAt
+    cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt
 )

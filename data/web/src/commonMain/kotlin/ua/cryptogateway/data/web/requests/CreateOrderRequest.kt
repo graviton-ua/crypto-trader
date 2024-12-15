@@ -1,6 +1,7 @@
 package ua.cryptogateway.data.web.requests
 
 import kotlinx.serialization.Serializable
+import ua.cryptogateway.data.models.Side
 
 
 //{
@@ -14,7 +15,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateOrderRequest(
     val type: String,
-    val orderSide: String,
+    val orderSide: Side,
     val pair: String,
     val price: String? = null,
     val quantity: String,

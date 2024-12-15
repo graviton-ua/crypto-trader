@@ -9,9 +9,9 @@ import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.BotConfigsDao
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.dao.TickersDao
+import ua.cryptogateway.data.models.Side
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.domain.interactors.CreateOrder
-import ua.cryptogateway.data.models.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -38,7 +38,7 @@ class HomeViewModel(
             .onFailure { }
 //-------------------------------------------------------------------------------------------------------------------
         val ordersFilter = orderDao.getAll().getOrDefault(emptyList())
-            .filter { it.side.code == "Bid" && it.pair == "DOGE_USDT" } // Фильтруем по side и pair
+            .filter { it.side == Side.Buy && it.pair == "DOGE_USDT" } // Фильтруем по side и pair
         val countOrders = ordersFilter.size
 //        println("countOrders : $countOrders")
 

@@ -2,6 +2,7 @@ package ua.cryptogateway.data.web.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import ua.cryptogateway.data.models.Side
 
 
 //{
@@ -20,7 +21,7 @@ data class KunaOrder(
     @SerialName("id") val id: String,
     @SerialName("type") val type: String,
     @SerialName("quantity") val quantity: Double,
-    @SerialName("side") val side: String,
+    @SerialName("side") val side: Side,
     @SerialName("executedQuantity") val executedQuantity: Double,
     @SerialName("pair") val pair: String,
     @SerialName("price") val price: Double,

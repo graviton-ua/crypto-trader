@@ -4,6 +4,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.OrderDao
+import ua.cryptogateway.data.models.Side
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.requests.CreateOrderRequest
 import ua.cryptogateway.domain.ResultInteractor
@@ -53,7 +54,7 @@ class UpdateOrder(
 
     suspend operator fun invoke(
         type: Params.Type,
-        orderSide: String,
+        orderSide: Side,
         pair: String,
         price: String,
         quantity: String,
@@ -62,7 +63,7 @@ class UpdateOrder(
 
     data class Params(
         val type: Type,
-        val orderSide: String,
+        val orderSide: Side,
         val pair: String,
         val price: String,
         val quantity: String,

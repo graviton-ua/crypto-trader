@@ -6,11 +6,11 @@ import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.models.OrderEntity
 import ua.cryptogateway.data.db.models.OrderType
+import ua.cryptogateway.data.models.Side
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaOrder
 import ua.cryptogateway.data.web.requests.CreateOrderRequest
 import ua.cryptogateway.domain.ResultInteractor
-import ua.cryptogateway.data.models.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -27,7 +27,7 @@ class CreateOrder(
         val newOrderRequest = when (params) {
             is Params.Limit -> CreateOrderRequest(
                 type = params.type.code,
-                orderSide = params.side.code,
+                orderSide = params.side,
                 pair = params.pair,
                 price = params.price.toString(),
                 quantity = params.quantity.toString(),
@@ -35,7 +35,7 @@ class CreateOrder(
 
             is Params.Market -> CreateOrderRequest(
                 type = params.type.code,
-                orderSide = params.side.code,
+                orderSide = params.side,
                 pair = params.pair,
                 quantity = params.quantity.toString(),
             )
@@ -109,7 +109,7 @@ internal fun KunaOrder.toEntity(): OrderEntity {
         executedQuantity = executedQuantity,
         cumulativeQuoteQty = 0.0,
         cost = 0.0,
-        side = Side.fromKunaString(side),
+        side = side,
         pair = pair,
         price = price,
         status = status,
