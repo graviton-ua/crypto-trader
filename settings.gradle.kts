@@ -41,6 +41,7 @@ include(
 )
 include(":domain")
 include(":shared")
+include(":common:ui:compose")
 include(
     ":ui:home",
     ":ui:configs",

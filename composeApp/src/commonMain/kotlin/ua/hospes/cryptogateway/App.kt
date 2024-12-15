@@ -2,11 +2,13 @@ package ua.hospes.cryptogateway
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.NavigationRail
 import androidx.compose.material.NavigationRailItem
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -15,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ua.cryptogateway.inject.SharedUiComponent
+import ua.hospes.cryptogateway.ui.common.theme.AppTheme
 import ua.hospes.cryptogateway.ui.configs.ConfigsScreen
 import ua.hospes.cryptogateway.ui.configs.addConfigsScreen
 import ua.hospes.cryptogateway.ui.home.HomeScreen
@@ -26,7 +29,7 @@ import ua.hospes.cryptogateway.ui.settings.addSettingsScreen
 fun App(
     uiComponent: SharedUiComponent,
 ) {
-    MaterialTheme {
+    AppTheme {
         val destinations = remember { listOf(HomeScreen, ConfigsScreen, SettingsScreen) }
         val navController = rememberNavController()
         Row {

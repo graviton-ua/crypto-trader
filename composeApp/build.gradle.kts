@@ -28,6 +28,7 @@ kotlin {
 
             implementation(projects.domain)
             implementation(projects.shared)
+            implementation(projects.common.ui.compose)
 
             implementation(projects.ui.home)
             implementation(projects.ui.configs)
