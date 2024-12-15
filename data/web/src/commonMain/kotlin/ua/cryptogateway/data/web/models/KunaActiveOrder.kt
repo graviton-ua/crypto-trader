@@ -4,7 +4,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ua.cryptogateway.data.models.Side
+import ua.cryptogateway.data.models.Order
 
 //{
 //    "id": "5992a049-8612-409d-8599-2c3d7298b106",            // Unique identifier of an order
@@ -29,7 +29,7 @@ data class KunaActiveOrder(
     @SerialName("executedQuantity") val executedQuantity: Double,
     @SerialName("cumulativeQuoteQty") val cumulativeQuoteQty: Double,
     @SerialName("cost") val cost: Double,
-    @SerialName("side") val side: Side,
+    @SerialName("side") val side: Order.Side,
     @SerialName("pair") val pair: String,
     @SerialName("price") val price: Double,
     @SerialName("status") val status: String,

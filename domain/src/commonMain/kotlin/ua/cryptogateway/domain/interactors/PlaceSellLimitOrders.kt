@@ -9,7 +9,7 @@ import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.models.OrderType
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.domain.ResultInteractor
-import ua.cryptogateway.data.models.Side
+import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -23,7 +23,7 @@ class PlaceSellLimitOrders(
     private val dispatcher = dispatchers.io
 
     override suspend fun doWork(params: Params): Result<Unit> = withContext(dispatcher) {
-        val configs = configsDao.getActive().filter { it.side == Side.Sell }
+        val configs = configsDao.getActive().filter { it.side == Order.Side.Sell }
 
         configs.forEach { config ->
             val balance = balanceDao.getCurrency(currency = config.baseAsset)
@@ -32,7 +32,7 @@ class PlaceSellLimitOrders(
 
             if (balance.balance == 0.0) return@forEach
 
-            val activeOrders = orderDao.get(side = Side.Sell)
+            val activeOrders = orderDao.get(side = Order.Side.Sell)
                 .onFailure { Log.warn(it) { "Can't get active orders from table" } }
                 .getOrNull() ?: return@forEach
 

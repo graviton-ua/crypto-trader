@@ -6,7 +6,7 @@ import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.models.OrderEntity
 import ua.cryptogateway.data.db.models.OrderType
-import ua.cryptogateway.data.models.Side
+import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaOrder
 import ua.cryptogateway.data.web.requests.CreateOrderRequest
@@ -62,14 +62,14 @@ class CreateOrder(
 
 
     suspend fun limit(
-        side: Side,
+        side: Order.Side,
         pair: String,
         quantity: Double,
         price: Double,
     ) = executeSync(Params.Limit(side, pair, quantity, price))
 
     suspend fun market(
-        side: Side,
+        side: Order.Side,
         pair: String,
         quantity: Double,
     ) = executeSync(Params.Market(side, pair, quantity))
@@ -78,7 +78,7 @@ class CreateOrder(
         val type: OrderType
 
         data class Limit(
-            val side: Side,
+            val side: Order.Side,
             val pair: String,
             val quantity: Double,
             val price: Double,
@@ -87,7 +87,7 @@ class CreateOrder(
         }
 
         data class Market(
-            val side: Side,
+            val side: Order.Side,
             val pair: String,
             val quantity: Double,
         ) : Params {

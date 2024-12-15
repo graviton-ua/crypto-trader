@@ -9,7 +9,7 @@ import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.BotConfigsDao
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.dao.TickersDao
-import ua.cryptogateway.data.models.Side
+import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.domain.interactors.CreateOrder
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -32,13 +32,13 @@ class HomeViewModel(
     private fun CoroutineScope.testRun() = launch(dispatcher) {
 
         createOrder.limit(
-            side = Side.Sell, pair = "DOGE_USDT", price = 0.61, quantity = 0.01
+            side = Order.Side.Sell, pair = "DOGE_USDT", price = 0.61, quantity = 0.01
         )
             .onSuccess { }
             .onFailure { }
 //-------------------------------------------------------------------------------------------------------------------
         val ordersFilter = orderDao.getAll().getOrDefault(emptyList())
-            .filter { it.side == Side.Buy && it.pair == "DOGE_USDT" } // Фильтруем по side и pair
+            .filter { it.side == Order.Side.Buy && it.pair == "DOGE_USDT" } // Фильтруем по side и pair
         val countOrders = ordersFilter.size
 //        println("countOrders : $countOrders")
 

@@ -1,6 +1,6 @@
 package ua.cryptogateway.data.db.models
 
-import ua.cryptogateway.data.models.Side
+import ua.cryptogateway.data.models.Order
 
 
 //{
@@ -25,7 +25,7 @@ data class OrderEntity(
     val executedQuantity: Double,
     val cumulativeQuoteQty: Double,
     val cost: Double,
-    val side: Side,
+    val side: Order.Side,
     val pair: String,
     val price: Double,
     val status: String,

@@ -1,12 +1,12 @@
 package ua.cryptogateway.data.db.models
 
-import ua.cryptogateway.data.models.Side
+import ua.cryptogateway.data.models.Order
 
 data class BotConfigEntity(
     val baseAsset: String,
     val quoteAsset: String,
 
-    val side: Side,
+    val side: Order.Side,
 
     val fond: Double,
 
