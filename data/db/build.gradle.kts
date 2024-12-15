@@ -11,6 +11,7 @@ kotlin {
             implementation(projects.core.preferences)
             implementation(projects.core.logging)
 
+            implementation(projects.data.models)
             implementation(libs.kotlinx.datetime)
             // Need to force upgrade these for recent Kotlin support
             //api(libs.kotlinx.atomicfu)

@@ -1,6 +1,6 @@
 package ua.cryptogateway.data.db.models
 
-import ua.cryptogateway.model.Side
+import ua.cryptogateway.data.models.Side
 
 
 //{

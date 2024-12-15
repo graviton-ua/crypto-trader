@@ -15,7 +15,7 @@ import ua.cryptogateway.data.web.models.KunaActiveOrder
 import ua.cryptogateway.domain.DataPuller
 import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
-import ua.cryptogateway.model.Side
+import ua.cryptogateway.data.models.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds

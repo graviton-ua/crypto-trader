@@ -11,7 +11,7 @@ import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.dao.TickersDao
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.domain.interactors.CreateOrder
-import ua.cryptogateway.model.Side
+import ua.cryptogateway.data.models.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject

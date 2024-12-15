@@ -3,7 +3,7 @@ package ua.cryptogateway.data.db.columns
 import org.jetbrains.exposed.sql.ColumnType
 import org.jetbrains.exposed.sql.EnumerationColumnType
 import org.jetbrains.exposed.sql.vendors.currentDialect
-import ua.cryptogateway.model.Side
+import ua.cryptogateway.data.models.Side
 import kotlin.reflect.KClass
 
 internal class SideColumnType : ColumnType<Side>() {

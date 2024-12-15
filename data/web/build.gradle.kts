@@ -33,6 +33,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logging)
 
+                implementation(projects.data.models)
                 implementation(libs.kotlinx.datetime)
 
                 api(libs.ktor.client.core)

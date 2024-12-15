@@ -1,4 +1,4 @@
-package ua.cryptogateway.model
+package ua.cryptogateway.data.models
 
 enum class Side(val code: String) {
     Sell("Ask"),

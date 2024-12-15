@@ -10,7 +10,7 @@ import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaOrder
 import ua.cryptogateway.data.web.requests.CreateOrderRequest
 import ua.cryptogateway.domain.ResultInteractor
-import ua.cryptogateway.model.Side
+import ua.cryptogateway.data.models.Side
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
