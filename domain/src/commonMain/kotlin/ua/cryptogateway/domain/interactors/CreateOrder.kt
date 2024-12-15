@@ -5,7 +5,6 @@ import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.models.OrderEntity
-import ua.cryptogateway.data.db.models.OrderType
 import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaOrder
@@ -26,7 +25,7 @@ class CreateOrder(
 
         val newOrderRequest = when (params) {
             is Params.Limit -> CreateOrderRequest(
-                type = params.type.code,
+                type = params.type,
                 orderSide = params.side,
                 pair = params.pair,
                 price = params.price.toString(),
@@ -34,7 +33,7 @@ class CreateOrder(
             )
 
             is Params.Market -> CreateOrderRequest(
-                type = params.type.code,
+                type = params.type,
                 orderSide = params.side,
                 pair = params.pair,
                 quantity = params.quantity.toString(),
@@ -75,7 +74,7 @@ class CreateOrder(
     ) = executeSync(Params.Market(side, pair, quantity))
 
     sealed interface Params {
-        val type: OrderType
+        val type: Order.Type
 
         data class Limit(
             val side: Order.Side,
@@ -83,7 +82,7 @@ class CreateOrder(
             val quantity: Double,
             val price: Double,
         ) : Params {
-            override val type: OrderType = OrderType.Limit
+            override val type: Order.Type = Order.Type.Limit
         }
 
         data class Market(
@@ -91,7 +90,7 @@ class CreateOrder(
             val pair: String,
             val quantity: Double,
         ) : Params {
-            override val type: OrderType = OrderType.Market
+            override val type: Order.Type = Order.Type.Market
         }
     }
 
@@ -104,7 +103,7 @@ class CreateOrder(
 internal fun KunaOrder.toEntity(): OrderEntity {
     return OrderEntity(
         id = id,
-        type = OrderType.fromKunaString(type),
+        type = type,
         quantity = quantity,
         executedQuantity = executedQuantity,
         cumulativeQuoteQty = 0.0,

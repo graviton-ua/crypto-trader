@@ -1,14 +1,14 @@
 package ua.cryptogateway.data.db.schema
 
 import org.jetbrains.exposed.sql.Table
-import ua.cryptogateway.data.db.columns.SideColumnType
+import ua.cryptogateway.data.db.columns.OrderSideColumnType
 
 object BotConfigsSchema : Table("dbo.botconfigs") {
     val baseAsset = varchar("baseAsset", 8)
     val quoteAsset = varchar("quoteAsset", 8)
 
     // Type or orders to create sell/buy
-    val side = registerColumn("side", SideColumnType())
+    val side = registerColumn("side", OrderSideColumnType())
 
     // Amount of base asset to safe on balance
     val fond = double("fond")

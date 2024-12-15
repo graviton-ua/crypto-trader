@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.vendors.currentDialect
 import ua.cryptogateway.data.models.Order
 import kotlin.reflect.KClass
 
-internal class SideColumnType : ColumnType<Order.Side>() {
+internal class OrderSideColumnType : ColumnType<Order.Side>() {
     private val klass: KClass<Order.Side> = Order.Side::class
 
     override fun sqlType(): String = currentDialect.dataTypeProvider.varcharType(8)

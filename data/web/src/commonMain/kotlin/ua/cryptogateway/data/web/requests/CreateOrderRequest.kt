@@ -14,7 +14,7 @@ import ua.cryptogateway.data.models.Order
 
 @Serializable
 data class CreateOrderRequest(
-    val type: String,
+    val type: Order.Type,
     val orderSide: Order.Side,
     val pair: String,
     val price: String? = null,

@@ -25,7 +25,7 @@ class UpdateOrder(
 //            type = "Limit", orderSide = "Ask", pair = "DOGE_USDT", price = 0.6, quantity = 0.01
 //        )
         val newOrderRequest = CreateOrderRequest(
-            type = params.type.code,
+            type = params.type,
             orderSide = params.orderSide,
             pair = params.pair,
             price = params.price,
@@ -53,7 +53,7 @@ class UpdateOrder(
 
 
     suspend operator fun invoke(
-        type: Params.Type,
+        type: Order.Type,
         orderSide: Order.Side,
         pair: String,
         price: String,
@@ -62,19 +62,12 @@ class UpdateOrder(
 
 
     data class Params(
-        val type: Type,
+        val type: Order.Type,
         val orderSide: Order.Side,
         val pair: String,
         val price: String,
         val quantity: String,
-    ) {
-        enum class Type(val code: String) {
-            Limit("Limit"),
-            Market("Market"),
-            StopLossLimit("StopLossLimit"),
-            TakeProfitLimit("TakeProfitLimit"),
-        }
-    }
+    )
 
 
     companion object {

@@ -9,7 +9,6 @@ import saschpe.log4k.Log
 import saschpe.log4k.logged
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.models.OrderEntity
-import ua.cryptogateway.data.db.models.OrderType
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaActiveOrder
 import ua.cryptogateway.domain.DataPuller
@@ -79,6 +78,6 @@ class ActiveOrdersPullService(
 }
 
 private fun KunaActiveOrder.toEntity(): OrderEntity = OrderEntity(
-    id, OrderType.fromKunaString(type), quantity, executedQuantity,
+    id, type, quantity, executedQuantity,
     cumulativeQuoteQty, cost, side, pair, price, status, createdAt, updatedAt
 )

@@ -1,7 +1,7 @@
 package ua.cryptogateway.data.db.schema
 
 import org.jetbrains.exposed.sql.Table
-import ua.cryptogateway.data.db.columns.SideColumnType
+import ua.cryptogateway.data.db.columns.OrderSideColumnType
 import ua.cryptogateway.data.db.columns.OrderTypeColumnType
 
 //{
@@ -26,7 +26,7 @@ internal object OrderSchema : Table("dbo.active") {
     val executedQuantity = double("executedQuantity")
     val cumulativeQuoteQty = double("cumulativeQuoteQty")
     val cost = double("cost")
-    val side = registerColumn("side", SideColumnType())
+    val side = registerColumn("side", OrderSideColumnType())
     val pair = varchar("pair", 15)
     val price = double("price")
     val status = varchar("status", 12)

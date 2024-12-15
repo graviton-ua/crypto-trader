@@ -24,7 +24,7 @@ import ua.cryptogateway.data.models.Order
 @Serializable
 data class KunaActiveOrder(
     @SerialName("id") val id: String,
-    @SerialName("type") val type: String,
+    @SerialName("type") val type: Order.Type,
     @SerialName("quantity") val quantity: Double,
     @SerialName("executedQuantity") val executedQuantity: Double,
     @SerialName("cumulativeQuoteQty") val cumulativeQuoteQty: Double,
@@ -36,4 +36,4 @@ data class KunaActiveOrder(
     @SerialName("createdAt") val createdAt: String,
     @SerialName("updatedAt") val updatedAt: String,
     val timestamp: Instant = Clock.System.now(),
-)
+) : Order

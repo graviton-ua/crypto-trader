@@ -19,7 +19,7 @@ import ua.cryptogateway.data.models.Order
 @Serializable
 data class KunaOrder(
     @SerialName("id") val id: String,
-    @SerialName("type") val type: String,
+    @SerialName("type") val type: Order.Type,
     @SerialName("quantity") val quantity: Double,
     @SerialName("side") val side: Order.Side,
     @SerialName("executedQuantity") val executedQuantity: Double,
@@ -28,4 +28,4 @@ data class KunaOrder(
     @SerialName("status") val status: String,
     @SerialName("createdAt") val createdAt: String,
     @SerialName("updatedAt") val updatedAt: String,
-)
+) : Order

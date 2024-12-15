@@ -6,7 +6,6 @@ import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.BalanceDao
 import ua.cryptogateway.data.db.dao.BotConfigsDao
 import ua.cryptogateway.data.db.dao.OrderDao
-import ua.cryptogateway.data.db.models.OrderType
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.domain.ResultInteractor
 import ua.cryptogateway.data.models.Order

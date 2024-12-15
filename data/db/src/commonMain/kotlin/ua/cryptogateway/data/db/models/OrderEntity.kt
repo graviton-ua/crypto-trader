@@ -2,7 +2,6 @@ package ua.cryptogateway.data.db.models
 
 import ua.cryptogateway.data.models.Order
 
-
 //{
 //    "id": "5992a049-8612-409d-8599-2c3d7298b106",            // Unique identifier of an order
 //    "type": "Limit",                                         // Type of an order
@@ -20,7 +19,7 @@ import ua.cryptogateway.data.models.Order
 
 data class OrderEntity(
     val id: String,
-    val type: OrderType,
+    val type: Order.Type,
     val quantity: Double,
     val executedQuantity: Double,
     val cumulativeQuoteQty: Double,
@@ -32,4 +31,4 @@ data class OrderEntity(
     val createdAt: String,
     val updatedAt: String,
     val cancel: Boolean? = null,
-)
+) : Order
