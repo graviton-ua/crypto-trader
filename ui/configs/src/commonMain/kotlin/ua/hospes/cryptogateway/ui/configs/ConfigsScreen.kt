@@ -26,7 +26,7 @@ data object ConfigsScreen
 @Composable
 internal fun ConfigsScreen(
     diComponent: ConfigsComponent,
-    navigateConfigEdit: (BotConfigModel?) -> Unit,
+    navigateConfigEdit: (Int?) -> Unit,
     resultConfigEdit: OpenResultRecipient<Boolean>,
 ) {
     ConfigsScreen(
@@ -39,7 +39,7 @@ internal fun ConfigsScreen(
 @Composable
 private fun ConfigsScreen(
     viewModel: ConfigsViewModel,
-    navigateConfigEdit: (BotConfigModel?) -> Unit,
+    navigateConfigEdit: (Int?) -> Unit,
     resultConfigEdit: OpenResultRecipient<Boolean>,
 ) {
     resultConfigEdit.onNavResult { viewModel.refreshList() }
@@ -55,7 +55,7 @@ private fun ConfigsScreen(
 @Composable
 private fun ConfigsScreen(
     state: ConfigsViewState,
-    onConfigEdit: (BotConfigModel?) -> Unit,
+    onConfigEdit: (Int?) -> Unit,
 ) {
     Scaffold(
         topBar = {

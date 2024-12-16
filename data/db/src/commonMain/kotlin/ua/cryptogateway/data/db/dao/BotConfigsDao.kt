@@ -27,26 +27,24 @@ class BotConfigsDao(
      */
     suspend fun getAll() = dbQuery {
         BotConfigsSchema.selectAll()
-            .map { row ->
-                BotConfigEntity(
-                    baseAsset = row[BotConfigsSchema.baseAsset],
-                    quoteAsset = row[BotConfigsSchema.quoteAsset],
-                    side = row[BotConfigsSchema.side],
-                    fond = row[BotConfigsSchema.fond],
-                    startPrice = row[BotConfigsSchema.startPrice],
-                    priceStep = row[BotConfigsSchema.priceStep],
-                    biasPrice = row[BotConfigsSchema.biasPrice],
-                    minSize = row[BotConfigsSchema.minSize],
-                    orderSize = row[BotConfigsSchema.orderSize],
-                    sizeStep = row[BotConfigsSchema.sizeStep],
-                    orderAmount = row[BotConfigsSchema.orderAmount],
-                    priceForce = row[BotConfigsSchema.priceForce],
-                    market = row[BotConfigsSchema.market],
-                    basePrec = row[BotConfigsSchema.basePrec],
-                    quotePrec = row[BotConfigsSchema.quotePrec],
-                    active = row[BotConfigsSchema.active]
-                )
-            }
+            .orderBy(BotConfigsSchema.baseAsset to SortOrder.ASC, BotConfigsSchema.quoteAsset to SortOrder.ASC, BotConfigsSchema.side to SortOrder.ASC)
+            .mapBotConfigEntities()
+    }
+
+    suspend fun get(id: Int) = dbQuery {
+        BotConfigsSchema.selectAll()
+            .where { BotConfigsSchema.id eq id }
+            .mapBotConfigEntities()
+            .firstOrNull()
+    }
+
+    suspend fun get(
+        baseAsset: String, quoteAsset: String, side: Order.Side,
+    ) = dbQuery {
+        BotConfigsSchema.selectAll()
+            .where { (BotConfigsSchema.baseAsset eq baseAsset) and (BotConfigsSchema.quoteAsset eq quoteAsset) and (BotConfigsSchema.side eq side) }
+            .mapBotConfigEntities()
+            .firstOrNull()
     }
 
     /**
@@ -62,26 +60,7 @@ class BotConfigsDao(
     suspend fun getActive() = dbQuery {
         BotConfigsSchema.selectAll()
             .where { BotConfigsSchema.active eq true }
-            .map { row ->
-                BotConfigEntity(
-                    baseAsset = row[BotConfigsSchema.baseAsset],
-                    quoteAsset = row[BotConfigsSchema.quoteAsset],
-                    side = row[BotConfigsSchema.side],
-                    fond = row[BotConfigsSchema.fond],
-                    startPrice = row[BotConfigsSchema.startPrice],
-                    priceStep = row[BotConfigsSchema.priceStep],
-                    biasPrice = row[BotConfigsSchema.biasPrice],
-                    minSize = row[BotConfigsSchema.minSize],
-                    orderSize = row[BotConfigsSchema.orderSize],
-                    sizeStep = row[BotConfigsSchema.sizeStep],
-                    orderAmount = row[BotConfigsSchema.orderAmount],
-                    priceForce = row[BotConfigsSchema.priceForce],
-                    market = row[BotConfigsSchema.market],
-                    basePrec = row[BotConfigsSchema.basePrec],
-                    quotePrec = row[BotConfigsSchema.quotePrec],
-                    active = row[BotConfigsSchema.active]
-                )
-            }
+            .mapBotConfigEntities()
     }
 
     /**
@@ -103,6 +82,7 @@ class BotConfigsDao(
     suspend fun save(entity: BotConfigEntity) = Result.runCatching {
         dbQuery {
             BotConfigsSchema.upsert {
+                it[BotConfigsSchema.id] = entity.id
                 it[BotConfigsSchema.baseAsset] = entity.baseAsset
                 it[BotConfigsSchema.quoteAsset] = entity.quoteAsset
                 it[BotConfigsSchema.side] = entity.side
@@ -124,6 +104,7 @@ class BotConfigsDao(
     }
 
     suspend fun save(
+        id: Int?,
         baseAsset: String, quoteAsset: String, side: Order.Side,
         fond: Double, startPrice: Double, priceStep: Double,
         biasPrice: Double, minSize: Double, orderSize: Int,
@@ -132,6 +113,7 @@ class BotConfigsDao(
     ) = Result.runCatching {
         dbQuery {
             BotConfigsSchema.upsert {
+                it[BotConfigsSchema.id] = id ?: 0
                 it[BotConfigsSchema.baseAsset] = baseAsset
                 it[BotConfigsSchema.quoteAsset] = quoteAsset
                 it[BotConfigsSchema.side] = side
@@ -152,6 +134,15 @@ class BotConfigsDao(
         }
     }
 
+
+    suspend fun delete(
+        id: Int,
+    ) = Result.runCatching {
+        dbQuery {
+            BotConfigsSchema.deleteWhere { BotConfigsSchema.id eq id }
+        }
+    }
+
     suspend fun delete(
         baseAsset: String, quoteAsset: String, side: Order.Side,
     ) = Result.runCatching {
@@ -161,4 +152,26 @@ class BotConfigsDao(
             }
         }
     }
+}
+
+private fun Query.mapBotConfigEntities(): List<BotConfigEntity> = map { row ->
+    BotConfigEntity(
+        id = row[BotConfigsSchema.id],
+        baseAsset = row[BotConfigsSchema.baseAsset],
+        quoteAsset = row[BotConfigsSchema.quoteAsset],
+        side = row[BotConfigsSchema.side],
+        fond = row[BotConfigsSchema.fond],
+        startPrice = row[BotConfigsSchema.startPrice],
+        priceStep = row[BotConfigsSchema.priceStep],
+        biasPrice = row[BotConfigsSchema.biasPrice],
+        minSize = row[BotConfigsSchema.minSize],
+        orderSize = row[BotConfigsSchema.orderSize],
+        sizeStep = row[BotConfigsSchema.sizeStep],
+        orderAmount = row[BotConfigsSchema.orderAmount],
+        priceForce = row[BotConfigsSchema.priceForce],
+        market = row[BotConfigsSchema.market],
+        basePrec = row[BotConfigsSchema.basePrec],
+        quotePrec = row[BotConfigsSchema.quotePrec],
+        active = row[BotConfigsSchema.active]
+    )
 }

@@ -6,6 +6,7 @@ import ua.cryptogateway.data.models.Order
 
 @Serializable
 data class BotConfigModel(
+    val id: Int,
     val baseAsset: String,
     val quoteAsset: String,
 
@@ -29,6 +30,7 @@ data class BotConfigModel(
 )
 
 internal fun BotConfigEntity.toModel() = BotConfigModel(
+    id = id,
     baseAsset = baseAsset,
     quoteAsset = quoteAsset,
     side = side,

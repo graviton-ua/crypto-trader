@@ -25,6 +25,8 @@ data class ConfigEditViewState(
     val basePrec: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
     val quotePrec: TextFieldValue = TextFieldValue(text = "0", selection = TextRange(1)),
     val active: Boolean = false,
+
+    val deleteAvailable: Boolean = false,
 ) {
     companion object {
         val Init = ConfigEditViewState()

@@ -4,6 +4,8 @@ import org.jetbrains.exposed.sql.Table
 import ua.cryptogateway.data.db.columns.OrderSideColumnType
 
 object BotConfigsSchema : Table("dbo.botconfigs") {
+    val id = integer("id").autoIncrement()
+
     val baseAsset = varchar("baseAsset", 8)
     val quoteAsset = varchar("quoteAsset", 8)
 
@@ -28,5 +30,9 @@ object BotConfigsSchema : Table("dbo.botconfigs") {
     val quotePrec = integer("quotePrec")
     val active = bool("active")
 
-    override val primaryKey = PrimaryKey(baseAsset, quoteAsset, side)
+    override val primaryKey = PrimaryKey(id)
+
+    init {
+        uniqueIndex(baseAsset, quoteAsset, side)
+    }
 }

@@ -11,6 +11,7 @@ import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
 import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.domain.interactors.DeleteBotConfig
+import ua.cryptogateway.domain.interactors.GetBotConfig
 import ua.cryptogateway.domain.interactors.SaveBotConfig
 import ua.cryptogateway.domain.models.BotConfigModel
 import ua.cryptogateway.extensions.combine
@@ -21,6 +22,7 @@ import ua.hospes.cryptogateway.ui.common.formatDouble
 class ConfigEditViewModel(
     //@Assisted savedStateHandle: SavedStateHandle, TODO: Library not working properly with Assisted injection yet
     dispatchers: AppCoroutineDispatchers,
+    private val getBotConfig: GetBotConfig,
     private val saveBotConfig: SaveBotConfig,
     private val deleteBotConfig: DeleteBotConfig,
 ) : ViewModel() {
@@ -29,6 +31,7 @@ class ConfigEditViewModel(
     private val _events = MutableSharedFlow<ConfigEditViewEvent>()
     val events: SharedFlow<ConfigEditViewEvent> = _events
 
+    private val configId = MutableStateFlow<Int?>(null)
     private val config = MutableStateFlow<BotConfigModel?>(null)
 
     private val title = config.map { it?.let { "${it.baseAsset}_${it.quoteAsset}" } }
@@ -48,6 +51,7 @@ class ConfigEditViewModel(
     private val _basePrec = MutableStateFlow(TextFieldValue(text = "0", selection = TextRange(1)))
     private val _quotePrec = MutableStateFlow(TextFieldValue(text = "0", selection = TextRange(1)))
     private val _active = MutableStateFlow(false)
+    private val deleteAvailable = config.map { it != null }
     private val _inProgress = MutableStateFlow(false)
 
     val state = combine(
@@ -55,19 +59,19 @@ class ConfigEditViewModel(
         _fond, _startPrice, _priceStep, _biasPrice,
         _minSize, _orderSize, _sizeStep, _orderAmount,
         _priceForce, _market, _basePrec, _quotePrec,
-        _active,
+        _active, deleteAvailable,
     ) { title, base, quote, side,
         fond, startPrice, priceStep, biasPrice,
         minSize, orderSize, sizeStep, orderAmount,
         priceForce, market, basePrec, quotePrec,
-        active ->
+        active, deleteAvailable ->
 
         ConfigEditViewState(
             title = title, baseAsset = base, quoteAsset = quote, side = side,
             fond = fond, startPrice = startPrice, priceStep = priceStep, biasPrice = biasPrice,
             minSize = minSize, orderSize = orderSize, sizeStep = sizeStep, orderAmount = orderAmount,
             priceForce = priceForce, market = market, basePrec = basePrec, quotePrec = quotePrec,
-            active = active,
+            active = active, deleteAvailable = deleteAvailable,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -77,6 +81,12 @@ class ConfigEditViewModel(
 
 
     init {
+        viewModelScope.launch(dispatcher) {
+            configId.filterNotNull().collectLatest {
+                config.value = getBotConfig.byId(it)
+            }
+        }
+
         viewModelScope.launch(dispatcher) {
             config.collectLatest {
                 it?.baseAsset?.let { _baseAsset.value = TextFieldValue(text = it, selection = TextRange(it.length)) }
@@ -99,7 +109,7 @@ class ConfigEditViewModel(
         }
     }
 
-    fun initConfig(config: BotConfigModel?) = with(this.config) { value = config }
+    fun initConfig(id: Int?) = with(configId) { value = id }
 
     fun onBaseAssetChange(text: TextFieldValue) = with(_baseAsset) { value = text }
     fun onQuoteAssetChange(text: TextFieldValue) = with(_quoteAsset) { value = text }
@@ -135,6 +145,7 @@ class ConfigEditViewModel(
         _inProgress.value = true
 
         saveBotConfig(
+            id = config.value?.id ?: configId.value,
             baseAsset = _baseAsset.value.text,
             quoteAsset = _quoteAsset.value.text,
             side = _side.value,
@@ -160,10 +171,8 @@ class ConfigEditViewModel(
     private fun CoroutineScope.delete() = launch(dispatcher) {
         _inProgress.value = true
 
-        deleteBotConfig(
-            baseAsset = _baseAsset.value.text,
-            quoteAsset = _quoteAsset.value.text,
-            side = _side.value,
+        deleteBotConfig.byId(
+            id = config.value?.id ?: configId.value ?: return@launch,
         )
             .onSuccess { _events.emit(ConfigEditViewEvent.ConfigSaved) }
             .onFailure { Log.warn(tag = TAG, throwable = it) { "Failed while deleting config" } }

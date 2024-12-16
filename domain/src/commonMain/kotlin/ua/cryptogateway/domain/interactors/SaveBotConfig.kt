@@ -17,6 +17,7 @@ class SaveBotConfig(
 
     override suspend fun doWork(params: Params): Result<Unit> = withContext(dispatcher) {
         dao.save(
+            id = params.id,
             baseAsset = params.baseAsset,
             quoteAsset = params.quoteAsset,
             side = params.side,
@@ -41,6 +42,7 @@ class SaveBotConfig(
 
 
     suspend operator fun invoke(
+        id: Int?,
         baseAsset: String, quoteAsset: String, side: Order.Side,
         fond: Double, startPrice: Double, priceStep: Double,
         biasPrice: Double, minSize: Double, orderSize: Int,
@@ -48,6 +50,7 @@ class SaveBotConfig(
         market: Boolean, basePrec: Int, quotePrec: Int, active: Boolean,
     ) = executeSync(
         Params(
+            id,
             baseAsset, quoteAsset, side, fond,
             startPrice, priceStep, biasPrice,
             minSize, orderSize, sizeStep, orderAmount,
@@ -56,6 +59,7 @@ class SaveBotConfig(
     )
 
     data class Params(
+        val id: Int?,
         val baseAsset: String,
         val quoteAsset: String,
         val side: Order.Side,

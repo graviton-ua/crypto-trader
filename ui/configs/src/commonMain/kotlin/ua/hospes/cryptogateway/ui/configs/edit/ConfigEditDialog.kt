@@ -32,7 +32,7 @@ import ua.hospes.cryptogateway.ui.configs.ConfigsComponent
 import kotlin.reflect.typeOf
 
 @Serializable
-internal data class ConfigEditDialog(val config: BotConfigModel? = null) {
+internal data class ConfigEditDialog(val id: Int? = null) {
     companion object {
         val typeMap = mapOf(typeOf<BotConfigModel?>() to BotConfigModelArgType())
         fun from(savedStateHandle: SavedStateHandle) = savedStateHandle.toRoute<ConfigEditDialog>(typeMap)
@@ -54,7 +54,7 @@ internal fun ConfigEditDialog(
 ) {
     ConfigEditDialog(
         viewModel = injectViewModel { diComponent.configEditViewModel() }
-            .also { it.initConfig(ConfigEditDialog.from(savedStateHandle).config) },
+            .also { it.initConfig(ConfigEditDialog.from(savedStateHandle).id) },
         navigateUp = navigateUp,
         resultNavigator = resultNavigator,
     )
@@ -276,11 +276,12 @@ private fun ConfigEditDialog(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                OutlinedButton(
-                    onClick = onDelete,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                ) { Text("Delete") }
+                if (state.deleteAvailable)
+                    OutlinedButton(
+                        onClick = onDelete,
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                    ) { Text("Delete") }
 
                 Spacer(modifier = Modifier.weight(1f))
 

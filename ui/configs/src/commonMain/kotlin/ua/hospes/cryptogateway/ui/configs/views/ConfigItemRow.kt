@@ -8,7 +8,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,10 +28,10 @@ import ua.hospes.cryptogateway.ui.common.formatDouble
 @Composable
 internal fun ConfigItemRow(
     state: BotConfigModel,
-    onEdit: (BotConfigModel) -> Unit,
+    onEdit: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val onClickEdit = remember(state, onEdit) { { onEdit(state) } }
+    val onClickEdit = remember(state, onEdit) { { onEdit(state.id) } }
     ConfigRow(
         baseAsset = { Text(text = state.baseAsset, modifier = Modifier.width(60.dp)) },
         quoteAsset = { Text(text = state.quoteAsset, modifier = Modifier.width(60.dp)) },
@@ -78,6 +81,7 @@ private fun Preview() {
     MaterialTheme {
         ConfigItemRow(
             state = BotConfigModel(
+                id = 0,
                 baseAsset = "BTC",
                 quoteAsset = "USDT",
                 side = Order.Side.Sell,

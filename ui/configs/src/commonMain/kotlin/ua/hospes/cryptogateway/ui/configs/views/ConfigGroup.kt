@@ -20,7 +20,7 @@ import ua.hospes.cryptogateway.ui.common.theme.AppTheme
 internal fun ConfigGroup(
     baseAsset: String,
     items: List<BotConfigModel>,
-    onEdit: (BotConfigModel) -> Unit,
+    onEdit: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(

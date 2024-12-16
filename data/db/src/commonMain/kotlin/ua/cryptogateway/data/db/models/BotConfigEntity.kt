@@ -3,6 +3,8 @@ package ua.cryptogateway.data.db.models
 import ua.cryptogateway.data.models.Order
 
 data class BotConfigEntity(
+    val id: Int,
+
     val baseAsset: String,
     val quoteAsset: String,
 

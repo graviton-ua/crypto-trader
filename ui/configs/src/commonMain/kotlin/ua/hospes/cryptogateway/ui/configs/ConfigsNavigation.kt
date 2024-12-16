@@ -16,7 +16,7 @@ fun NavGraphBuilder.addConfigsScreen(
     composable<ConfigsScreen> {
         ConfigsScreen(
             diComponent = diComponent,
-            navigateConfigEdit = { navController.navigate(ConfigEditDialog(config = it)) },
+            navigateConfigEdit = { navController.navigate(ConfigEditDialog(id = it)) },
             resultConfigEdit = resultRecipient<ConfigEditDialog, Boolean>(it),
         )
     }
