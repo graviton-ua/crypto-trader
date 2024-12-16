@@ -13,6 +13,7 @@ import kotlinx.coroutines.cancel
 import ua.cryptogateway.inject.DesktopApplicationComponent
 import ua.cryptogateway.inject.WindowComponent
 import ua.cryptogateway.inject.create
+import java.util.*
 
 /**
  * Main entry point of the CryptoGateway desktop application.
@@ -29,6 +30,7 @@ import ua.cryptogateway.inject.create
  * - Constructs and displays the main application window with the user interface defined in `App` composable.
  */
 fun main() {
+    Locale.setDefault(Locale.US)
     System.setProperty("skiko.renderApi", "OPENGL") //TODO: Fixes issue with G-Sync stuttering
     val applicationComponent = DesktopApplicationComponent.create()
     applicationComponent.initializers.initialize()
