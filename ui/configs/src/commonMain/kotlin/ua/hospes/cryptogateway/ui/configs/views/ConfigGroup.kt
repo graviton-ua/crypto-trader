@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ua.cryptogateway.domain.models.BotConfigModel
 import ua.hospes.cryptogateway.ui.common.theme.AppTheme
@@ -26,7 +27,7 @@ internal fun ConfigGroup(
     Column(
         modifier = modifier,
     ) {
-        Text(text = baseAsset, modifier = Modifier.fillMaxWidth())
+        Text(text = baseAsset, modifier = Modifier.fillMaxWidth(), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Medium)
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth()
@@ -51,3 +52,4 @@ internal fun ConfigGroup(
         }
     }
 }
+
