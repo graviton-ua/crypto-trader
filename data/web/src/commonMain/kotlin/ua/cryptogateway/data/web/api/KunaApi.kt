@@ -1,9 +1,11 @@
 package ua.cryptogateway.data.web.api
 
 import io.ktor.client.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.cryptogateway.data.web.models.*
@@ -214,5 +216,113 @@ class KunaApi(
             contentType(ContentType.Application.Json)
             setBody(request)
         }.asResult<KunaResponse<List<KunaCancelledOrder>>>().map { it.data }
+    }
+
+
+    suspend fun websocket() = client.webSocket(
+        host = "ws-pro.kuna.io", /*port = 443,*/ path = "/socketcluster/",
+//        request = {
+//            //headers.append("Authorization", "Bearer YOUR_TOKEN") // Example header
+//            headers.append("api-key", "biRb/dUmozuosPTuQHecC6fTaQ0C+n0Iz1Dcms5KSE4=") // Example header
+//        }
+    ) {
+        //ApiKey: biRb/dUmozuosPTuQHecC6fTaQ0C+n0Iz1Dcms5KSE4=
+        //ApiKey: 77HmE/lav4JZbiMy5e4IvNsOWINLH8dU4HJ0SDsNugk=
+        println("Connected to SocketCluster server.")
+
+        // Step 1: Send Handshake Event
+        val handshakePayload: String = """
+            {"event":"#handshake","data":{ },"cid":1}
+        """.trimIndent()
+        send(handshakePayload)
+        println("Sent handshake payload.")
+
+        // Step 2: Wait for Handshake Response
+        var handshakeSuccessful = false
+        for (frame in incoming) {
+            if (frame is Frame.Text) {
+                val response = frame.readText()
+                println("Received: $response")
+
+                if (response.contains("\"rid\":1")) {
+                    println("Handshake successful.")
+                    handshakeSuccessful = true
+                    break
+                }
+            }
+        }
+
+        // Step 3: Send Authentication Event
+        if (handshakeSuccessful) {
+            val authPayload = """
+                {"event":"login","data":"77HmE/lav4JZbiMy5e4IvNsOWINLH8dU4HJ0SDsNugk=","cid":2}                
+            """.trimIndent()
+            send(authPayload)
+            println("Sent authentication payload.")
+        } else {
+            println("Handshake failed. Cannot authenticate.")
+            return@webSocket
+        }
+
+        // Step 4: Wait for Handshake Response
+        var authenticated = false
+        for (frame in incoming) {
+            if (frame is Frame.Text) {
+                val response = frame.readText()
+                println("Received: $response")
+
+                if (response.contains("\"rid\":2")) {
+                    println("Authenticated successful.")
+                    authenticated = true
+                    break
+                }
+            }
+        }
+
+        // Step 5:  Subscribe
+        if (authenticated) {
+//            val authPayload = """
+//                {"event":"#subscribe","data":{"channel":"btc_usdt@ticker"},"cid":3}
+//            """.trimIndent()
+//            val authPayload = """
+//                {"event":"#subscribe","data":{"channel":"arrTicker"},"cid":3}
+//            """.trimIndent()
+            send(
+                """
+                    {"event":"#subscribe","data":{"channel":"btc_usdt@depth"},"cid":3}                
+                """.trimIndent()
+            )
+            send(
+                """
+                    {"event":"#subscribe","data":{"channel":"eth_usdt@ticker"},"cid":4}                
+                """.trimIndent()
+            )
+            println("Sent subscribe payload.")
+        } else {
+            println("Authentication failed. Cannot authenticate.")
+            return@webSocket
+        }
+
+        // Step 6: Listen for Authentication Response and Messages
+        for (frame in incoming) {
+            when (frame) {
+                is Frame.Text -> {
+                    val text = frame.readText()
+                    println("Received: $text")
+                    if (text.isEmpty()) {
+                        send("")
+                        println("Sent PONG")
+                    }
+
+                    if (text.contains("isAuthenticated")) {
+                        println("Authentication successful!")
+                    }
+                }
+
+                else -> println("Received unsupported frame: $frame")
+            }
+        }
+
+        println("WebSocket func finished")
     }
 }
