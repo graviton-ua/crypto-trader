@@ -37,7 +37,7 @@ class KunaWebsocketService(
         if (job != null) return
         job = scope.launch(dispatcher) {
 
-            webSocket.subscribe("arrTicker", "doge_usdt@ohlcv")
+            webSocket.subscribe(/*"arrTicker",*/ "doge_usdt@ohlcv")
 
             webSocket.flow()
                 .mapNotNull { result ->
