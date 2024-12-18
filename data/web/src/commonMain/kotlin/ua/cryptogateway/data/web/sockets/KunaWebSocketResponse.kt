@@ -3,7 +3,7 @@ package ua.cryptogateway.data.web.sockets
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ua.cryptogateway.data.models.Trade
+import ua.cryptogateway.data.models.Trade as TradeModel
 
 @Serializable
 sealed interface KunaWebSocketResponse {
@@ -242,7 +242,7 @@ sealed interface ChannelData {
             val matchPrice: Double,
             val matchQuantity: Double,
             val quoteQuantity: Double,
-            val type: Trade.Type,
+            val type: TradeModel.Type,
             val createdAt: Instant,
         )
     }
@@ -273,7 +273,7 @@ sealed interface ChannelData {
             val pair: String,
             val matchPrice: Double,
             val matchQuantity: Double,
-            val type: Trade.Type,
+            val type: TradeModel.Type,
             val createdAt: Instant,
             val firstTradeId: String,
             val lastTradeId: String,
