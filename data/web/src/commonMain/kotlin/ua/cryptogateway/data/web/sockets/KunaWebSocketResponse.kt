@@ -8,22 +8,32 @@ import ua.cryptogateway.data.models.Trade
 @Serializable
 sealed interface KunaWebSocketResponse {
     val event: String
-    val data: PublishData
 
+
+    @Serializable
+    @SerialName("#setAuthToken")
+    data class SetAuthToken(
+        override val event: String,
+        val data: Data,
+    ) : KunaWebSocketResponse {
+        @Serializable
+        data class Data(val token: String)
+    }
 
     @Serializable
     @SerialName("#publish")
     data class PublishMessage(
         override val event: String,
-        override val data: PublishData
-    ) : KunaWebSocketResponse
+        val data: Data,
+    ) : KunaWebSocketResponse {
+        @Serializable
+        data class Data(
+            val channel: String,
+            val data: ChannelData
+        )
+    }
 }
 
-@Serializable
-data class PublishData(
-    val channel: String,
-    val data: ChannelData
-)
 
 @Serializable
 sealed interface ChannelData {

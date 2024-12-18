@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class KunaWebSocketEvent {
+internal sealed class KunaWebSocketEvent {
     abstract val cid: Int?
 
     // {"event":"#handshake","data":{ },"cid":1}
