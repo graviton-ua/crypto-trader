@@ -26,6 +26,7 @@ class HomeViewModel(
     }
 
     private fun CoroutineScope.testRun() = launch(dispatcher) {
+        //placeBuyLimitOrders()
         //placeSellLimitOrders()
 //        val prices: List<Double> = listOf(
 //            80365.0, 88566.0, 87932.0, 90453.0, 87319.0, 91023.0, 90554.0, 89843.0, 90535.0, 92247.0,

@@ -37,26 +37,69 @@ class PlaceBuyLimitOrders(
             val startQuantity = config.minSize * config.orderSize
             val bestPrice = bestPrice(pairName, config) ?: return@forEach
 
+            val quotAssetLimit = quotAsset.balance
             // If there is not enough quoteAsset even to purchase the minimum volume
-            if (quotAsset.balance < (startQuantity * bestPrice)) return@forEach
+            if (quotAssetLimit < (startQuantity * bestPrice)) {
+                val formatBalance = String.format("%.6f", quotAssetLimit)
+                val formatRequired = String.format("%.6f", startQuantity * bestPrice)
+                Log.info {
+                    "Balance < minimum Order Quantity!  Balance= $formatBalance ${config.quoteAsset}; " +
+                            "Coins required=$formatRequired ${config.quoteAsset}"
+                }
+                return@forEach
+            }
 
             val balance = balanceDao.getCurrency(currency = config.baseAsset) ?: return@forEach
 
             val activeOrders = orderDao.get(side = Order.Side.Buy)
                 .onFailure { Log.warn(it) { "Can't get active orders side=Buy from table" } }
                 .getOrNull() ?: return@forEach
+            val buyLimit = config.fond - balance.balance
+            if (buyLimit > 0) {    // need to buy
+            if (activeOrders.isEmpty()) {
+                Log.info { "Active Orders table is Empty!" }
+                createNewGridOrders(pairName, config, bestPrice, buyLimit, quotAssetLimit)
+            } else {
+                val activeOrdersAmount = activeOrders.size
 
-            if (balance.balance < config.fond) {    // need to buy
                 when {
-                    activeOrders.isEmpty() -> {}
-                    activeOrders.size < config.orderAmount -> {}
-                    activeOrders.minOf { it.price } != bestPrice -> {}
-                    activeOrders.minOf { it.quantity } != startQuantity -> {}
+                    activeOrdersAmount < config.orderAmount -> {
+                        val cancelList = activeOrders.map { it.id }
+                        Log.info { "Canceled all orders. Active amount < Config amount." }
+                        api.cancelOrders(cancelList)
+                        createNewGridOrders(pairName, config, bestPrice, buyLimit, quotAssetLimit)
+                        // return
+                    }
+
+                    activeOrdersAmount > config.orderAmount -> {
+                        val cancelAmount = activeOrdersAmount - config.orderAmount
+                        val cancelList = activeOrders.map { it.id }.takeLast(cancelAmount)
+                        Log.info { "Canceled only a few orders: $cancelList" }
+                        api.cancelOrders(cancelList)
+                        // return
+                    }
+
+                    activeOrders.minOf { it.price } != bestPrice -> {
+                        val cancelList = activeOrders.map { it.id }
+                        Log.info { "Canceled all orders. Min Price != Best Price." }
+                        api.cancelOrders(cancelList)
+                        createNewGridOrders(pairName, config, bestPrice, buyLimit, quotAssetLimit)
+                        // return
+                    }
+
+                    activeOrders.minOf { it.quantity } != startQuantity -> {
+                        val cancelList = activeOrders.map { it.id }
+                        Log.info { "Canceled all orders. Min Quantity != Start Quantity." }
+                        api.cancelOrders(cancelList)
+                        createNewGridOrders(pairName, config, bestPrice, buyLimit, quotAssetLimit)
+                        // return
+                    }
                 }
-            } else if (activeOrders.isNotEmpty()) { // no need to buy
-                val cancelList = activeOrders.map { it.id }
-                api.cancelOrders(cancelList)
             }
+        } else if (activeOrders.isNotEmpty()) { // no need to buy
+            val cancelList = activeOrders.map { it.id }
+            api.cancelOrders(cancelList)
+        }
         }
     }
 
@@ -74,7 +117,7 @@ class PlaceBuyLimitOrders(
         val price = when {
             tickerPrice != null && bookPrice != null && tickerPrice >= bookPrice
                     || tickerPrice == null && bookPrice != null -> {
-                when (bookPrice < startPrice) {
+                when (bookPrice > startPrice) {
                     true -> startPrice
                     false -> bookPrice
                 }
@@ -82,7 +125,7 @@ class PlaceBuyLimitOrders(
 
             tickerPrice != null && bookPrice != null && tickerPrice < bookPrice
                     || tickerPrice != null && bookPrice == null -> {
-                when (tickerPrice < startPrice) {
+                when (tickerPrice > startPrice) {
                     true -> startPrice
                     false -> tickerPrice
                 }
@@ -95,36 +138,54 @@ class PlaceBuyLimitOrders(
             true -> price
             false -> price + price * biasPrice / 100
         }
-
+        Log.info { "Best=$bestPrice; Ticker=$tickerPrice; Book=$bookPrice; Start=$startPrice; Bias=$biasPrice; Force=$priceForce" }
         return bestPrice
     }
 
-    private suspend fun createNewGridOrders(pair: String, config: BotConfigEntity, tickPrice: Double) {
-        val biasPrice = config.biasPrice
-        val priceForce = config.priceForce
-        var priceStart = tickPrice + tickPrice * biasPrice / 100
-        if (priceForce) priceStart = tickPrice
-        if (priceStart < config.startPrice) priceStart = config.startPrice
+    private suspend fun createNewGridOrders(
+        pair: String,
+        config: BotConfigEntity,
+        bestPrice: Double,
+        buyLimit: Double,
+        quotAssetLimit: Double
+    ) {
         val priceStep = config.priceStep
         val sellQuantity = config.minSize * config.orderSize
         val sizeStep = config.sizeStep
+        var sumQuantity = 0.0
+        var balanceLimit = quotAssetLimit
 
         val requests = (0 until config.orderAmount).map { item ->
-            val price = priceStart + priceStart * item * priceStep / 100
+            val price = bestPrice - bestPrice * item * priceStep / 100
             val quantity = sellQuantity + sellQuantity * item * sizeStep / 100
-            CreateOrderRequest(
-                Order.Type.Limit, Order.Side.Buy, pair, price, quantity
-            )
+            sumQuantity += quantity
+            balanceLimit -= (price * quantity)
+            if (sumQuantity >= buyLimit || balanceLimit < 0) {
+                if (balanceLimit < 0)  Log.info { "Order N$item not create! Balance limit exceeded." }
+                else  Log.info { "Order N$item not create! Buy limit  exceeded." }
+//                Log.info(tag = TAG) {
+//                    "Order N$item not create! Price=$formatPrice; Quantity=$formatQuantity.\n " +
+//                            "Summa quantity: ${String.format("%.6f", sumQuantity)}  Buy limit: ${String.format("%.6f", buyLimit)}, " +
+//                            "Balance limit: ${String.format("%.6f", balanceLimit)}"
+//                }
+            } else {
+                CreateOrderRequest(
+                    Order.Type.Limit, Order.Side.Buy, pair, price, quantity
+                )
+            }
         }
-
+//        Log.info(tag = TAG) {
+//            "Summa quantity: ${String.format("%.6f", sumQuantity)}  Buy limit: ${String.format("%.6f", buyLimit)}, " +
+//                    "Balance limit: ${String.format("%.6f", balanceLimit)}"
+//        }
         Log.info {
             "Orders to create on web:\n" + requests.joinToString("\n")
         }
 
-        requests.forEach {
-            api.createOrder(it)
-                .onFailure { Log.warn(it) { "Order wasn't created" } }
-        }
+//        requests.forEach {
+//            api.createOrder(it)
+//                .onFailure { Log.warn(it, TAG) { "Order wasn't created" } }
+//        }
     }
 
     data object Params

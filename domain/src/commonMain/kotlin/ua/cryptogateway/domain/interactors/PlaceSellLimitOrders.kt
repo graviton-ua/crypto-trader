@@ -13,6 +13,7 @@ import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.requests.CreateOrderRequest
 import ua.cryptogateway.domain.ResultInteractor
 import ua.cryptogateway.util.AppCoroutineDispatchers
+import kotlin.math.max
 
 @Inject
 class PlaceSellLimitOrders(
@@ -50,7 +51,7 @@ class PlaceSellLimitOrders(
                     createNewGridOrders(pairName, config, bestPrice, balance.balance - config.fond)
                 }
             } else {
-                val activeQuantity = activeOrders.sumOf { it.quantity } // а если список пуст??????
+                val activeQuantity = activeOrders.sumOf { it.quantity }
                 val activeOrdersAmount = activeOrders.size
 
                 when {
@@ -104,41 +105,6 @@ class PlaceSellLimitOrders(
                     }
                 }
             }
-
-
-//            when {
-//            activeOrders.isEmpty() -> {
-//
-//                // return
-//            }
-//            // We have not enough balance, quit
-//
-//            // We have enough balance, can create new orders
-//            balance.balance >= config.fond -> {
-//                // We are checking amount orders
-//                when {
-//
-//
-//                    else -> {
-//                        // We are checking price first order
-//
-//                        val minPrice = activeOrders.minOf { it.price }
-//                        val priceStart = when (config.priceForce) {
-//                            true -> bestPrice
-//                            false -> bestPrice + (bestPrice * config.biasPrice / 100)
-//                        }
-//
-//                        val minQuantity = activeOrders.minOf { it.quantity }
-//                        val sellQuantity = config.minSize * config.orderSize
-//
-//                        when {
-//
-//                        }
-//                    }
-//                }
-//
-//            }
-//        }
         }
     }
 
@@ -161,14 +127,16 @@ class PlaceSellLimitOrders(
                     true -> startPrice
                     false -> bookPrice
                 }
+                //max(bookPrice, startPrice)
             }
 
             tickerPrice != null && bookPrice != null && tickerPrice > bookPrice
                     || tickerPrice != null && bookPrice == null -> {
-                when (tickerPrice < startPrice) {
-                    true -> startPrice
-                    false -> tickerPrice
-                }
+//                when (tickerPrice < startPrice) {
+//                    true -> startPrice
+//                    false -> tickerPrice
+//                }
+                max(tickerPrice,startPrice)
             }
 
             else -> return startPrice
@@ -178,7 +146,7 @@ class PlaceSellLimitOrders(
             true -> price
             false -> price + price * biasPrice / 100
         }
-        Log.info { "Best=$bestPrice; Ticker=$tickerPrice; Book=$bookPrice; Star=$startPrice; Bias=$biasPrice; Force=$priceForce" }
+        Log.info { "Best=$bestPrice; Ticker=$tickerPrice; Book=$bookPrice; Start=$startPrice; Bias=$biasPrice; Force=$priceForce" }
         return bestPrice
     }
 
@@ -186,27 +154,23 @@ class PlaceSellLimitOrders(
         pair: String,
         config: BotConfigEntity,
         bestPrice: Double,
-        maxVolume: Double
+        sellLimit: Double
     ) {
 
         val priceStep = config.priceStep
         val sellQuantity = config.minSize * config.orderSize
         val sizeStep = config.sizeStep
-        var totalVolume = 0.0
+        var sumQuantity = 0.0
 
         val requests = (0 until config.orderAmount).map { item ->
-            val price = bestPrice + bestPrice * item * priceStep / 100
-            val quantity = sellQuantity + sellQuantity * item * sizeStep / 100
-            totalVolume += quantity
-            if (totalVolume >= maxVolume) {
-                val formatPrice = String.format("%.6f", price)
-                val formatQuantity = String.format("%.6f", quantity)
-                val formatTotVolume = String.format("%.6f", totalVolume)
-                val formatMaxVolume = String.format("%.6f", maxVolume)
-                Log.info { "Order not create! Max Volume=$formatMaxVolume" }
+            val price = bestPrice + (bestPrice * item * priceStep) / 100
+            val quantity = sellQuantity + (sellQuantity * item * sizeStep) / 100
+            sumQuantity += quantity
+            if (sumQuantity >= sellLimit) {
+                Log.info { "Order N$item not create! Sell limit exceeded." }
 //                Log.info(tag = TAG) {
-//                    "Order not create! Price=$formatPrice; Quantity=$formatQuantity.\n " +
-//                            "Maximum volume exceeded! Total Volume: $formatTotVolume  Max Volume: $formatMaxVolume"
+//                    "Order N$item not create! Price=${String.format("%.6f", price)}; Quantity=${String.format("%.6f", quantity)}.\n " +
+//                            "Summa quantity: ${String.format("%.6f", sumQuantity)}  Sell limit: ${String.format("%.6f", sellLimit)}"
 //                }
             } else {
                 CreateOrderRequest(
