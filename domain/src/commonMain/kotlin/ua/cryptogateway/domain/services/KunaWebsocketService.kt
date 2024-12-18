@@ -25,11 +25,11 @@ class KunaWebsocketService(
         if (job != null) return
         job = scope.launch(dispatcher) {
 
-            webSocket.subscribe("arrTicker")
+            webSocket.subscribe("doge_usdt@ohlcv")
 
             Log.debug(tag = TAG) { "websocket" }
             webSocket.flow().collect {
-                Log.debug(tag = TAG) { "websocket: $it" }
+                Log.info(tag = TAG) { "websocket response: $it" }
             }
         }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "websocket job completed (exception: ${it?.message})" }; job = null } }
     }

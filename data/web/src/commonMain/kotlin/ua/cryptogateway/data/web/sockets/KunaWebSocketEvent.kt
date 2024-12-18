@@ -26,6 +26,7 @@ sealed class KunaWebSocketEvent {
         override val cid: Int,
     ) : KunaWebSocketEvent()
 
+    // {"event":"#subscribe","data":{"channel":"doge_usdt@ohlcv"},"cid":3}
     @Serializable
     @SerialName("#subscribe")
     data class Subscribe(

@@ -24,20 +24,18 @@ class KunaWebSocket(
         encodeDefaults = true
         classDiscriminator = "event"
         explicitNulls = false
+        ignoreUnknownKeys = true
     }
+    private val eventRegexp = """\"event\":\"[^"]+@""".toRegex()
 
     private val eventChannel = MutableSharedFlow<KunaWebSocketEvent>(replay = 10, onBufferOverflow = BufferOverflow.DROP_LATEST)
 
-    // StateFlow for tracking initialization
-    val isInitialized = MutableStateFlow(false)
 
-
-    fun flow(): Flow<String> = channelFlow {
+    fun flow(): Flow<Result<KunaWebSocketResponse>> = channelFlow {
         val session = client.webSocketSession(host = "ws-pro.kuna.io", /*port = 443,*/ path = "/socketcluster/")
         println("Connected to Kuna.SocketCluster server.")
 
         session.authenticate { session.close() }
-        isInitialized.value = true
 
         // Start
         launch(dispatcher) {
@@ -49,18 +47,20 @@ class KunaWebSocket(
 
         launch(dispatcher) {
             println("Start listen for incoming frames")
-            session.incoming.receiveAsFlow().collect {
+            session.incoming.receiveAsFlow().collectLatest {
                 when (it) {
                     is Frame.Text -> {
                         val text = it.readText()
                         println("Received: $text")
                         if (text.isEmpty()) {
                             session.send("")
-                            return@collect
+                            return@collectLatest
                         }
                         if (text.contains("disconnect")) close()
 
-                        this@channelFlow.send(text)
+                        val trimmed = text.replace(eventRegexp, "\"event\":\"")
+                        val parsed = Result.runCatching { json.decodeFromString<KunaWebSocketResponse>(trimmed.also { println("Trimmed: $it") }) }
+                        this@channelFlow.send(parsed)
                     }
 
                     else -> println("Unknown frame: $it")
