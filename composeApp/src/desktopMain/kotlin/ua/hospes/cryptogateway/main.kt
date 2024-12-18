@@ -2,6 +2,7 @@ package ua.hospes.cryptogateway
 
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -32,15 +33,19 @@ fun main() {
     applicationComponent.initializers.initialize()
 
     application {
+        val initializationCompleted = remember { mutableStateOf(false) }
+
         LaunchedEffect(applicationComponent) {
             applicationComponent.suspendedInitializers.initialize()
+            initializationCompleted.value = true // Signal that initialization is complete
         }
 
         val services = applicationComponent.services
-        DisposableEffect(services) {
-            services.start()
-            onDispose { services.stop() }
-        }
+        if (initializationCompleted.value)  // Ensure DisposableEffect runs only after initialization
+            DisposableEffect(services) {
+                services.start()
+                onDispose { services.stop() }
+            }
 
         Window(
             state = rememberWindowState(size = DpSize(1300.dp, 660.dp)),

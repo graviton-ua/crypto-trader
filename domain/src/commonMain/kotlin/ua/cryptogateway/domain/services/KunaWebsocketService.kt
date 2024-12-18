@@ -4,7 +4,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
-import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.sockets.KunaWebSocket
 import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
@@ -27,7 +26,6 @@ class KunaWebsocketService(
 
             webSocket.subscribe("doge_usdt@ohlcv")
 
-            Log.debug(tag = TAG) { "websocket" }
             webSocket.flow().collect {
                 Log.info(tag = TAG) { "websocket response: $it" }
             }
