@@ -1,41 +1,37 @@
 package ua.cryptogateway.data.web.sockets
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 @Serializable
-internal sealed interface KunaWebSocketEvent {
-    val event: String
-    val cid: Int
+sealed class KunaWebSocketEvent {
+    abstract val cid: Int?
 
-
+    // {"event":"#handshake","data":{ },"cid":1}
     @Serializable
+    @SerialName("#handshake")
     data class Handshake(
+        val data: Data = Data,
         override val cid: Int,
-    ) : KunaWebSocketEvent {
-        override val event: String = "#handshake"
-        val data: Data = Data
-
+    ) : KunaWebSocketEvent() {
         @Serializable
         data object Data
     }
 
+    // {"event":"login","data":"${BuildConfig.KUNA_API_KEY}","cid":2}
     @Serializable
+    @SerialName("login")
     data class Login(
-        @Transient val apiKey: String = "",
+        @SerialName("data") val apiKey: String,
         override val cid: Int,
-    ) : KunaWebSocketEvent {
-        override val event: String = "login"
-        val data: String = apiKey
-    }
+    ) : KunaWebSocketEvent()
 
     @Serializable
+    @SerialName("#subscribe")
     data class Subscribe(
-        @Transient val channel: String = "",
-        override val cid: Int,
-    ) : KunaWebSocketEvent {
-        override val event: String = "#subscribe"
-        val data: Data = Data(channel)
+        val data: Data,
+        override val cid: Int? = null,
+    ) : KunaWebSocketEvent() {
 
         @Serializable
         data class Data(val channel: String)

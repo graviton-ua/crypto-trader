@@ -24,6 +24,9 @@ class KunaWebsocketService(
     override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
+
+            webSocket.subscribe("arrTicker")
+
             Log.debug(tag = TAG) { "websocket" }
             webSocket.flow().collect {
                 Log.debug(tag = TAG) { "websocket: $it" }
