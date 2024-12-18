@@ -103,7 +103,7 @@ sealed interface ChannelData {
      * for a specific trading pair.
      */
     @Serializable
-    @SerialName("arrTicker ")
+    @SerialName("arrTicker")
     data class ArrTicker(
         val event: String,
         val data: List<Ticker.Data>,

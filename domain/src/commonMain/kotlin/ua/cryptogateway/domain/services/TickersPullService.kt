@@ -19,6 +19,7 @@ import ua.cryptogateway.util.AppCoroutineDispatchers
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+@Deprecated("Use KunaWebSocketService instead")
 @ApplicationScope
 @Inject
 class TickersPullService(

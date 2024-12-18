@@ -51,16 +51,18 @@ class TickersDao(
     }
 
 
-    suspend fun save(tickers: List<TickerEntity>) = dbQuery {
-        TickerSchema.batchUpsert(tickers) {
-            this[TickerSchema.pairName] = it.pairName
-            this[TickerSchema.priceHigh] = it.priceHigh
-            this[TickerSchema.priceAsk] = it.priceAsk
-            this[TickerSchema.priceBid] = it.priceBid
-            this[TickerSchema.priceLow] = it.priceLow
-            this[TickerSchema.priceLast] = it.priceLast
-            this[TickerSchema.change] = it.change
-            this[TickerSchema.timestamp] = it.timestamp
+    suspend fun save(tickers: List<TickerEntity>) = Result.runCatching {
+        dbQuery {
+            TickerSchema.batchUpsert(tickers) {
+                this[TickerSchema.pairName] = it.pairName
+                this[TickerSchema.priceHigh] = it.priceHigh
+                this[TickerSchema.priceAsk] = it.priceAsk
+                this[TickerSchema.priceBid] = it.priceBid
+                this[TickerSchema.priceLow] = it.priceLow
+                this[TickerSchema.priceLast] = it.priceLast
+                this[TickerSchema.change] = it.change
+                this[TickerSchema.timestamp] = it.timestamp
+            }
         }
     }
 }

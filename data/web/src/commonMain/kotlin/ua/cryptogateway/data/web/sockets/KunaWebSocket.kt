@@ -99,7 +99,8 @@ class KunaWebSocket(
 
 
     private suspend fun DefaultClientWebSocketSession.authenticate(closeSocket: suspend () -> Unit) {
-        sendEvent(KunaWebSocketEvent.Handshake(cid = cid.getAndIncrement()))
+        val handshakeCid = cid.getAndIncrement()
+        sendEvent(KunaWebSocketEvent.Handshake(cid = handshakeCid))
 
         //TODO: Refactor it to have proper response handling
         // Step 2: Wait for Handshake Response
@@ -109,7 +110,7 @@ class KunaWebSocket(
                 val response = frame.readText()
                 println("Received: $response")
 
-                if (response.contains("\"rid\":1")) {
+                if (response.contains("\"rid\":$handshakeCid")) {
                     println("Handshake successful.")
                     handshakeSuccessful = true
                     break
@@ -118,10 +119,12 @@ class KunaWebSocket(
         }
 
         // Step 3: Send Authentication Event
+        val authCid = cid.getAndIncrement()
         if (handshakeSuccessful) {
-            sendEvent(KunaWebSocketEvent.Login(apiKey = BuildConfig.KUNA_API_KEY, cid = cid.getAndIncrement()))
+            sendEvent(KunaWebSocketEvent.Login(apiKey = BuildConfig.KUNA_API_KEY, cid = authCid))
         } else {
             println("Handshake failed. Cannot authenticate.")
+            closeSocket()
             return
         }
 
@@ -132,7 +135,7 @@ class KunaWebSocket(
                 val response = frame.readText()
                 println("Received: $response")
 
-                if (response.contains("\"rid\":2")) {
+                if (response.contains("\"rid\":$authCid")) {
                     println("Authenticated successful.")
                     authenticated = true
                     break
