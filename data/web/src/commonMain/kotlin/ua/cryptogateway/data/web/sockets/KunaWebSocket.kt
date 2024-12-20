@@ -35,7 +35,7 @@ class KunaWebSocket(
 
 
     fun flow(): Flow<Result<KunaWebSocketResponse>> = channelFlow {
-        val session = client.webSocketSession(host = "ws-pro.kuna.io", /*port = 443,*/ path = "/socketcluster/")
+        val session = client.webSocketSession("wss://ws-pro.kuna.io/socketcluster/")
         Log.info(tag = TAG) { "Connected to Kuna.SocketCluster server." }
 
         session.authenticate { session.close() }
@@ -91,9 +91,9 @@ class KunaWebSocket(
 
     private fun sendEvent(event: KunaWebSocketEvent) = eventChannel.tryEmit(event)
 
-    fun subscribe(vararg channels: String) {
+    fun subscribe(vararg channels: Channel) {
         channels.forEach {
-            sendEvent(KunaWebSocketEvent.Subscribe(KunaWebSocketEvent.Subscribe.Data(channel = it), cid = cid.getAndIncrement()))
+            sendEvent(KunaWebSocketEvent.Subscribe(KunaWebSocketEvent.Subscribe.Data(channel = it.tag), cid = cid.getAndIncrement()))
         }
     }
 
@@ -144,6 +144,17 @@ class KunaWebSocket(
         }
 
         if (!authenticated) closeSocket()
+    }
+
+
+    sealed class Channel(val tag: String) {
+        data object ArrTicker : Channel("arrTicker")
+        data class Ticker(val pair: String) : Channel("${pair.lowercase()}@ticker")
+        data object ArrMiniTicker : Channel("arrMiniTicker")
+        data class MiniTicker(val pair: String) : Channel("${pair.lowercase()}@miniTicker")
+        data class Ohlcv(val pair: String) : Channel("${pair.lowercase()}@ohlcv")
+        data class Trade(val pair: String) : Channel("${pair.lowercase()}@trade")
+        data class AggTrade(val pair: String) : Channel("${pair.lowercase()}@aggTrade")
     }
 
 

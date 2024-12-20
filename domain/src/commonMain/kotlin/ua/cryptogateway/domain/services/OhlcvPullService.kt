@@ -5,12 +5,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
-import ua.cryptogateway.data.db.dao.TickersDao
-import ua.cryptogateway.data.db.models.TickerEntity
-import ua.cryptogateway.data.web.models.KunaTicker
+import ua.cryptogateway.data.db.dao.OhlcvDao
+import ua.cryptogateway.data.db.models.OhlcvEntity
 import ua.cryptogateway.data.web.sockets.ChannelData
 import ua.cryptogateway.data.web.sockets.KunaWebSocket
 import ua.cryptogateway.data.web.sockets.KunaWebSocket.Channel
@@ -21,15 +20,15 @@ import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @ApplicationScope
 @Inject
-class TickersPullService(
+class OhlcvPullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val webSocket: KunaWebSocket,
-    private val dao: TickersDao,
+    private val dao: OhlcvDao,
 ) : ServiceInitializer {
     private val dispatcher = dispatchers.io
     private var job: Job? = null
-    private val data = MutableSharedFlow<List<ChannelData.Ticker.Data>?>(
+    private val data = MutableSharedFlow<Pair<String, ChannelData.Ohlcv.Data>?>(
         replay = 0, // No replay; emit only new values
         extraBufferCapacity = 100, // Buffer up to 100 messages
         onBufferOverflow = BufferOverflow.DROP_OLDEST // Drop the oldest message if buffer is full
@@ -37,7 +36,7 @@ class TickersPullService(
 
 
     init {
-        scope.updateTickersTable()
+        scope.updateTable()
     }
 
 
@@ -46,7 +45,7 @@ class TickersPullService(
         job = scope.launch(dispatcher) {
             Log.debug(tag = TAG) { "Websocket job started" }
 
-            webSocket.subscribe(Channel.ArrTicker)  // Subscribe for all tickers
+            webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))  // Subscribe for doge_usdt@ohlcv
 
             webSocket.flow()
                 .mapNotNull { result ->
@@ -55,12 +54,17 @@ class TickersPullService(
                         .getOrNull()
                 }
                 .filterIsInstance(KunaWebSocketResponse.PublishMessage::class)
-                .map { it.data.data }
-                .filterIsInstance(ChannelData.ArrTicker::class)
+                .mapNotNull {
+                    val channel = it.data.channel
+                    when (val data = it.data.data) {
+                        is ChannelData.Ohlcv -> channel to data.data
+                        else -> null
+                    }
+                }
                 .catch { Log.error(tag = TAG, throwable = it) }
                 .flowOn(dispatcher)
                 .collectLatest {
-                    data.tryEmit(it.data)
+                    data.tryEmit(it)
                 }
         }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "Websocket job completed (exception: ${it?.message})" }; job = null } }
     }
@@ -71,33 +75,34 @@ class TickersPullService(
     }
 
 
-    private fun CoroutineScope.updateTickersTable() = launch(dispatcher) {
-        Log.debug(tag = TAG) { "updateTickersTable() job started" }
+    private fun CoroutineScope.updateTable() = launch(dispatcher) {
+        Log.debug(tag = TAG) { "updateOhlcvTable() job started" }
 
         data.filterNotNull()
-            .map { it.map(ChannelData.Ticker.Data::toEntity) }
-            .collectLatest { list ->
-                Result.runCatching { dao.save(list) }
+            .map { (pair, data) -> data.toEntity(pair) }
+            .collectLatest { entity ->
+                dao.save(entity)
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 
-    }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateTickersTable() job completed (exception: ${it?.message})" } } }
+    }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateOhlcvTable() job completed (exception: ${it?.message})" } } }
 
 
     companion object {
-        private const val TAG = "TickersPullService"
+        private const val TAG = "OhlcvPullService"
     }
 }
 
-private fun KunaTicker.toEntity(): TickerEntity = TickerEntity(pairName, priceHigh, priceAsk, priceBid, priceLow, priceLast, change, timestamp)
 
-private fun ChannelData.Ticker.Data.toEntity(): TickerEntity = TickerEntity(
-    pairName = pair,
-    priceHigh = highPrice,
-    priceAsk = bestAskPrice,
-    priceBid = bestBidPrice,
-    priceLow = lowPrice,
-    priceLast = lastPrice,
-    change = priceChange,
-    timestamp = Clock.System.now(),
+private fun ChannelData.Ohlcv.Data.toEntity(pair: String): OhlcvEntity = OhlcvEntity(
+    id = 0,
+    pair = pair,
+    openTime = Instant.fromEpochMilliseconds(openTime),
+    closeTime = Instant.fromEpochMilliseconds(closeTime),
+    trades = trades,
+    openPrice = openPrice,
+    closePrice = closePrice,
+    highPrice = highPrice,
+    lowPrice = lowPrice,
+    volume = volume
 )
