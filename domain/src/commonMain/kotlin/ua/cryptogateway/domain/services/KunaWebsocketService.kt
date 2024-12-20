@@ -15,6 +15,7 @@ import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
+@Deprecated("Use for testing only")
 @ApplicationScope
 @Inject
 class KunaWebsocketService(
