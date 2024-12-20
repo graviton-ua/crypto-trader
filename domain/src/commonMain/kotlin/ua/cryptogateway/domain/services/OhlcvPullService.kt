@@ -57,7 +57,11 @@ class OhlcvPullService(
                 .mapNotNull {
                     val channel = it.data.channel
                     when (val data = it.data.data) {
-                        is ChannelData.Ohlcv -> channel to data.data
+                        is ChannelData.Ohlcv -> {
+                            val pair = channel.split("@").firstOrNull() ?: channel
+                            pair to data.data
+                        }
+
                         else -> null
                     }
                 }
@@ -96,7 +100,7 @@ class OhlcvPullService(
 
 private fun ChannelData.Ohlcv.Data.toEntity(pair: String): OhlcvEntity = OhlcvEntity(
     id = 0,
-    pair = pair,
+    pair = pair.uppercase(),
     openTime = Instant.fromEpochMilliseconds(openTime),
     closeTime = Instant.fromEpochMilliseconds(closeTime),
     trades = trades,
