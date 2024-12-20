@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
-import ua.cryptogateway.connorsrsi.rsi
-import ua.cryptogateway.connorsrsi.streaks
+import ua.cryptogateway.connorsrsi.crsi
 import ua.cryptogateway.domain.interactors.PlaceBuyLimitOrders
 import ua.cryptogateway.domain.interactors.PlaceSellLimitOrders
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -34,17 +32,8 @@ class HomeViewModel(
             96650.0, 101090.0, 100010.0, 101370.0, 101320.0, 104340.0, 105870.0, 106020.0, 100110.0,
             97482.0,
         )
-        // RSI(Close,3)
-        val rsiCloseResult = measureTimedValue { prices.rsi(3) }.also { Log.info(tag = TAG) { "RSI Close Exec time: ${it.duration}" } }.value
-        for (i in rsiCloseResult.indices) {
-            println("${"%10.2f".format(prices[i])} | ${"%10.2f".format(rsiCloseResult[i])}")
-        }
 
-        val streaksResult = measureTimedValue { prices.streaks() }.also { Log.info(tag = TAG) { "UpDown Exec time: ${it.duration}" } }.value
-        val rsiStreakResult = measureTimedValue { streaksResult.rsi(2) }.also { Log.info(tag = TAG) { "RSI Streak Exec time: ${it.duration}" } }.value
-        for (i in rsiStreakResult.indices) {
-            println("${"%10.2f".format(prices[i])} | ${"%10.2f".format(streaksResult[i])} | ${"%10.2f".format(rsiStreakResult[i])}")
-        }
+        val result = measureTimedValue { prices.crsi(3, 2, 10) }.also { println("CRSI Exec time: ${it.duration}") }.value
     }
 
 
