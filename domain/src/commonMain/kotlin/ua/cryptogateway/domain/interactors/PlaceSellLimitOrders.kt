@@ -29,13 +29,11 @@ class PlaceSellLimitOrders(
         val configs = configsDao.getActive().filter { it.side == Order.Side.Sell }
 
         configs.forEach { config ->
-            val balance = balanceDao.getCurrency(currency = config.baseAsset)
-                .onFailure { Log.warn(it, TAG) { "Can't get balance from table for Currency = ${config.baseAsset}" } }
-                .getOrNull() ?: return@forEach
+            val balance = balanceDao.getCurrency(currency = config.baseAsset) ?: return@forEach
 
             if (balance.balance < config.minSize) return@forEach
 
-            val pairName = config.baseAsset + "_" + config.quoteAsset
+            val pairName = config.pair
             val book = api.getOrderBook(pairName, 5)
                 .onFailure { Log.warn(it, TAG) { "Can't get public orders book from Kuna API for Pair = $pairName" } }
                 .getOrNull() ?: return@forEach

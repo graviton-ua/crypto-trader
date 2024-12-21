@@ -84,7 +84,7 @@ class OhlcvPullService(
 
         data.filterNotNull()
             .map { (pair, data) -> data.toEntity(pair) }
-            .collectLatest { entity ->
+            .collect { entity ->
                 dao.save(entity)
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }

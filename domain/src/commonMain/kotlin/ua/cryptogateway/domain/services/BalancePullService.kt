@@ -2,21 +2,22 @@ package ua.cryptogateway.domain.services
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import saschpe.log4k.Log
-import saschpe.log4k.logged
 import ua.cryptogateway.data.db.dao.BalanceDao
 import ua.cryptogateway.data.db.models.BalanceEntity
 import ua.cryptogateway.data.web.api.KunaApi
 import ua.cryptogateway.data.web.models.KunaBalance
-import ua.cryptogateway.domain.DataPuller
+import ua.cryptogateway.data.web.sockets.ChannelData
+import ua.cryptogateway.data.web.sockets.KunaWebSocket
+import ua.cryptogateway.data.web.sockets.KunaWebSocket.Channel
+import ua.cryptogateway.data.web.sockets.KunaWebSocketResponse
 import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
 import ua.cryptogateway.util.AppCoroutineDispatchers
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 @ApplicationScope
 @Inject
@@ -24,12 +25,16 @@ class BalancePullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
+    private val webSocket: KunaWebSocket,
     private val dao: BalanceDao,
 ) : ServiceInitializer {
     private val dispatcher = dispatchers.io
-    private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
-    private val data = MutableStateFlow<List<KunaBalance>?>(null)
+    private val data = MutableSharedFlow<List<KunaBalance>?>(
+        replay = 0, // No replay; emit only new values
+        extraBufferCapacity = 100, // Buffer up to 100 messages
+        onBufferOverflow = BufferOverflow.DROP_OLDEST // Drop the oldest message if buffer is full
+    )
 
 
     init {
@@ -41,16 +46,30 @@ class BalancePullService(
     override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
-            Log.debug(tag = TAG) { "DataPuller job started" }
-            DataPuller().pull(delay.value) { api.getBalance() }
-                .mapNotNull { it.getOrNull() }
+            Log.debug(tag = TAG) { "Websocket job started" }
+
+            webSocket.subscribe(Channel.Accounts)  // Subscribe for all tickers
+
+            webSocket.flow()
+                .mapNotNull { result ->
+                    result
+                        .onFailure { Log.warn(tag = TAG, throwable = it) }
+                        .getOrNull()
+                }
+                .filterIsInstance(KunaWebSocketResponse.PublishMessage::class)
+                .map { it.data.data }
+                .filterIsInstance(ChannelData.Accounts::class)
                 .catch { Log.error(tag = TAG, throwable = it) }
                 .flowOn(dispatcher)
                 .collectLatest {
-                    data.value = it
-                    it.logged()
+                    data.tryEmit(it.data.assets.map { it.toEntity() })
                 }
-        }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
+        }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "Websocket job completed (exception: ${it?.message})" }; job = null } }
+
+        // On service start fetch initial balance
+        scope.launch(dispatcher) {
+            api.getBalance().onSuccess { data.tryEmit(it) }
+        }
     }
 
     override fun stop() {
@@ -64,9 +83,8 @@ class BalancePullService(
 
         data.filterNotNull()
             .map { it.map(KunaBalance::toEntity) }
-            .collectLatest { list ->
-                Result.runCatching { dao.save(list) }
-//                    .onSuccess { Log.info(tag = TAG) { "BalanceTable updated" } }
+            .collect { list ->
+                dao.save(list)
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 
@@ -79,3 +97,4 @@ class BalancePullService(
 }
 
 private fun KunaBalance.toEntity(): BalanceEntity = BalanceEntity(currency, balance, lockBalance, entire, timestamp)
+private fun ChannelData.Accounts.Data.Asset.toEntity(): KunaBalance = KunaBalance(asset, balance, lockBalance)

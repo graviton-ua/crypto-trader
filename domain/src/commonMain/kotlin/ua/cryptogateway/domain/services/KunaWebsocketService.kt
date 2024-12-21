@@ -53,6 +53,7 @@ class KunaWebsocketService(
                             is ChannelData.AggTrade -> Unit
                             is ChannelData.Ohlcv -> Unit
                             is ChannelData.Trade -> Unit
+                            is ChannelData.Accounts -> Unit
                         }
                     }
                 }

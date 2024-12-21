@@ -279,4 +279,26 @@ sealed interface ChannelData {
             val lastTradeId: String,
         )
     }
+
+
+    @Serializable
+    @SerialName("accounts")
+    data class Accounts(
+        val event: String,
+        val data: Data,
+    ) : ChannelData {
+
+        @Serializable
+        data class Data(
+            @SerialName("userId") val userId: String,
+            @SerialName("assets") val assets: List<Asset>,
+        ) {
+            @Serializable
+            data class Asset(
+                @SerialName("code") val asset: String,
+                @SerialName("balance") val balance: Double,
+                @SerialName("lockBalance") val lockBalance: Double,
+            )
+        }
+    }
 }

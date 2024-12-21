@@ -54,11 +54,20 @@ class KunaWebSocket(
                 when (it) {
                     is Frame.Text -> {
                         val text = it.readText()
-                        Log.debug(tag = TAG) { "Received: $text" }
-                        if (text.isEmpty()) {
-                            session.send("")
-                            return@collectLatest
+
+                        when {
+                            text.isEmpty() -> {
+                                session.send("")
+                                return@collectLatest
+                            }
+
+                            text.contains("rid") -> {
+                                /* We received confirmation of successful subscription etc, ignore it */
+                                return@collectLatest
+                            }
                         }
+
+                        Log.debug(tag = TAG) { "Received: $text" }
                         if (text.contains("disconnect")) close()
 
 
@@ -155,6 +164,9 @@ class KunaWebSocket(
         data class Ohlcv(val pair: String) : Channel("${pair.lowercase()}@ohlcv")
         data class Trade(val pair: String) : Channel("${pair.lowercase()}@trade")
         data class AggTrade(val pair: String) : Channel("${pair.lowercase()}@aggTrade")
+
+
+        data object Accounts : Channel("accounts")
     }
 
 

@@ -76,8 +76,8 @@ class TickersPullService(
 
         data.filterNotNull()
             .map { it.map(ChannelData.Ticker.Data::toEntity) }
-            .collectLatest { list ->
-                Result.runCatching { dao.save(list) }
+            .collect { list ->
+                dao.save(list)
                     .onFailure { Log.error(tag = TAG, throwable = it) }
             }
 

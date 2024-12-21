@@ -2,14 +2,15 @@ package ua.cryptogateway.domain
 
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
+import ua.cryptogateway.domain.services.BalancePullService
 import ua.cryptogateway.domain.services.OhlcvPullService
 import ua.cryptogateway.domain.services.ServiceInitializer
 import ua.cryptogateway.domain.services.TickersPullService
 
 interface DomainComponent {
-//    @Provides
-//    @IntoSet
-//    fun provideBalancePullService(impl: BalancePullService): ServiceInitializer = impl
+    @Provides
+    @IntoSet
+    fun provideBalancePullService(impl: BalancePullService): ServiceInitializer = impl
 
     @Provides
     @IntoSet

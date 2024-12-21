@@ -25,4 +25,6 @@ data class BotConfigEntity(
     val basePrec: Int,
     val quotePrec: Int,
     val active: Boolean,
-)
+) {
+    val pair: String = "${baseAsset}_${quoteAsset}"
+}
