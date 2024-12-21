@@ -38,6 +38,21 @@ class OhlcvDao(
             .mapOhlcvEntities()
     }
 
+    //SELECT *
+    //FROM ohlcv
+    //JOIN (
+    //    SELECT
+    //        pair,
+    //        closeTime,
+    //        MAX([timestamp]) AS timestamp
+    //    FROM ohlcv
+    //    WHERE pair = 'BTC_USDT'
+    //    GROUP BY pair, closeTime
+    //) AS LatestRows
+    //ON ohlcv.pair = LatestRows.pair
+    //   AND ohlcv.closeTime = LatestRows.closeTime
+    //   AND ohlcv.timestamp = LatestRows.timestamp
+    //ORDER BY ohlcv.closeTime ASC;
     /**
      * Retrieves all OHLCV (Open, High, Low, Close, Volume) records for the specified trading pair,
      * grouped by each minute and ordered by the close time. This method only includes the most
