@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
-import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.OhlcvDao
 import ua.cryptogateway.data.db.models.OhlcvEntity
 import ua.cryptogateway.data.web.sockets.ChannelData
@@ -16,6 +15,7 @@ import ua.cryptogateway.data.web.sockets.KunaWebSocket.Channel
 import ua.cryptogateway.data.web.sockets.KunaWebSocketResponse
 import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @ApplicationScope
@@ -43,7 +43,7 @@ class OhlcvPullService(
     override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
-            Log.debug(tag = TAG) { "Websocket job started" }
+            Log.debug { "Websocket job started" }
 
             webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))  // Subscribe for doge_usdt@ohlcv
 
@@ -70,7 +70,7 @@ class OhlcvPullService(
                 .collectLatest {
                     data.tryEmit(it)
                 }
-        }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "Websocket job completed (exception: ${it?.message})" }; job = null } }
+        }.also { it.invokeOnCompletion { Log.debug { "Websocket job completed (exception: ${it?.message})" }; job = null } }
     }
 
     override fun stop() {
@@ -80,7 +80,7 @@ class OhlcvPullService(
 
 
     private fun CoroutineScope.updateTable() = launch(dispatcher) {
-        Log.debug(tag = TAG) { "updateOhlcvTable() job started" }
+        Log.debug { "updateOhlcvTable() job started" }
 
         data.filterNotNull()
             .map { (pair, data) -> data.toEntity(pair) }
@@ -89,12 +89,7 @@ class OhlcvPullService(
                     .onFailure { Log.error(throwable = it) }
             }
 
-    }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateOhlcvTable() job completed (exception: ${it?.message})" } } }
-
-
-    companion object {
-        private const val TAG = "OhlcvPullService"
-    }
+    }.also { it.invokeOnCompletion { Log.debug { "updateOhlcvTable() job completed (exception: ${it?.message})" } } }
 }
 
 

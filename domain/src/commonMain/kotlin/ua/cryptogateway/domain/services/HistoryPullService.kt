@@ -38,7 +38,7 @@ class HistoryPullService(
     override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
-            Log.debug(tag = TAG) { "DataPuller job started" }
+            Log.debug { "DataPuller job started" }
             DataPuller().pull(delay.value) { api.geHistory() }
                 .mapNotNull { it.getOrNull() }
                 .catch { Log.error(throwable = it) }
@@ -46,7 +46,7 @@ class HistoryPullService(
                 .collectLatest {
                     data.value = it
                 }
-        }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
+        }.also { it.invokeOnCompletion { Log.debug { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
     }
 
     override fun stop() {
@@ -56,7 +56,7 @@ class HistoryPullService(
 
 
     private fun CoroutineScope.updateHistoryTable() = launch(dispatcher) {
-        Log.debug(tag = TAG) { "updateHistoryTable() job started" }
+        Log.debug { "updateHistoryTable() job started" }
 
         data
             .filterNotNull()
@@ -73,12 +73,7 @@ class HistoryPullService(
                     .onFailure { Log.error(throwable = it) }
             }
 
-    }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateHistoryTable() job completed (exception: ${it?.message})" } } }
-
-
-    companion object {
-        private const val TAG = "HistoryPullService"
-    }
+    }.also { it.invokeOnCompletion { Log.debug { "updateHistoryTable() job completed (exception: ${it?.message})" } } }
 }
 
 private fun KunaHistory.toEntity(): HistoryEntity =

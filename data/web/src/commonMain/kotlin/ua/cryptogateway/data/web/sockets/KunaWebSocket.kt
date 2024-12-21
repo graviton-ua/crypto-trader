@@ -36,20 +36,20 @@ class KunaWebSocket(
 
     fun flow(): Flow<Result<KunaWebSocketResponse>> = channelFlow {
         val session = client.webSocketSession("wss://ws-pro.kuna.io/socketcluster/")
-        Log.debug(tag = TAG) { "Connected to Kuna.SocketCluster server." }
+        Log.debug { "Connected to Kuna.SocketCluster server." }
 
         session.authenticate { session.close() }
 
         // Start
         launch(dispatcher) {
-            Log.debug(tag = TAG) { "Start listen for sending events" }
+            Log.debug { "Start listen for sending events" }
             eventChannel.collect {
                 session.sendEvent(it)
             }
         }
 
         launch(dispatcher) {
-            Log.debug(tag = TAG) { "Start listen for incoming frames" }
+            Log.debug { "Start listen for incoming frames" }
             session.incoming.receiveAsFlow().collectLatest {
                 when (it) {
                     is Frame.Text -> {
@@ -67,17 +67,17 @@ class KunaWebSocket(
                             }
                         }
 
-                        Log.debug(tag = TAG) { "Received: $text" }
+                        Log.debug { "Received: $text" }
                         if (text.contains("disconnect")) close()
 
 
                         val parsed = measureTimedValue {
                             val trimmed = text.replace(eventRegexp, "\"event\":\"")
-                            Log.debug(tag = TAG) { "Trimmed: $trimmed" }
+                            Log.debug { "Trimmed: $trimmed" }
                             Result.runCatching { json.decodeFromString<KunaWebSocketResponse>(trimmed) }
                         }
                         this@channelFlow.send(parsed.value)
-                        Log.debug(tag = TAG) { "Emit response[decoding: ${parsed.duration}]: ${parsed.value}" }
+                        Log.debug { "Emit response[decoding: ${parsed.duration}]: ${parsed.value}" }
                     }
 
                     else -> println("Unknown frame: $it")
@@ -95,7 +95,7 @@ class KunaWebSocket(
     private suspend fun WebSocketSession.sendEvent(event: KunaWebSocketEvent) {
         val s = measureTimedValue { json.encodeToString(event) }
         send(s.value)
-        Log.debug(tag = TAG) { "Sent event[encoding: ${s.duration}]: ${s.value}" }
+        Log.debug { "Sent event[encoding: ${s.duration}]: ${s.value}" }
     }
 
     private fun sendEvent(event: KunaWebSocketEvent) = eventChannel.tryEmit(event)
@@ -139,10 +139,5 @@ class KunaWebSocket(
 
 
         data object Accounts : Channel("accounts")
-    }
-
-
-    companion object {
-        private const val TAG = "KunaWebSocket"
     }
 }

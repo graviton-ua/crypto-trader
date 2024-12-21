@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
-import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.TickersDao
 import ua.cryptogateway.data.db.models.TickerEntity
 import ua.cryptogateway.data.web.models.KunaTicker
@@ -17,6 +16,7 @@ import ua.cryptogateway.data.web.sockets.KunaWebSocket.Channel
 import ua.cryptogateway.data.web.sockets.KunaWebSocketResponse
 import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @ApplicationScope
@@ -44,7 +44,7 @@ class TickersPullService(
     override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
-            Log.debug(tag = TAG) { "Websocket job started" }
+            Log.debug { "Websocket job started" }
 
             webSocket.subscribe(Channel.ArrTicker)  // Subscribe for all tickers
 
@@ -62,7 +62,7 @@ class TickersPullService(
                 .collectLatest {
                     data.tryEmit(it.data)
                 }
-        }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "Websocket job completed (exception: ${it?.message})" }; job = null } }
+        }.also { it.invokeOnCompletion { Log.debug { "Websocket job completed (exception: ${it?.message})" }; job = null } }
     }
 
     override fun stop() {
@@ -72,7 +72,7 @@ class TickersPullService(
 
 
     private fun CoroutineScope.updateTickersTable() = launch(dispatcher) {
-        Log.debug(tag = TAG) { "updateTickersTable() job started" }
+        Log.debug { "updateTickersTable() job started" }
 
         data.filterNotNull()
             .map { it.map(ChannelData.Ticker.Data::toEntity) }
@@ -81,12 +81,7 @@ class TickersPullService(
                     .onFailure { Log.error(throwable = it) }
             }
 
-    }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateTickersTable() job completed (exception: ${it?.message})" } } }
-
-
-    companion object {
-        private const val TAG = "TickersPullService"
-    }
+    }.also { it.invokeOnCompletion { Log.debug { "updateTickersTable() job completed (exception: ${it?.message})" } } }
 }
 
 private fun KunaTicker.toEntity(): TickerEntity = TickerEntity(pairName, priceHigh, priceAsk, priceBid, priceLow, priceLast, change, timestamp)

@@ -135,8 +135,4 @@ class PlaceSellLimitOrders(
     data object Params
 
     suspend operator fun invoke() = executeSync(Params)
-
-    companion object {
-        private const val TAG = "PlaceSellLimitOrders"
-    }
 }

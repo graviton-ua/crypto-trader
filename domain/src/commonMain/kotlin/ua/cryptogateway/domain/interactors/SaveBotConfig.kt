@@ -77,9 +77,4 @@ class SaveBotConfig(
         val quotePrec: Int,
         val active: Boolean,
     )
-
-
-    companion object {
-        private const val TAG = "SaveBotConfig"
-    }
 }

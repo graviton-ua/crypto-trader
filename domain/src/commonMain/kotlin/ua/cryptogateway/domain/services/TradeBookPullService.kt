@@ -40,7 +40,7 @@ class TradeBookPullService(
     override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
-            Log.debug(tag = TAG) { "DataPuller job started" }
+            Log.debug { "DataPuller job started" }
             DataPuller().pull(delay.value) {
                 // Fetch active pairs form KunaList table first and then use active tickers as input params for fetching TradesBookTable
                 val active = botConfigsDao.getActiveTickers()
@@ -64,7 +64,7 @@ class TradeBookPullService(
                 }
         }.also {
             it.invokeOnCompletion {
-                Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null
+                Log.debug { "DataPuller job completed (exception: ${it?.message})" }; job = null
             }
         }
     }
@@ -76,7 +76,7 @@ class TradeBookPullService(
 
 
     private fun CoroutineScope.updateTradesBookTable() = launch(dispatcher) {
-        Log.debug(tag = TAG) { "updateTradesBook() job started" }
+        Log.debug { "updateTradesBook() job started" }
 
         data
             .filterNotNull()
@@ -93,12 +93,7 @@ class TradeBookPullService(
                     .onFailure { Log.error(throwable = it) }
             }
 
-    }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateTradesBook() job completed (exception: ${it?.message})" } } }
-
-
-    companion object {
-        private const val TAG = "TradesBookPullService"
-    }
+    }.also { it.invokeOnCompletion { Log.debug { "updateTradesBook() job completed (exception: ${it?.message})" } } }
 }
 
 private fun KunaTradesBook.toEntity(): TradeBookEntity =

@@ -51,6 +51,8 @@ interface SharedApplicationComponent :
     val suspendedInitializers: AppSuspendedInitializers
     val services: ServiceInitializers
     val dispatchers: AppCoroutineDispatchers
+
+    val appScope: ApplicationCoroutineScope
     //val deepLinker: DeepLinker
 
     @OptIn(ExperimentalCoroutinesApi::class)

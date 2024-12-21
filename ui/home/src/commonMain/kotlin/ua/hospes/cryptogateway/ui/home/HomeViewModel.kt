@@ -35,9 +35,4 @@ class HomeViewModel(
 
         val result = measureTimedValue { prices.crsi(3, 2, 10) }.also { println("CRSI Exec time: ${it.duration}") }.value
     }
-
-
-    companion object {
-        private const val TAG = "HomeViewModel"
-    }
 }

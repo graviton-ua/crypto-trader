@@ -53,8 +53,4 @@ class SettingsViewModel(
     fun onLogLevelSelect(level: LogLevel) {
         viewModelScope.launch { setLogLevel.executeSync(level) }
     }
-
-    companion object {
-        private const val TAG = "SettingsViewModel"
-    }
 }

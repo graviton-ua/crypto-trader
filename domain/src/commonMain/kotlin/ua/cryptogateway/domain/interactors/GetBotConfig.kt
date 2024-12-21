@@ -47,9 +47,4 @@ class GetBotConfig(
             val side: Order.Side,
         ) : Params
     }
-
-
-    companion object {
-        private const val TAG = "SaveBotConfig"
-    }
 }

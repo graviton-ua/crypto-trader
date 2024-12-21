@@ -178,9 +178,4 @@ class ConfigEditViewModel(
             .onFailure { Log.warn(throwable = it) { "Failed while deleting config" } }
 
     }.also { it.invokeOnCompletion { _inProgress.value = false } }
-
-
-    companion object {
-        private const val TAG = "ConfigEditViewModel"
-    }
 }

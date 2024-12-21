@@ -57,16 +57,11 @@ class KunaWebsocketService(
                         }
                     }
                 }
-        }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "websocket job completed (exception: ${it?.message})" }; job = null } }
+        }.also { it.invokeOnCompletion { Log.debug { "websocket job completed (exception: ${it?.message})" }; job = null } }
     }
 
     override fun stop() {
         job?.cancel()
         job = null
-    }
-
-
-    companion object {
-        private const val TAG = "KunaWebsocketService"
     }
 }

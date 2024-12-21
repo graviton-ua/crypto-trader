@@ -38,7 +38,7 @@ class ActiveOrdersPullService(
     override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
-            Log.debug(tag = TAG) { "DataPuller job started" }
+            Log.debug { "DataPuller job started" }
             DataPuller().pull(delay.value) { api.getActiveOrders() }
                 .mapNotNull { it.getOrNull() }
                 .catch { Log.error(throwable = it) }
@@ -48,7 +48,7 @@ class ActiveOrdersPullService(
                 }
         }.also {
             it.invokeOnCompletion {
-                Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null
+                Log.debug { "DataPuller job completed (exception: ${it?.message})" }; job = null
             }
         }
     }
@@ -60,7 +60,7 @@ class ActiveOrdersPullService(
 
 
     private fun CoroutineScope.updateActiveTable() = launch(dispatcher) {
-        Log.debug(tag = TAG) { "updateActiveTable() job started" }
+        Log.debug { "updateActiveTable() job started" }
 
         data.filterNotNull()
             .map { it.map(KunaActiveOrder::toEntity) }
@@ -70,12 +70,7 @@ class ActiveOrdersPullService(
                     .onFailure { Log.error(throwable = it) }
             }
 
-    }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateActiveTable() job completed (exception: ${it?.message})" } } }
-
-
-    companion object {
-        private const val TAG = "ActivePullService"
-    }
+    }.also { it.invokeOnCompletion { Log.debug { "updateActiveTable() job completed (exception: ${it?.message})" } } }
 }
 
 private fun KunaActiveOrder.toEntity(): OrderEntity = OrderEntity(

@@ -93,11 +93,6 @@ class CreateOrder(
             override val type: Order.Type = Order.Type.Market
         }
     }
-
-
-    companion object {
-        private const val TAG = "CreateOrder"
-    }
 }
 
 internal fun KunaOrder.toEntity(): OrderEntity {

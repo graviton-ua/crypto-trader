@@ -68,9 +68,4 @@ class UpdateOrder(
         val price: String,
         val quantity: String,
     )
-
-
-    companion object {
-        private const val TAG = "CreateOrder"
-    }
 }

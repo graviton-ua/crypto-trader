@@ -36,9 +36,4 @@ class ConfigsViewModel(
 
 
     fun refreshList() = viewModelScope.launch { observeBotConfigs.silentRefresh() }.let { }
-
-
-    companion object {
-        private const val TAG = "ConfigsViewModel"
-    }
 }
