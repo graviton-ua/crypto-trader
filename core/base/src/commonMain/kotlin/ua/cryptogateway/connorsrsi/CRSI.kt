@@ -25,7 +25,7 @@ fun List<Double>.crsi(close: Int, streak: Int, percentRank: Int): List<Double> {
     // Allocate same size (as original) list with CRSI and prefilled 0.0 as initial values
     val crsi = MutableList<Double>(this.size) { 0.0 }
     println(
-        "${"%12s".format("price")} | " +
+        "${"%6s".format("index")} | ${"%12s".format("price")} | " +
                 "${"%12s".format("RSI(close)")} | " +
                 "${"%12s".format("RSI(streak)")} | " +
                 "${"%12s".format("PercentRank")} | " +
@@ -34,7 +34,7 @@ fun List<Double>.crsi(close: Int, streak: Int, percentRank: Int): List<Double> {
     for (i in this.indices) {
         crsi[i] = (rsiCloseResult[i] + rsiStreakResult[i] + percentRankResult[i]) / 3
         println(
-            "${"%12.2f".format(this[i])} | " +
+            "${"%6d".format(i)} | ${"%12.2f".format(this[i])} | " +
                     "${"%12.2f".format(rsiCloseResult[i])} | " +
                     "${"%12.2f".format(rsiStreakResult[i])} | " +
                     "${"%12.2f".format(percentRankResult[i])} | " +

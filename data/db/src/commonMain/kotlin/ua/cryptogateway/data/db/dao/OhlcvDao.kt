@@ -1,10 +1,7 @@
 package ua.cryptogateway.data.db.dao
 
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Query
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.upsert
+import org.jetbrains.exposed.sql.*
 import ua.cryptogateway.data.db.models.OhlcvEntity
 import ua.cryptogateway.data.db.schema.BotConfigsSchema
 import ua.cryptogateway.data.db.schema.OhlcvSchema
@@ -38,6 +35,44 @@ class OhlcvDao(
     suspend fun getAll(pair: String) = dbQuery {
         OhlcvSchema.selectAll()
             .where { OhlcvSchema.pair eq pair }
+            .mapOhlcvEntities()
+    }
+
+    /**
+     * Retrieves all OHLCV (Open, High, Low, Close, Volume) records for the specified trading pair,
+     * grouped by each minute and ordered by the close time. This method only includes the most
+     * recent record for each minute based on the timestamp.
+     *
+     * @param pair The trading pair for which to retrieve the records (e.g., "BTC_USD").
+     */
+    suspend fun getAllClosedForEachMinute(pair: String) = dbQuery {
+        val latestRows = OhlcvSchema
+            .select(
+                OhlcvSchema.pair,
+                OhlcvSchema.closeTime,
+                OhlcvSchema.timestamp.max().alias("timestamp")
+            )
+            .where { OhlcvSchema.pair eq pair }
+            .groupBy(OhlcvSchema.pair, OhlcvSchema.closeTime)
+            .alias("LatestRows")
+
+        // Define aliased columns
+        val latestPairColumn = latestRows[OhlcvSchema.pair]
+        val latestCloseTimeColumn = latestRows[OhlcvSchema.closeTime]
+        val maxTimestampColumn = latestRows[OhlcvSchema.timestamp]
+
+        // Main query joining with the subquery
+        OhlcvSchema
+            .join(
+                latestRows, JoinType.INNER,
+                additionalConstraint = {
+                    (OhlcvSchema.pair eq latestPairColumn) and
+                    (OhlcvSchema.closeTime eq latestCloseTimeColumn) and
+                            (OhlcvSchema.timestamp eq maxTimestampColumn)
+                }
+            )
+            .selectAll()
+            .orderBy(OhlcvSchema.closeTime to SortOrder.ASC)
             .mapOhlcvEntities()
     }
 
