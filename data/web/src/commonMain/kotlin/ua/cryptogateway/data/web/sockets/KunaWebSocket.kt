@@ -36,7 +36,7 @@ class KunaWebSocket(
 
     fun flow(): Flow<Result<KunaWebSocketResponse>> = channelFlow {
         val session = client.webSocketSession("wss://ws-pro.kuna.io/socketcluster/")
-        Log.info(tag = TAG) { "Connected to Kuna.SocketCluster server." }
+        Log.debug(tag = TAG) { "Connected to Kuna.SocketCluster server." }
 
         session.authenticate { session.close() }
 
@@ -108,51 +108,23 @@ class KunaWebSocket(
 
 
     private suspend fun DefaultClientWebSocketSession.authenticate(closeSocket: suspend () -> Unit) {
+        // Step 1: Send Handshake event
         val handshakeCid = cid.getAndIncrement()
         sendEvent(KunaWebSocketEvent.Handshake(cid = handshakeCid))
 
-        //TODO: Refactor it to have proper response handling
-        // Step 2: Wait for Handshake Response
-        var handshakeSuccessful = false
-        for (frame in incoming) {
-            if (frame is Frame.Text) {
-                val response = frame.readText()
-                println("Received: $response")
+        // Step 2: Wait for Handshake response
+        incoming.receiveAsFlow().filterIsInstance<Frame.Text>().firstOrNull { frame ->
+            frame.readText().contains("\"rid\":$handshakeCid")
+        } ?: Log.warn(tag = TAG) { "Handshake failed. Cannot authenticate." }; closeSocket(); return
 
-                if (response.contains("\"rid\":$handshakeCid")) {
-                    println("Handshake successful.")
-                    handshakeSuccessful = true
-                    break
-                }
-            }
-        }
-
-        // Step 3: Send Authentication Event
+        // Step 3: Send Authentication event
         val authCid = cid.getAndIncrement()
-        if (handshakeSuccessful) {
-            sendEvent(KunaWebSocketEvent.Login(apiKey = BuildConfig.KUNA_API_KEY, cid = authCid))
-        } else {
-            println("Handshake failed. Cannot authenticate.")
-            closeSocket()
-            return
-        }
+        sendEvent(KunaWebSocketEvent.Login(apiKey = BuildConfig.KUNA_API_KEY, cid = authCid))
 
-        // Step 4: Wait for Handshake Response
-        var authenticated = false
-        for (frame in incoming) {
-            if (frame is Frame.Text) {
-                val response = frame.readText()
-                println("Received: $response")
-
-                if (response.contains("\"rid\":$authCid")) {
-                    println("Authenticated successful.")
-                    authenticated = true
-                    break
-                }
-            }
-        }
-
-        if (!authenticated) closeSocket()
+        // Step 4: Wait for Authentication response
+        incoming.receiveAsFlow().filterIsInstance<Frame.Text>().firstOrNull { frame ->
+            frame.readText().contains("\"rid\":$authCid")
+        } ?: Log.warn(tag = TAG) { "Authentication failed. Cannot proceed." }; closeSocket(); return
     }
 
 
