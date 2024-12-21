@@ -62,7 +62,7 @@ exposed-kotlin-datetime = { group = "org.jetbrains.exposed", name="exposed-kotli
 # Multiplatform logging
 log4k = { group = "de.peilicke.sascha", name="log4k", version.ref = "log4k" }
 log4k-slf4j = { group = "de.peilicke.sascha", name="log4k-slf4j", version.ref = "log4k" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.12" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.13" }
 
 multiplatformsettings-core = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformsettings" }
 multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformsettings" }

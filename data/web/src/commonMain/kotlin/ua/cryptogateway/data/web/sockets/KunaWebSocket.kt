@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
-import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.web.BuildConfig
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.util.AppCoroutineDispatchers
 import kotlin.time.measureTimedValue
 
@@ -113,18 +113,30 @@ class KunaWebSocket(
         sendEvent(KunaWebSocketEvent.Handshake(cid = handshakeCid))
 
         // Step 2: Wait for Handshake response
-        incoming.receiveAsFlow().filterIsInstance<Frame.Text>().firstOrNull { frame ->
+        val handshakeResult = incoming.receiveAsFlow().filterIsInstance<Frame.Text>().firstOrNull { frame ->
             frame.readText().contains("\"rid\":$handshakeCid")
-        } ?: Log.warn { "Handshake failed. Cannot authenticate." }; closeSocket(); return
+        }
+
+        if (handshakeResult == null) {
+            Log.warn { "Handshake failed. Cannot proceed." }
+            closeSocket()
+            return
+        } else Log.warn { "Success handshake" }
 
         // Step 3: Send Authentication event
         val authCid = cid.getAndIncrement()
         sendEvent(KunaWebSocketEvent.Login(apiKey = BuildConfig.KUNA_API_KEY, cid = authCid))
 
         // Step 4: Wait for Authentication response
-        incoming.receiveAsFlow().filterIsInstance<Frame.Text>().firstOrNull { frame ->
+        val authResult = incoming.receiveAsFlow().filterIsInstance<Frame.Text>().firstOrNull { frame ->
             frame.readText().contains("\"rid\":$authCid")
-        } ?: Log.warn { "Authentication failed. Cannot proceed." }; closeSocket(); return
+        }
+
+        if (authResult == null) {
+            Log.warn { "Authentication failed. Cannot proceed." }
+            closeSocket()
+            return
+        } else Log.warn { "Success authentication" }
     }
 
 
