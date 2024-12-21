@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.cancel
 import ua.cryptogateway.inject.DesktopApplicationComponent
 import ua.cryptogateway.inject.WindowComponent
 import ua.cryptogateway.inject.create
@@ -32,7 +33,7 @@ fun main() {
     val applicationComponent = DesktopApplicationComponent.create()
     applicationComponent.initializers.initialize()
 
-    application {
+    application(exitProcessOnExit = false) {
         val initializationCompleted = remember { mutableStateOf(false) }
 
         LaunchedEffect(applicationComponent) {
@@ -46,6 +47,11 @@ fun main() {
                 services.start()
                 onDispose { services.stop() }
             }
+
+        val appScope = applicationComponent.appScope
+        DisposableEffect(appScope) {
+            onDispose { appScope.cancel(null) }
+        }
 
         Window(
             state = rememberWindowState(size = DpSize(1300.dp, 660.dp)),
