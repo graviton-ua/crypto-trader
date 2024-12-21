@@ -5,8 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
-import saschpe.log4k.logged
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.models.OrderEntity
 import ua.cryptogateway.data.web.api.KunaApi
@@ -42,11 +41,10 @@ class ActiveOrdersPullService(
             Log.debug(tag = TAG) { "DataPuller job started" }
             DataPuller().pull(delay.value) { api.getActiveOrders() }
                 .mapNotNull { it.getOrNull() }
-                .catch { Log.error(tag = TAG, throwable = it) }
+                .catch { Log.error(throwable = it) }
                 .flowOn(dispatcher)
                 .collectLatest {
                     data.value = it
-                    it.logged()
                 }
         }.also {
             it.invokeOnCompletion {
@@ -68,8 +66,8 @@ class ActiveOrdersPullService(
             .map { it.map(KunaActiveOrder::toEntity) }
             .collectLatest { list ->
                 Result.runCatching { dao.saveActive(list) }
-//                    .onSuccess { Log.info(tag = TAG) { "ActiveTable updated" } }
-                    .onFailure { Log.error(tag = TAG, throwable = it) }
+//                    .onSuccess { Log.info { "ActiveTable updated" } }
+                    .onFailure { Log.error(throwable = it) }
             }
 
     }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateActiveTable() job completed (exception: ${it?.message})" } } }

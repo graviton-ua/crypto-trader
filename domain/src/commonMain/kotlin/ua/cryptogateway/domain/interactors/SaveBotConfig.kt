@@ -2,7 +2,7 @@ package ua.cryptogateway.domain.interactors
 
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.BotConfigsDao
 import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.domain.ResultInteractor
@@ -35,8 +35,8 @@ class SaveBotConfig(
             quotePrec = params.quotePrec,
             active = params.active,
         )
-            .onSuccess { Log.info(tag = TAG) { "Config saved: $params" } }
-            .onFailure { Log.error(tag = TAG, throwable = it) { "Config wasn't saved" } }
+            .onSuccess { Log.info { "Config saved: $params" } }
+            .onFailure { Log.error(throwable = it) { "Config wasn't saved" } }
             .map { }
     }
 

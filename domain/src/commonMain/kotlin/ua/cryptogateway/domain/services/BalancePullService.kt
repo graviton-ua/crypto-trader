@@ -6,7 +6,6 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
 import ua.cryptogateway.data.db.dao.BalanceDao
 import ua.cryptogateway.data.db.models.BalanceEntity
 import ua.cryptogateway.data.web.api.KunaApi
@@ -17,6 +16,7 @@ import ua.cryptogateway.data.web.sockets.KunaWebSocket.Channel
 import ua.cryptogateway.data.web.sockets.KunaWebSocketResponse
 import ua.cryptogateway.inject.ApplicationCoroutineScope
 import ua.cryptogateway.inject.ApplicationScope
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @ApplicationScope
@@ -46,25 +46,25 @@ class BalancePullService(
     override fun start() {
         if (job != null) return
         job = scope.launch(dispatcher) {
-            Log.debug(tag = TAG) { "Websocket job started" }
+            Log.debug { "Websocket job started" }
 
             webSocket.subscribe(Channel.Accounts)  // Subscribe for all tickers
 
             webSocket.flow()
                 .mapNotNull { result ->
                     result
-                        .onFailure { Log.warn(tag = TAG, throwable = it) }
+                        .onFailure { Log.warn(throwable = it) }
                         .getOrNull()
                 }
                 .filterIsInstance(KunaWebSocketResponse.PublishMessage::class)
                 .map { it.data.data }
                 .filterIsInstance(ChannelData.Accounts::class)
-                .catch { Log.error(tag = TAG, throwable = it) }
+                .catch { Log.error(throwable = it) }
                 .flowOn(dispatcher)
                 .collectLatest {
                     data.tryEmit(it.data.assets.map { it.toEntity() })
                 }
-        }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "Websocket job completed (exception: ${it?.message})" }; job = null } }
+        }.also { it.invokeOnCompletion { Log.debug { "Websocket job completed (exception: ${it?.message})" }; job = null } }
 
         // On service start fetch initial balance
         scope.launch(dispatcher) {
@@ -79,21 +79,16 @@ class BalancePullService(
 
 
     private fun CoroutineScope.updateBalanceTable() = launch(dispatcher) {
-        Log.debug(tag = TAG) { "updateTickersTable() job started" }
+        Log.debug { "updateTickersTable() job started" }
 
         data.filterNotNull()
             .map { it.map(KunaBalance::toEntity) }
             .collect { list ->
                 dao.save(list)
-                    .onFailure { Log.error(tag = TAG, throwable = it) }
+                    .onFailure { Log.error(throwable = it) }
             }
 
-    }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateTickersTable() job completed (exception: ${it?.message})" } } }
-
-
-    companion object {
-        private const val TAG = "BalancePullService"
-    }
+    }.also { it.invokeOnCompletion { Log.debug { "updateTickersTable() job completed (exception: ${it?.message})" } } }
 }
 
 private fun KunaBalance.toEntity(): BalanceEntity = BalanceEntity(currency, balance, lockBalance, entire, timestamp)

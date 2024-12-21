@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.OhlcvDao
 import ua.cryptogateway.data.db.models.OhlcvEntity
 import ua.cryptogateway.data.web.sockets.ChannelData
@@ -50,7 +50,7 @@ class OhlcvPullService(
             webSocket.flow()
                 .mapNotNull { result ->
                     result
-                        .onFailure { Log.warn(tag = TAG, throwable = it) }
+                        .onFailure { Log.warn(throwable = it) }
                         .getOrNull()
                 }
                 .filterIsInstance(KunaWebSocketResponse.PublishMessage::class)
@@ -65,7 +65,7 @@ class OhlcvPullService(
                         else -> null
                     }
                 }
-                .catch { Log.error(tag = TAG, throwable = it) }
+                .catch { Log.error(throwable = it) }
                 .flowOn(dispatcher)
                 .collectLatest {
                     data.tryEmit(it)
@@ -86,7 +86,7 @@ class OhlcvPullService(
             .map { (pair, data) -> data.toEntity(pair) }
             .collect { entity ->
                 dao.save(entity)
-                    .onFailure { Log.error(tag = TAG, throwable = it) }
+                    .onFailure { Log.error(throwable = it) }
             }
 
     }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateOhlcvTable() job completed (exception: ${it?.message})" } } }

@@ -9,7 +9,35 @@
         </encoder>
     </appender>
 
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory> <!-- Keep logs for 7 days -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %-20.20logger{0} : %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
     <root level="debug">
         <appender-ref ref="CONSOLE" />
     </root>
+
+    <logger name="ua.cryptogateway" level="debug" additivity="true">
+        <appender-ref ref="ROLLING" />
+    </logger>
+
+    <logger name="io.ktor.client" level="debug" additivity="true">
+        <appender-ref ref="ROLLING" />
+    </logger>
+
+    <logger name="com.zaxxer.hikari" level="debug" additivity="true">
+        <appender-ref ref="ROLLING" />
+    </logger>
+
+    <logger name="Exposed" level="debug" additivity="true">
+        <appender-ref ref="ROLLING" />
+    </logger>
 </configuration>

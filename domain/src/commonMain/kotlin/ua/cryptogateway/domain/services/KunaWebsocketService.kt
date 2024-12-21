@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.web.sockets.ChannelData
 import ua.cryptogateway.data.web.sockets.KunaWebSocket
 import ua.cryptogateway.data.web.sockets.KunaWebSocket.Channel
@@ -36,8 +36,8 @@ class KunaWebsocketService(
             webSocket.flow()
                 .mapNotNull { result ->
                     result
-                        .onSuccess { Log.info(tag = TAG) { "Websocket response: $it" } }
-                        .onFailure { Log.warn(tag = TAG, throwable = it) }
+                        .onSuccess { Log.info { "Websocket response: $it" } }
+                        .onFailure { Log.warn(throwable = it) }
                         .getOrNull()
                 }
                 .filterIsInstance(KunaWebSocketResponse.PublishMessage::class)

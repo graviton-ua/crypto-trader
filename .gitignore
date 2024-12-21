@@ -83,3 +83,4 @@ screenshots/**/*.png
 test_output
 
 *.env*
+/composeApp/logs

@@ -5,8 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
-import saschpe.log4k.logged
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.BotConfigsDao
 import ua.cryptogateway.data.db.dao.TradeBookDao
 import ua.cryptogateway.data.db.models.TradeBookEntity
@@ -45,24 +44,23 @@ class TradeBookPullService(
             DataPuller().pull(delay.value) {
                 // Fetch active pairs form KunaList table first and then use active tickers as input params for fetching TradesBookTable
                 val active = botConfigsDao.getActiveTickers()
-//                Log.info(tag = TAG) { "Active tickers: $active" }
+//                Log.info { "Active tickers: $active" }
                 active.flatMap { pair ->
                     api.getTradesBook(pair, 1)
 //                        .onSuccess { value ->
-//                            Log.info(tag = TAG) { "getTradesBook: $value" }
+//                            Log.info { "getTradesBook: $value" }
 //                        }
                         .onFailure { exception ->
-                            Log.error(tag = TAG, throwable = exception) { "getTradesBook: Some error happen" }
+                            Log.error(throwable = exception) { "getTradesBook: Some error happen" }
                         }
                         .getOrDefault(emptyList())
                 }.ifEmpty { null }
             }
                 .filterNotNull()
-                .catch { Log.error(tag = TAG, throwable = it) }
+                .catch { Log.error(throwable = it) }
                 .flowOn(dispatcher)
                 .collectLatest {
                     data.value = it
-                    it.logged()
                 }
         }.also {
             it.invokeOnCompletion {
@@ -83,16 +81,16 @@ class TradeBookPullService(
         data
             .filterNotNull()
 //            .also {
-//                Log.info(tag = TAG) { "Flow: $it" }
+//                Log.info { "Flow: $it" }
 //            }
             .map { it ->
-//                Log.info(tag = TAG) { "List: $it" }
+//                Log.info { "List: $it" }
                 it.map(KunaTradesBook::toEntity)
             }
             .collectLatest { list ->
                 daoTradeBook.save(list)
-//                    .onSuccess { Log.info(tag = TAG) { "TradesBook updated" } }
-                    .onFailure { Log.error(tag = TAG, throwable = it) }
+//                    .onSuccess { Log.info { "TradesBook updated" } }
+                    .onFailure { Log.error(throwable = it) }
             }
 
     }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateTradesBook() job completed (exception: ${it?.message})" } } }

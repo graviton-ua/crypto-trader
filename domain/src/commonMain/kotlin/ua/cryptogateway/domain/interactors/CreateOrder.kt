@@ -2,7 +2,7 @@ package ua.cryptogateway.domain.interactors
 
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.OrderDao
 import ua.cryptogateway.data.db.models.OrderEntity
 import ua.cryptogateway.data.models.Order
@@ -42,19 +42,19 @@ class CreateOrder(
 
         val newOrder = api.createOrder(request = newOrderRequest)
             .onSuccess {
-                Log.info(tag = TAG) { "New order created: $it" }
+                Log.info { "New order created: $it" }
             }
             .onFailure {
-                Log.error(tag = TAG, throwable = it) { "Creation of new order failed" }
+                Log.error(throwable = it) { "Creation of new order failed" }
             }
             .getOrNull() ?: return@withContext Result.failure(IllegalStateException("We didn't get order object"))
 
         return@withContext dao.save(newOrder.toEntity())
             .onSuccess {
-                Log.info(tag = TAG) { "New order saved to database: $it" }
+                Log.info { "New order saved to database: $it" }
             }
             .onFailure {
-                Log.error(tag = TAG, throwable = it) { "New order wasn't saved" }
+                Log.error(throwable = it) { "New order wasn't saved" }
             }
             .map { }
     }

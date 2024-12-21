@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.TickersDao
 import ua.cryptogateway.data.db.models.TickerEntity
 import ua.cryptogateway.data.web.models.KunaTicker
@@ -51,13 +51,13 @@ class TickersPullService(
             webSocket.flow()
                 .mapNotNull { result ->
                     result
-                        .onFailure { Log.warn(tag = TAG, throwable = it) }
+                        .onFailure { Log.warn(throwable = it) }
                         .getOrNull()
                 }
                 .filterIsInstance(KunaWebSocketResponse.PublishMessage::class)
                 .map { it.data.data }
                 .filterIsInstance(ChannelData.ArrTicker::class)
-                .catch { Log.error(tag = TAG, throwable = it) }
+                .catch { Log.error(throwable = it) }
                 .flowOn(dispatcher)
                 .collectLatest {
                     data.tryEmit(it.data)
@@ -78,7 +78,7 @@ class TickersPullService(
             .map { it.map(ChannelData.Ticker.Data::toEntity) }
             .collect { list ->
                 dao.save(list)
-                    .onFailure { Log.error(tag = TAG, throwable = it) }
+                    .onFailure { Log.error(throwable = it) }
             }
 
     }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateTickersTable() job completed (exception: ${it?.message})" } } }

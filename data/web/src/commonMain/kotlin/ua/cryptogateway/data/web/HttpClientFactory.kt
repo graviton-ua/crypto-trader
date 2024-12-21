@@ -11,7 +11,7 @@ import io.ktor.serialization.kotlinx.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
+import ua.cryptogateway.logs.Log
 
 @Inject
 class HttpClientFactory {
@@ -31,7 +31,7 @@ class HttpClientFactory {
         install(Logging) {
             level = LogLevel.ALL
             logger = object : Logger {
-                override fun log(message: String) = Log.debug(tag = "HttpClient") { message }
+                override fun log(message: String) = Log.debug(tag = HttpClient::class.qualifiedName ?: "HttpClient") { message }
             }
         }
         install(WebSockets) {

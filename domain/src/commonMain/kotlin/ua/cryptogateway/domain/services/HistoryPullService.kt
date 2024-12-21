@@ -5,8 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
-import saschpe.log4k.logged
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.HistoryDao
 import ua.cryptogateway.data.db.models.HistoryEntity
 import ua.cryptogateway.data.web.api.KunaApi
@@ -42,11 +41,10 @@ class HistoryPullService(
             Log.debug(tag = TAG) { "DataPuller job started" }
             DataPuller().pull(delay.value) { api.geHistory() }
                 .mapNotNull { it.getOrNull() }
-                .catch { Log.error(tag = TAG, throwable = it) }
+                .catch { Log.error(throwable = it) }
                 .flowOn(dispatcher)
                 .collectLatest {
                     data.value = it
-                    it.logged()
                 }
         }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
     }
@@ -63,16 +61,16 @@ class HistoryPullService(
         data
             .filterNotNull()
             .also {
-                Log.info(tag = TAG) { "Flow: $it" }
+                Log.info { "Flow: $it" }
             }
             .map { it ->
-                Log.info(tag = TAG) { "List: $it" }
+                Log.info { "List: $it" }
                 it.map(KunaHistory::toEntity)
             }
             .collectLatest { list ->
                 daoHistory.save(list)
-                    .onSuccess { Log.info(tag = TAG) { "History updated" } }
-                    .onFailure { Log.error(tag = TAG, throwable = it) }
+                    .onSuccess { Log.info { "History updated" } }
+                    .onFailure { Log.error(throwable = it) }
             }
 
     }.also { it.invokeOnCompletion { Log.debug(tag = TAG) { "updateHistoryTable() job completed (exception: ${it?.message})" } } }

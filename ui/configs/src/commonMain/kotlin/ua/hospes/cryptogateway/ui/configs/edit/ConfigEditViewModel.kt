@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.domain.interactors.DeleteBotConfig
 import ua.cryptogateway.domain.interactors.GetBotConfig
@@ -164,7 +164,7 @@ class ConfigEditViewModel(
             active = _active.value,
         )
             .onSuccess { _events.emit(ConfigEditViewEvent.ConfigSaved) }
-            .onFailure { Log.warn(tag = TAG, throwable = it) { "Failed while saving config" } }
+            .onFailure { Log.warn(throwable = it) { "Failed while saving config" } }
 
     }.also { it.invokeOnCompletion { _inProgress.value = false } }
 
@@ -175,7 +175,7 @@ class ConfigEditViewModel(
             id = config.value?.id ?: configId.value ?: return@launch,
         )
             .onSuccess { _events.emit(ConfigEditViewEvent.ConfigSaved) }
-            .onFailure { Log.warn(tag = TAG, throwable = it) { "Failed while deleting config" } }
+            .onFailure { Log.warn(throwable = it) { "Failed while deleting config" } }
 
     }.also { it.invokeOnCompletion { _inProgress.value = false } }
 

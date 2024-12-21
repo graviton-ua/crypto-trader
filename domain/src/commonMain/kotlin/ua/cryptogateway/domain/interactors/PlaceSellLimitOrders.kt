@@ -2,7 +2,7 @@ package ua.cryptogateway.domain.interactors
 
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import saschpe.log4k.Log
+import ua.cryptogateway.logs.Log
 import ua.cryptogateway.data.db.dao.BalanceDao
 import ua.cryptogateway.data.db.dao.BotConfigsDao
 import ua.cryptogateway.data.db.dao.OrderDao
@@ -35,12 +35,12 @@ class PlaceSellLimitOrders(
 
             val pairName = config.pair
             val book = api.getOrderBook(pairName, 5)
-                .onFailure { Log.warn(it, TAG) { "Can't get public orders book from Kuna API for Pair = $pairName" } }
+                .onFailure { Log.warn(it) { "Can't get public orders book from Kuna API for Pair = $pairName" } }
                 .getOrNull() ?: return@forEach
             val bookPrice = book.bids.minBy { it.price }.price
 
             val activeOrders = orderDao.get(side = Order.Side.Sell)
-                .onFailure { Log.warn(it, TAG) { "Can't get active orders from table" } }
+                .onFailure { Log.warn(it) { "Can't get active orders from table" } }
                 .getOrNull() ?: return@forEach
             when {
                 // We have not enough balance, quit
@@ -122,13 +122,13 @@ class PlaceSellLimitOrders(
                 Order.Type.Limit, Order.Side.Sell, pair, price, quantity
             )
         }
-        Log.info(tag = TAG) {
+        Log.info {
             "Orders to create on web:\n" + requests.joinToString("\n")
         }
 
         requests.forEach {
 //            api.createOrder(newOrder)
-//                .onFailure { Log.warn(it, TAG) { "Order wasn't created" } }
+//                .onFailure { Log.warn(it) { "Order wasn't created" } }
         }
     }
 
