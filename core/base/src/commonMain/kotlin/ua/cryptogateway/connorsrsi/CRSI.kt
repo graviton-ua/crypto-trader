@@ -32,7 +32,7 @@ fun List<Double>.crsi(close: Int, streak: Int, percentRank: Int): List<Double> {
                 "%12s".format("CRSI")
     )
     for (i in this.indices) {
-        crsi[i] = (rsiCloseResult[i] + rsiStreakResult[i] + percentRankResult[i]) / close
+        crsi[i] = (rsiCloseResult[i] + rsiStreakResult[i] + percentRankResult[i]) / 3
         println(
             "${"%12.2f".format(this[i])} | " +
                     "${"%12.2f".format(rsiCloseResult[i])} | " +
