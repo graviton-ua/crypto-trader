@@ -121,7 +121,7 @@ class KunaWebSocket(
             Log.warn { "Handshake failed. Cannot proceed." }
             closeSocket()
             return
-        } else Log.warn { "Success handshake" }
+        } else Log.debug { "Success handshake" }
 
         // Step 3: Send Authentication event
         val authCid = cid.getAndIncrement()
@@ -136,7 +136,7 @@ class KunaWebSocket(
             Log.warn { "Authentication failed. Cannot proceed." }
             closeSocket()
             return
-        } else Log.warn { "Success authentication" }
+        } else Log.debug { "Success authentication" }
     }
 
 

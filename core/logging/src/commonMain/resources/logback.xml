@@ -7,6 +7,9 @@
                 %d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %-20.20logger{0} : %msg%n
             </pattern>
         </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level> <!-- Only show INFO and higher logs in console -->
+        </filter>
     </appender>
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">

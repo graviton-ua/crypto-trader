@@ -1,7 +1,9 @@
 package ua.cryptogateway.logs
 
 import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.filter.ThresholdFilter
+import ch.qos.logback.core.ConsoleAppender
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
@@ -21,12 +23,37 @@ class LogbackInitializer(
     private val dispatcher = dispatchers.io
 
     override fun initialize() {
-        val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
         scope.launch(dispatcher) {
             prefs.loglevel.flow
-                .collectLatest { value -> rootLogger.level = value.toLogLevel() }
+                .collectLatest { value ->
+                    updateConsoleThreshold(value.toLogLevel().levelStr)
+                }
         }
     }
+}
+
+private fun updateConsoleThreshold(level: String) {
+    val context = LoggerFactory.getILoggerFactory() as LoggerContext
+    val rootLogger = context.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME)
+
+    // Find the ConsoleAppender
+    val consoleAppender = rootLogger.getAppender("CONSOLE") as? ConsoleAppender<*>
+        ?: throw IllegalStateException("Console appender not found")
+
+    // Find or add a ThresholdFilter
+    val filter = consoleAppender.copyOfAttachedFiltersList
+        .filterIsInstance<ThresholdFilter>()
+        .firstOrNull() ?: return//ThresholdFilter().also { consoleAppender.addFilter(it) }
+
+    // Update the filter level
+    filter.setLevel(level)
+    filter.start() // Restart the filter
+
+    // Restart the appender
+    consoleAppender.stop()
+    consoleAppender.start()
+
+    println("Updated console logging threshold to: $level")
 }
 
 private fun LogLevel.toLogLevel(): Level = when (this) {
