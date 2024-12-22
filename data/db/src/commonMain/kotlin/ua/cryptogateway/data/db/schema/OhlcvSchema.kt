@@ -4,7 +4,7 @@ import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object OhlcvSchema : Table("dbo.ohlcv") {
+object OhlcvSchema : Table("ohlcv") {
     val id = integer("id").autoIncrement()
 
     val pair = varchar("pair", 15)

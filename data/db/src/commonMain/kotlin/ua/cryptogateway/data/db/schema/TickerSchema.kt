@@ -4,7 +4,7 @@ import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object TickerSchema : Table("dbo.tickers") {
+object TickerSchema : Table("tickers") {
     val pairName = varchar("pairName", 12)
     val priceHigh = double("priceHigh")
     val priceAsk = double("priceAsk")

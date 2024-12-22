@@ -3,7 +3,7 @@ package ua.cryptogateway.data.db.schema
 import org.jetbrains.exposed.sql.Table
 import ua.cryptogateway.data.db.columns.OrderSideColumnType
 
-object BotConfigsSchema : Table("dbo.botconfigs") {
+object BotConfigsSchema : Table("botconfigs") {
     val id = integer("id").autoIncrement()
 
     val baseAsset = varchar("baseAsset", 8)

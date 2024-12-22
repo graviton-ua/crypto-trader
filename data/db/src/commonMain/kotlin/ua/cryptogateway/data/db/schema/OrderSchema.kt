@@ -19,7 +19,7 @@ import ua.cryptogateway.data.db.columns.OrderTypeColumnType
 //    "updatedAt": "2023-07-11T07:04:20.131Z"                  // Date-time of the last update of the order, UTC
 //}
 
-internal object OrderSchema : Table("dbo.active") {
+internal object OrderSchema : Table("active") {
     val id = varchar("id", 36)
     val type = registerColumn("type", OrderTypeColumnType())
     val quantity = double("quantity")

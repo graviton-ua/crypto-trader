@@ -3,7 +3,7 @@ package ua.cryptogateway.data.db.schema
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object TradeBookSchema : Table("dbo.tradeBook") {
+object TradeBookSchema : Table("tradeBook") {
     val id = varchar("id", 36)
     val pair = varchar("pair", 15)
     val quoteQuantity = double("quoteQuantity")

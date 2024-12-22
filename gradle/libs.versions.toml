@@ -10,7 +10,7 @@ kotlininject = "0.7.2"
 ksp = "2.0.21-1.0.28"
 ktor = "3.0.0"
 hikari = "6.2.1"
-mssql = "12.8.1.jre11"
+postgreSQL-JDBC = "42.7.4"
 exposed = "0.56.0"
 log4k = "1.4.0"
 multiplatformsettings = "1.1.1"
@@ -48,20 +48,20 @@ ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "k
 ktor-client-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 
-hikari = { group = "com.zaxxer", name="HikariCP", version.ref = "hikari" }
-mssql-jdbc = { group = "com.microsoft.sqlserver", name="mssql-jdbc", version.ref = "mssql" }
+hikari = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikari" }
+postgreSQL-jdbc = { module = "org.postgresql:postgresql", version.ref = "postgreSQL-JDBC" }
 
 # Exposed DB ORM framework
-exposed-core = { group = "org.jetbrains.exposed", name="exposed-core", version.ref = "exposed" }
-exposed-dao = { group = "org.jetbrains.exposed", name="exposed-dao", version.ref = "exposed" }
-exposed-jdbc = { group = "org.jetbrains.exposed", name="exposed-jdbc", version.ref = "exposed" }
-exposed-json = { group = "org.jetbrains.exposed", name="exposed-json", version.ref = "exposed" }
-exposed-migration = { group = "org.jetbrains.exposed", name="exposed-migration", version.ref = "exposed" }
-exposed-kotlin-datetime = { group = "org.jetbrains.exposed", name="exposed-kotlin-datetime", version.ref = "exposed" }
+exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "exposed" }
+exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
+exposed-json = { group = "org.jetbrains.exposed", name = "exposed-json", version.ref = "exposed" }
+exposed-migration = { group = "org.jetbrains.exposed", name = "exposed-migration", version.ref = "exposed" }
+exposed-kotlin-datetime = { group = "org.jetbrains.exposed", name = "exposed-kotlin-datetime", version.ref = "exposed" }
 
 # Multiplatform logging
-log4k = { group = "de.peilicke.sascha", name="log4k", version.ref = "log4k" }
-log4k-slf4j = { group = "de.peilicke.sascha", name="log4k-slf4j", version.ref = "log4k" }
+log4k = { group = "de.peilicke.sascha", name = "log4k", version.ref = "log4k" }
+log4k-slf4j = { group = "de.peilicke.sascha", name = "log4k-slf4j", version.ref = "log4k" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.13" }
 
 multiplatformsettings-core = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformsettings" }

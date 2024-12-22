@@ -4,7 +4,7 @@ import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object BalanceSchema : Table("dbo.balance") {
+object BalanceSchema : Table("balance") {
     val currency = varchar("currency", 4)
     val balance = double("balance")
     val lockBalance = double("lockBalance")

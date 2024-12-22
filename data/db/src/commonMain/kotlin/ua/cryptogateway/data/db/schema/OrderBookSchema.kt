@@ -5,7 +5,7 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.json.json
 
-object OrderBookSchema : Table("dbo.orderbook") {
+object OrderBookSchema : Table("orderbook") {
     val pair = varchar("pair", 12)
     val asks = json<List<List<Double>>>(
         name = "asks",

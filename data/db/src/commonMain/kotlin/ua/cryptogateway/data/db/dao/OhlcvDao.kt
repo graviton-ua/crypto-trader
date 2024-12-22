@@ -82,7 +82,7 @@ class OhlcvDao(
                 latestRows, JoinType.INNER,
                 additionalConstraint = {
                     (OhlcvSchema.pair eq latestPairColumn) and
-                    (OhlcvSchema.closeTime eq latestCloseTimeColumn) and
+                            (OhlcvSchema.closeTime eq latestCloseTimeColumn) and
                             (OhlcvSchema.timestamp eq maxTimestampColumn)
                 }
             )
@@ -114,7 +114,8 @@ class OhlcvDao(
     suspend fun save(entity: OhlcvEntity) = Result.runCatching {
         dbQuery {
             OhlcvSchema.upsert {
-                it[OhlcvSchema.id] = entity.id
+                if (entity.id != 0)
+                    it[OhlcvSchema.id] = entity.id
                 it[OhlcvSchema.pair] = entity.pair
                 it[OhlcvSchema.openTime] = entity.openTime
                 it[OhlcvSchema.closeTime] = entity.closeTime
