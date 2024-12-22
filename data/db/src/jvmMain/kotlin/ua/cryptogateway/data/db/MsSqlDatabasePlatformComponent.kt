@@ -19,8 +19,8 @@ actual interface MsSqlDatabasePlatformComponent {
     ): HikariConfig = HikariConfig().apply {
         jdbcUrl = "jdbc:postgresql://localhost:${tiviPreferences.dbPort.getNotSuspended()}/crypto"
         driverClassName = "org.postgresql.Driver"
-        username = "crypto_trade"
-        password = "crypto_trade"
+        username = "crypto_trader"
+        password = "crypto_trader"
         maximumPoolSize = 10
         isAutoCommit = false
         transactionIsolation = "TRANSACTION_READ_COMMITTED"

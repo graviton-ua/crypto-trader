@@ -29,7 +29,6 @@ kotlin {
         jvmMain {
             dependencies {
                 api(libs.hikari)
-                implementation(libs.mssql.jdbc)
                 implementation(libs.postgreSQL.jdbc)
             }
         }
