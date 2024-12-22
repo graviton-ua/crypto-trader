@@ -1,5 +1,7 @@
 package ua.cryptogateway.data.db
 
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.jdbc.asJdbcDriver
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import me.tatarka.inject.annotations.Provides
@@ -11,7 +13,7 @@ import javax.sql.DataSource
 /**
  * Interface for providing configurations and data sources specific to an SQL Server database platform.
  */
-actual interface MsSqlDatabasePlatformComponent {
+actual interface SqlDatabasePlatformComponent {
     @Provides
     @ApplicationScope
     fun provideHikariConfig(
@@ -22,7 +24,7 @@ actual interface MsSqlDatabasePlatformComponent {
         username = "crypto_trader"
         password = "crypto_trader"
         maximumPoolSize = 10
-        isAutoCommit = false
+        isAutoCommit = true
         transactionIsolation = "TRANSACTION_READ_COMMITTED"
         validate()
     }
@@ -32,6 +34,17 @@ actual interface MsSqlDatabasePlatformComponent {
     fun provideDataSource(
         hikariConfig: HikariConfig,
     ): DataSource = HikariDataSource(hikariConfig)
+
+
+    @Provides
+    @ApplicationScope
+    fun provideDriverFactory(
+        dataSource: DataSource,
+    ): SqlDriver = dataSource.asJdbcDriver()
+        .also { db ->
+            CryptoDb.Schema.create(db)
+            //db.execute(null, "PRAGMA foreign_keys=ON", 0)
+        }
 }
 
 private val databaseFile: File

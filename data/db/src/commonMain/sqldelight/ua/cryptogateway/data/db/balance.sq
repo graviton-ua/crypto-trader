@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS balance (
+    asset VARCHAR(6) PRIMARY KEY,
+    balance DOUBLE PRECISION NOT NULL,
+    lock_balance DOUBLE PRECISION NOT NULL,
+    entire DOUBLE PRECISION NOT NULL,
+    updated_at TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- queries
+
+getAll:
+SELECT * FROM balance;
+
+getForAsset:
+SELECT * FROM balance
+WHERE asset = :asset;
+
+save:
+INSERT INTO balance (asset, balance, lock_balance, entire, updated_at)
+VALUES (:asset, :balance, :lockBalance, :entire, CURRENT_TIMESTAMP)
+ON CONFLICT (asset) DO UPDATE
+SET
+    balance = EXCLUDED.balance,
+    lock_balance = EXCLUDED.lock_balance,
+    entire = EXCLUDED.entire,
+    updated_at = EXCLUDED.updated_at;

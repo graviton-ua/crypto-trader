@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -24,13 +25,26 @@ kotlin {
             implementation(libs.exposed.json)
             implementation(libs.exposed.migration)
             implementation(libs.exposed.kotlin.datetime)
+
+            implementation(libs.sqldelight.coroutines)
+            implementation(libs.sqldelight.primitive)
         }
 
         jvmMain {
             dependencies {
                 api(libs.hikari)
+                api(libs.sqldelight.driver)
                 implementation(libs.postgreSQL.jdbc)
             }
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("CryptoDb") {
+            packageName = "ua.cryptogateway.data.db"
+            dialect("app.cash.sqldelight:postgresql-dialect:2.0.2")
         }
     }
 }

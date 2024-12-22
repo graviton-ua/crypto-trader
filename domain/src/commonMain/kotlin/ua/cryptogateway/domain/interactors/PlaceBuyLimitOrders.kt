@@ -29,7 +29,7 @@ class PlaceBuyLimitOrders(
         val configs = configsDao.getActive().filter { it.side == Order.Side.Buy }
 
         configs.forEach { config ->
-            val balance = balanceDao.getCurrency(currency = config.baseAsset) ?: return@forEach
+            val balance = balanceDao.getForAsset(asset = config.baseAsset) ?: return@forEach
 
             if (balance.balance < config.minSize) return@forEach
 

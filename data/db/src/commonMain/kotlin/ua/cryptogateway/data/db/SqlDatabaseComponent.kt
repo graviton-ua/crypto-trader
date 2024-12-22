@@ -6,14 +6,21 @@ import org.jetbrains.exposed.sql.Database
 import ua.cryptogateway.appinitializers.AppSuspendedInitializer
 import ua.cryptogateway.inject.ApplicationScope
 
-expect interface MsSqlDatabasePlatformComponent
+expect interface SqlDatabasePlatformComponent
 
-interface MsSqlDatabaseComponent : MsSqlDatabasePlatformComponent {
+interface SqlDatabaseComponent : SqlDatabasePlatformComponent {
     @ApplicationScope
     @Provides
     fun provideMsSqlDatabase(
         factory: DatabaseFactory,
     ): Database = factory.build()
+
+    @ApplicationScope
+    @Provides
+    fun provideSqlDelightDatabase(
+        factory: DatabaseSqlDelightFactory,
+    ): CryptoDb = factory.build()
+
 
     @Provides
     @IntoSet

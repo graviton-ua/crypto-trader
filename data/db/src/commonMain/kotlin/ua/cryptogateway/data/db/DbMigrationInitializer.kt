@@ -20,11 +20,11 @@ class DbMigrationInitializer(
         newSuspendedTransaction(context = dispatcher, db = database) {
 
             SchemaUtils.createMissingTablesAndColumns(
-                BalanceSchema, BotConfigsSchema, HistorySchema, OhlcvSchema, OrderBookSchema, OrderSchema, TickerSchema, TradeBookSchema,
+                BotConfigsSchema, HistorySchema, OhlcvSchema, OrderBookSchema, OrderSchema, TickerSchema, TradeBookSchema,
             )
 
             MigrationUtils.statementsRequiredForDatabaseMigration(
-                BalanceSchema, BotConfigsSchema, HistorySchema, OhlcvSchema, OrderBookSchema, OrderSchema, TickerSchema, TradeBookSchema,
+                BotConfigsSchema, HistorySchema, OhlcvSchema, OrderBookSchema, OrderSchema, TickerSchema, TradeBookSchema,
             ).forEach { exec(it) }
         }
     }

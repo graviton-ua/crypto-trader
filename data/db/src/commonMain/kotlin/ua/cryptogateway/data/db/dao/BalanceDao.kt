@@ -1,57 +1,38 @@
 package ua.cryptogateway.data.db.dao
 
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.batchUpsert
-import org.jetbrains.exposed.sql.selectAll
+import ua.cryptogateway.data.db.CryptoDb
 import ua.cryptogateway.data.db.models.BalanceEntity
-import ua.cryptogateway.data.db.schema.BalanceSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
 class BalanceDao(
     dispatchers: AppCoroutineDispatchers,
-    override val database: Database,
-) : Dao {
-    override val dispatcher = dispatchers.io
+    db: CryptoDb,
+) : SqlDelightDao(dispatcher = dispatchers.io, db = db) {
 
 
-    suspend fun getAll() = dbQuery {
-        BalanceSchema.selectAll()
-            .map { row ->
-                BalanceEntity(
-                    currency = row[BalanceSchema.currency],
-                    balance = row[BalanceSchema.balance],
-                    lockBalance = row[BalanceSchema.lockBalance],
-                    entire = row[BalanceSchema.entire],
-                    timestamp = row[BalanceSchema.timestamp]
-                )
-            }
+    suspend fun getAll() = transaction {
+        balanceQueries.getAll(mapper = mapper).executeAsList()
     }
 
-    suspend fun getCurrency(currency: String) = dbQuery {
-        BalanceSchema.selectAll()
-            .where { BalanceSchema.currency eq currency }
-            .map { row ->
-                BalanceEntity(
-                    currency = row[BalanceSchema.currency],
-                    balance = row[BalanceSchema.balance],
-                    lockBalance = row[BalanceSchema.lockBalance],
-                    entire = row[BalanceSchema.entire],
-                    timestamp = row[BalanceSchema.timestamp]
-                )
-            }.firstOrNull()
+    suspend fun getForAsset(asset: String) = transaction {
+        balanceQueries.getForAsset(asset = asset, mapper = mapper).executeAsOneOrNull()
     }
 
     suspend fun save(entities: List<BalanceEntity>) = Result.runCatching {
-        dbQuery {
-            BalanceSchema.batchUpsert(entities) {
-                this[BalanceSchema.currency] = it.currency
-                this[BalanceSchema.balance] = it.balance
-                this[BalanceSchema.lockBalance] = it.lockBalance
-                this[BalanceSchema.entire] = it.entire
-                this[BalanceSchema.timestamp] = it.timestamp
+        transaction {
+            entities.forEach {
+                balanceQueries.save(
+                    asset = it.currency,
+                    balance = it.balance,
+                    lockBalance = it.lockBalance,
+                    entire = it.entire,
+                )
             }
         }
     }
 }
+
+private val mapper: (String, Double, Double, Double, Instant) -> BalanceEntity = ::BalanceEntity

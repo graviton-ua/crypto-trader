@@ -7,7 +7,7 @@ import kotlinx.coroutines.SupervisorJob
 import me.tatarka.inject.annotations.Provides
 import ua.cryptogateway.appinitializers.AppInitializers
 import ua.cryptogateway.appinitializers.AppSuspendedInitializers
-import ua.cryptogateway.data.db.MsSqlDatabaseComponent
+import ua.cryptogateway.data.db.SqlDatabaseComponent
 import ua.cryptogateway.data.web.KtorComponent
 import ua.cryptogateway.domain.DomainComponent
 import ua.cryptogateway.logs.LoggerComponent
@@ -45,7 +45,7 @@ interface SharedApplicationComponent :
     //WatchedShowsBinds,
     DomainComponent,
     KtorComponent,
-    MsSqlDatabaseComponent {
+    SqlDatabaseComponent {
 
     val initializers: AppInitializers
     val suspendedInitializers: AppSuspendedInitializers
