@@ -1,0 +1,52 @@
+CREATE TABLE IF NOT EXISTS ohlcv (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pair VARCHAR(13) NOT NULL,
+    open_time TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL,
+    close_time TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL,
+    trades INTEGER NOT NULL DEFAULT 0,
+    open_price DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    high_price DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    low_price DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    close_price DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    volume DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    created_at TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- queries
+
+getAll:
+SELECT * FROM ohlcv;
+
+getForId:
+SELECT * FROM ohlcv
+WHERE id = :id;
+
+getForPair:
+SELECT * FROM ohlcv
+WHERE pair = :pair;
+
+getClosedForEachMinute:
+SELECT ohlcv.id, ohlcv.pair, ohlcv.open_time, ohlcv.close_time, ohlcv.trades,
+    ohlcv.open_price, ohlcv.high_price, ohlcv.low_price, ohlcv.close_price,
+    ohlcv.volume, ohlcv.created_at
+FROM ohlcv
+JOIN (
+    SELECT
+        pair,
+        close_time,
+        MAX(created_at) AS timestamp
+    FROM ohlcv
+    WHERE pair = ?
+    GROUP BY pair, close_time
+) AS LatestRows
+ON ohlcv.pair = LatestRows.pair
+   AND ohlcv.close_time = LatestRows.close_time
+   AND ohlcv.created_at = LatestRows.timestamp
+ORDER BY ohlcv.close_time ASC;
+
+insert:
+INSERT INTO ohlcv (
+    pair, open_time, close_time, trades, open_price, high_price, low_price, close_price, volume
+) VALUES (
+    :pair, :openTime, :closeTime, :trades, :openPrice, :highPrice, :lowPrice, :closePrice, :volume
+);

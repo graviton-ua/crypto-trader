@@ -1,6 +1,5 @@
 package ua.cryptogateway.data.db
 
-import MigrationUtils
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -18,14 +17,9 @@ class DbMigrationInitializer(
 
     override suspend fun initialize() {
         newSuspendedTransaction(context = dispatcher, db = database) {
-
             SchemaUtils.createMissingTablesAndColumns(
-                BotConfigsSchema, HistorySchema, OhlcvSchema, OrderBookSchema, OrderSchema, TradeBookSchema,
+                BotConfigsSchema, HistorySchema, OrderBookSchema, OrderSchema, TradeBookSchema,
             )
-
-            MigrationUtils.statementsRequiredForDatabaseMigration(
-                BotConfigsSchema, HistorySchema, OhlcvSchema, OrderBookSchema, OrderSchema, TradeBookSchema,
-            ).forEach { exec(it) }
         }
     }
 }

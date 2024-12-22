@@ -29,5 +29,10 @@ class DatabaseSqlDelightFactory(
         tickersAdapter = Tickers.Adapter(
             updated_atAdapter = InstantTimestampColumnAdapter,
         ),
+        ohlcvAdapter = Ohlcv.Adapter(
+            open_timeAdapter = InstantTimestampColumnAdapter,
+            close_timeAdapter = InstantTimestampColumnAdapter,
+            created_atAdapter = InstantTimestampColumnAdapter,
+        ),
     )
 }
