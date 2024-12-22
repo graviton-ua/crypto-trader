@@ -7,7 +7,6 @@ import ua.cryptogateway.data.db.models.HistoryEntity
 import ua.cryptogateway.data.db.schema.HistorySchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
-
 @Inject
 class HistoryDao(
     dispatchers: AppCoroutineDispatchers,

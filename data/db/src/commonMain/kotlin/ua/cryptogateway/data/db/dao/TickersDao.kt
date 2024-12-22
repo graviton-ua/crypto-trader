@@ -1,68 +1,42 @@
 package ua.cryptogateway.data.db.dao
 
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.batchUpsert
-import org.jetbrains.exposed.sql.selectAll
+import ua.cryptogateway.data.db.CryptoDb
 import ua.cryptogateway.data.db.models.TickerEntity
-import ua.cryptogateway.data.db.schema.TickerSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
 class TickersDao(
     dispatchers: AppCoroutineDispatchers,
-    override val database: Database,
-) : Dao {
-    override val dispatcher = dispatchers.io
+    db: CryptoDb,
+) : SqlDelightDao(dispatcher = dispatchers.io, db = db) {
 
 
-    suspend fun getAll(): List<TickerEntity> = dbQuery {
-        TickerSchema.selectAll()
-            //.where { Users.id eq id }
-            .map { row ->
-                TickerEntity(
-                    pairName = row[TickerSchema.pairName],
-                    priceHigh = row[TickerSchema.priceHigh],
-                    priceAsk = row[TickerSchema.priceAsk],
-                    priceBid = row[TickerSchema.priceBid],
-                    priceLow = row[TickerSchema.priceLow],
-                    priceLast = row[TickerSchema.priceLast],
-                    change = row[TickerSchema.change],
-                    timestamp = row[TickerSchema.timestamp],
-                )
-            }
+    suspend fun getAll(): List<TickerEntity> = transaction {
+        tickersQueries.getAll(mapper = mapper).executeAsList()
     }
 
-    suspend fun getByPairName(pairName: String): TickerEntity? = dbQuery {
-        TickerSchema.selectAll()
-            .where { TickerSchema.pairName eq pairName }
-            .map { row ->
-                TickerEntity(
-                    pairName = row[TickerSchema.pairName],
-                    priceHigh = row[TickerSchema.priceHigh],
-                    priceAsk = row[TickerSchema.priceAsk],
-                    priceBid = row[TickerSchema.priceBid],
-                    priceLow = row[TickerSchema.priceLow],
-                    priceLast = row[TickerSchema.priceLast],
-                    change = row[TickerSchema.change],
-                    timestamp = row[TickerSchema.timestamp],
-                )
-            }.firstOrNull()
+    suspend fun getByPairName(pairName: String): TickerEntity? = transaction {
+        tickersQueries.getForPairName(pairName = pairName, mapper = mapper).executeAsOneOrNull()
     }
 
 
     suspend fun save(tickers: List<TickerEntity>) = Result.runCatching {
-        dbQuery {
-            TickerSchema.batchUpsert(tickers) {
-                this[TickerSchema.pairName] = it.pairName
-                this[TickerSchema.priceHigh] = it.priceHigh
-                this[TickerSchema.priceAsk] = it.priceAsk
-                this[TickerSchema.priceBid] = it.priceBid
-                this[TickerSchema.priceLow] = it.priceLow
-                this[TickerSchema.priceLast] = it.priceLast
-                this[TickerSchema.change] = it.change
-                this[TickerSchema.timestamp] = it.timestamp
+        transaction {
+            tickers.forEach {
+                tickersQueries.save(
+                    pairName = it.pairName,
+                    priceHigh = it.priceHigh,
+                    priceAsk = it.priceLow,
+                    priceBid = it.priceBid,
+                    priceLow = it.priceLow,
+                    priceLast = it.priceLast,
+                    change = it.change,
+                )
             }
         }
     }
 }
+
+private val mapper: (String, Double, Double, Double, Double, Double, Double, Instant) -> TickerEntity = ::TickerEntity

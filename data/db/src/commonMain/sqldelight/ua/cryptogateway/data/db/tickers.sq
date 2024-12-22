@@ -1,0 +1,32 @@
+CREATE TABLE IF NOT EXISTS tickers (
+    pair_name VARCHAR(13) PRIMARY KEY,
+    price_high DOUBLE PRECISION NOT NULL,
+    price_ask DOUBLE PRECISION NOT NULL,
+    price_bid DOUBLE PRECISION NOT NULL,
+    price_low DOUBLE PRECISION NOT NULL,
+    price_last DOUBLE PRECISION NOT NULL,
+    change DOUBLE PRECISION NOT NULL,
+    updated_at TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- queries
+
+getAll:
+SELECT * FROM tickers;
+
+getForPairName:
+SELECT * FROM tickers
+WHERE pair_name = :pairName;
+
+save:
+INSERT INTO tickers (pair_name, price_high, price_ask, price_bid, price_low, price_last, change, updated_at)
+VALUES (:pairName, :priceHigh, :priceAsk, :priceBid, :priceLow, :priceLast, :change, CURRENT_TIMESTAMP)
+ON CONFLICT (pair_name)
+DO UPDATE SET
+    price_high = EXCLUDED.price_high,
+    price_ask = EXCLUDED.price_ask,
+    price_bid = EXCLUDED.price_bid,
+    price_low = EXCLUDED.price_low,
+    price_last = EXCLUDED.price_last,
+    change = EXCLUDED.change,
+    updated_at = EXCLUDED.updated_at;

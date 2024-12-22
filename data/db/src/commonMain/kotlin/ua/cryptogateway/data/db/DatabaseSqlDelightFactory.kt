@@ -26,5 +26,8 @@ class DatabaseSqlDelightFactory(
         balanceAdapter = Balance.Adapter(
             updated_atAdapter = InstantTimestampColumnAdapter,
         ),
+        tickersAdapter = Tickers.Adapter(
+            updated_atAdapter = InstantTimestampColumnAdapter,
+        ),
     )
 }
