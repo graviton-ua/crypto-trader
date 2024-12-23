@@ -43,7 +43,7 @@ class TradeBookPullService(
             Log.debug { "DataPuller job started" }
             DataPuller().pull(delay.value) {
                 // Fetch active pairs form KunaList table first and then use active tickers as input params for fetching TradesBookTable
-                val active = botConfigsDao.getActiveTickers()
+                val active = botConfigsDao.getActiveTickers().map { it.pair }
 //                Log.info { "Active tickers: $active" }
                 active.flatMap { pair ->
                     api.getTradesBook(pair, 1)

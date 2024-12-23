@@ -1,107 +1,39 @@
 package ua.cryptogateway.data.db.dao
 
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import ua.cryptogateway.data.db.CryptoDb
 import ua.cryptogateway.data.db.models.BotConfigEntity
-import ua.cryptogateway.data.db.schema.BotConfigsSchema
 import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
 class BotConfigsDao(
     dispatchers: AppCoroutineDispatchers,
-    override val database: Database,
-) : Dao {
-    override val dispatcher = dispatchers.io
+    db: CryptoDb,
+) : SqlDelightDao(dispatcher = dispatchers.io, db = db) {
 
-    /**
-     * Retrieves all entries from the KunaListSchema and maps them to a list of KunaListEntity objects.
-     *
-     * This function performs a database query to select all records from the KunaListSchema table.
-     * Each record is transformed into a KunaListEntity instance, and the function returns a list
-     * of these entities.
-     *
-     * @return A list of KunaListEntity objects representing all records in the KunaListSchema.
-     * @throws SQLException If an error occurs during the database query.
-     */
-    suspend fun getAll() = dbQuery {
-        BotConfigsSchema.selectAll()
-            .orderBy(BotConfigsSchema.baseAsset to SortOrder.ASC, BotConfigsSchema.quoteAsset to SortOrder.ASC, BotConfigsSchema.side to SortOrder.ASC)
-            .mapBotConfigEntities()
+    suspend fun getAll() = transaction {
+        bot_configsQueries.getAll(mapper = mapper).executeAsList()
     }
 
-    suspend fun get(id: Int) = dbQuery {
-        BotConfigsSchema.selectAll()
-            .where { BotConfigsSchema.id eq id }
-            .mapBotConfigEntities()
-            .firstOrNull()
+    suspend fun get(id: Int) = transaction {
+        bot_configsQueries.getForId(id = id, mapper = mapper).executeAsOneOrNull()
     }
 
     suspend fun get(
         baseAsset: String, quoteAsset: String, side: Order.Side,
-    ) = dbQuery {
-        BotConfigsSchema.selectAll()
-            .where { (BotConfigsSchema.baseAsset eq baseAsset) and (BotConfigsSchema.quoteAsset eq quoteAsset) and (BotConfigsSchema.side eq side) }
-            .mapBotConfigEntities()
-            .firstOrNull()
+    ) = transaction {
+        bot_configsQueries.getForUnique(baseAsset = baseAsset, quoteAsset = quoteAsset, side = side, mapper = mapper).executeAsOneOrNull()
     }
 
-    /**
-     * Retrieves a list of `KunaListEntity` objects that are marked as active from the database.
-     *
-     * This function performs a database query that selects all entries from the KunaListSchema
-     * where the active flag is set to true. It returns a list of `KunaListEntity` instances
-     * created from the results of the query.
-     *
-     * @return A list of `KunaListEntity` objects with the active status set to true.
-     * @throws SQLException If there is an error while executing the database query.
-     */
-    suspend fun getActive() = dbQuery {
-        BotConfigsSchema.selectAll()
-            .where { BotConfigsSchema.active eq true }
-            .mapBotConfigEntities()
+    suspend fun getActive(side: Order.Side = Order.Side.Sell) = transaction {
+        bot_configsQueries.getActiveForSide(side = side, mapper = mapper).executeAsList()
     }
 
-    /**
-     * Retrieves a list of active ticker names from the KunaListSchema.
-     *
-     * This function executes a database query to select all ticker names from the KunaListSchema
-     * where the 'active' flag is set to true. It returns a list of these ticker names.
-     *
-     * @return A list of String representing the active ticker names.
-     */
-    suspend fun getActiveTickers() = dbQuery {
-        BotConfigsSchema.selectAll()
-//            .where { (BotConfigsSchema.active eq true) and (BotConfigsSchema.side eq Side.fromKunaString("AAA")) }
-            .where { (BotConfigsSchema.active eq true) and (BotConfigsSchema.side eq Order.Side.Sell) }
-            .map { row -> (row[BotConfigsSchema.baseAsset] + "_" + row[BotConfigsSchema.quoteAsset]).trim() }
+    suspend fun getActiveTickers(side: Order.Side = Order.Side.Sell) = transaction {
+        bot_configsQueries.getActiveForSide(side = side, mapper = mapper).executeAsList()
     }
 
-
-    suspend fun save(entity: BotConfigEntity) = Result.runCatching {
-        dbQuery {
-            BotConfigsSchema.upsert {
-                it[BotConfigsSchema.id] = entity.id
-                it[BotConfigsSchema.baseAsset] = entity.baseAsset
-                it[BotConfigsSchema.quoteAsset] = entity.quoteAsset
-                it[BotConfigsSchema.side] = entity.side
-                it[BotConfigsSchema.fond] = entity.fond
-                it[BotConfigsSchema.startPrice] = entity.startPrice
-                it[BotConfigsSchema.priceStep] = entity.priceStep
-                it[BotConfigsSchema.biasPrice] = entity.biasPrice
-                it[BotConfigsSchema.minSize] = entity.minSize
-                it[BotConfigsSchema.orderSize] = entity.orderSize
-                it[BotConfigsSchema.sizeStep] = entity.sizeStep
-                it[BotConfigsSchema.orderAmount] = entity.orderAmount
-                it[BotConfigsSchema.priceForce] = entity.priceForce
-                it[BotConfigsSchema.market] = entity.market
-                it[BotConfigsSchema.basePrec] = entity.basePrec
-                it[BotConfigsSchema.quotePrec] = entity.quotePrec
-                it[BotConfigsSchema.active] = entity.active
-            }
-        }
-    }
 
     suspend fun save(
         id: Int?,
@@ -111,25 +43,23 @@ class BotConfigsDao(
         sizeStep: Double, orderAmount: Int, priceForce: Boolean,
         market: Boolean, basePrec: Int, quotePrec: Int, active: Boolean,
     ) = Result.runCatching {
-        dbQuery {
-            BotConfigsSchema.upsert {
-                it[BotConfigsSchema.id] = id ?: 0
-                it[BotConfigsSchema.baseAsset] = baseAsset
-                it[BotConfigsSchema.quoteAsset] = quoteAsset
-                it[BotConfigsSchema.side] = side
-                it[BotConfigsSchema.fond] = fond
-                it[BotConfigsSchema.startPrice] = startPrice
-                it[BotConfigsSchema.priceStep] = priceStep
-                it[BotConfigsSchema.biasPrice] = biasPrice
-                it[BotConfigsSchema.minSize] = minSize
-                it[BotConfigsSchema.orderSize] = orderSize
-                it[BotConfigsSchema.sizeStep] = sizeStep
-                it[BotConfigsSchema.orderAmount] = orderAmount
-                it[BotConfigsSchema.priceForce] = priceForce
-                it[BotConfigsSchema.market] = market
-                it[BotConfigsSchema.basePrec] = basePrec
-                it[BotConfigsSchema.quotePrec] = quotePrec
-                it[BotConfigsSchema.active] = active
+        transaction {
+            when (id) {
+                null -> bot_configsQueries.saveWithUniques(
+                    baseAsset = baseAsset, quoteAsset = quoteAsset, side = side,
+                    fond = fond, startPrice = startPrice, priceStep = priceStep, biasPrice = biasPrice,
+                    minSize = minSize, orderSize = orderSize, sizeStep = sizeStep, orderAmount = orderAmount,
+                    priceForce = priceForce, market = market, basePrec = basePrec, quotePrec = quotePrec,
+                    active = active,
+                )
+
+                else -> bot_configsQueries.saveWithId(
+                    id = id, baseAsset = baseAsset, quoteAsset = quoteAsset, side = side,
+                    fond = fond, startPrice = startPrice, priceStep = priceStep, biasPrice = biasPrice,
+                    minSize = minSize, orderSize = orderSize, sizeStep = sizeStep, orderAmount = orderAmount,
+                    priceForce = priceForce, market = market, basePrec = basePrec, quotePrec = quotePrec,
+                    active = active,
+                )
             }
         }
     }
@@ -138,40 +68,22 @@ class BotConfigsDao(
     suspend fun delete(
         id: Int,
     ) = Result.runCatching {
-        dbQuery {
-            BotConfigsSchema.deleteWhere { BotConfigsSchema.id eq id }
+        transaction {
+            bot_configsQueries.deleteById(id = id)
         }
     }
 
     suspend fun delete(
         baseAsset: String, quoteAsset: String, side: Order.Side,
     ) = Result.runCatching {
-        dbQuery {
-            BotConfigsSchema.deleteWhere {
-                (BotConfigsSchema.baseAsset eq baseAsset) and (BotConfigsSchema.quoteAsset eq quoteAsset) and (BotConfigsSchema.side eq side)
-            }
+        transaction {
+            bot_configsQueries.deleteByUniqueKey(baseAsset = baseAsset, quoteAsset = quoteAsset, side = side)
         }
     }
 }
 
-private fun Query.mapBotConfigEntities(): List<BotConfigEntity> = map { row ->
-    BotConfigEntity(
-        id = row[BotConfigsSchema.id],
-        baseAsset = row[BotConfigsSchema.baseAsset],
-        quoteAsset = row[BotConfigsSchema.quoteAsset],
-        side = row[BotConfigsSchema.side],
-        fond = row[BotConfigsSchema.fond],
-        startPrice = row[BotConfigsSchema.startPrice],
-        priceStep = row[BotConfigsSchema.priceStep],
-        biasPrice = row[BotConfigsSchema.biasPrice],
-        minSize = row[BotConfigsSchema.minSize],
-        orderSize = row[BotConfigsSchema.orderSize],
-        sizeStep = row[BotConfigsSchema.sizeStep],
-        orderAmount = row[BotConfigsSchema.orderAmount],
-        priceForce = row[BotConfigsSchema.priceForce],
-        market = row[BotConfigsSchema.market],
-        basePrec = row[BotConfigsSchema.basePrec],
-        quotePrec = row[BotConfigsSchema.quotePrec],
-        active = row[BotConfigsSchema.active]
-    )
-}
+
+private val mapper: (
+    Int, String, String, Order.Side, Double, Double, Double, Double,
+    Double, Int, Double, Int, Boolean, Boolean, Int, Int, Boolean,
+) -> BotConfigEntity = ::BotConfigEntity
