@@ -23,7 +23,7 @@ class TiviPreferencesImpl(
     private val settings: ObservableSettings by settings
     private val flowSettings by lazy { settings.value.toFlowSettings(dispatchers.io) }
 
-    override val dbPort: Preference<String> by lazy { StringPreference(KEY_DB_PORT, "1433") }
+    override val dbPort: Preference<String> by lazy { StringPreference(KEY_DB_PORT, "5432") }
     override val loglevel: Preference<LogLevel> by lazy { MappingIntPreference(KEY_LOG_LEVEL, LogLevel.INFO, LogLevel::fromInt, LogLevel::toInt) }
 
     override val theme: Preference<Theme> by lazy { MappingPreference(KEY_THEME, Theme.SYSTEM, ::getThemeForStorageValue, ::themeToStorageValue) }
