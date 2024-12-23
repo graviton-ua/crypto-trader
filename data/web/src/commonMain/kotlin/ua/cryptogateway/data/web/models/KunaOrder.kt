@@ -1,5 +1,6 @@
 package ua.cryptogateway.data.web.models
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ua.cryptogateway.data.models.Order
@@ -26,6 +27,6 @@ data class KunaOrder(
     @SerialName("pair") val pair: String,
     @SerialName("price") val price: Double,
     @SerialName("status") val status: String,
-    @SerialName("createdAt") val createdAt: String,
-    @SerialName("updatedAt") val updatedAt: String,
+    @SerialName("createdAt") val createdAt: Instant,
+    @SerialName("updatedAt") val updatedAt: Instant,
 ) : Order

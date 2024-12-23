@@ -20,12 +20,6 @@ kotlin {
 
             implementation(libs.kotlininject.runtime)
 
-            api(libs.exposed.core)
-            api(libs.exposed.jdbc)
-            implementation(libs.exposed.json)
-            implementation(libs.exposed.migration)
-            implementation(libs.exposed.kotlin.datetime)
-
             implementation(libs.sqldelight.coroutines)
             implementation(libs.sqldelight.primitive)
         }

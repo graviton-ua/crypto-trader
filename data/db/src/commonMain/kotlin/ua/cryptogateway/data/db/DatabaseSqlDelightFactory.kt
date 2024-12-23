@@ -44,5 +44,11 @@ class DatabaseSqlDelightFactory(
         historyAdapter = History.Adapter(
             created_atAdapter = InstantTimestampColumnAdapter,
         ),
+        ordersAdapter = Orders.Adapter(
+            typeAdapter = EnumColumnAdapter(),
+            sideAdapter = EnumColumnAdapter(),
+            updated_atAdapter = InstantTimestampColumnAdapter,
+            created_atAdapter = InstantTimestampColumnAdapter,
+        ),
     )
 }

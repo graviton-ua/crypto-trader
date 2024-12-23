@@ -1,5 +1,6 @@
 package ua.cryptogateway.data.db.models
 
+import kotlinx.datetime.Instant
 import ua.cryptogateway.data.models.Order
 
 //{
@@ -28,7 +29,7 @@ data class OrderEntity(
     val pair: String,
     val price: Double,
     val status: String,
-    val createdAt: String,
-    val updatedAt: String,
+    val createdAt: Instant,
+    val updatedAt: Instant,
     val cancel: Boolean? = null,
 ) : Order

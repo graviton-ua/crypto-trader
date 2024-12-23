@@ -33,7 +33,7 @@ data class KunaActiveOrder(
     @SerialName("pair") val pair: String,
     @SerialName("price") val price: Double,
     @SerialName("status") val status: String,
-    @SerialName("createdAt") val createdAt: String,
-    @SerialName("updatedAt") val updatedAt: String,
+    @SerialName("createdAt") val createdAt: Instant,
+    @SerialName("updatedAt") val updatedAt: Instant,
     val timestamp: Instant = Clock.System.now(),
 ) : Order

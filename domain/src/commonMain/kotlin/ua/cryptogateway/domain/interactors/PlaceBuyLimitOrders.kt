@@ -40,8 +40,6 @@ class PlaceBuyLimitOrders(
             val bookPrice = book.bids.minBy { it.price }.price
 
             val activeOrders = orderDao.get(side = Order.Side.Buy)
-                .onFailure { Log.warn(it) { "Can't get active orders from table" } }
-                .getOrNull() ?: return@forEach
             when {
                 // We have not enough balance, quit
                 balance.balance < config.fond -> {

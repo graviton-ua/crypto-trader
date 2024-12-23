@@ -34,12 +34,12 @@ fun main() {
     applicationComponent.initializers.initialize()
 
     application(exitProcessOnExit = false) {
-        val initializationCompleted = remember { mutableStateOf(false) }
+        val initializationCompleted = remember { mutableStateOf(true) }
 
-        LaunchedEffect(applicationComponent) {
-            applicationComponent.suspendedInitializers.initialize()
-            initializationCompleted.value = true // Signal that initialization is complete
-        }
+//        LaunchedEffect(applicationComponent) {
+//            applicationComponent.suspendedInitializers.initialize()
+//            initializationCompleted.value = true // Signal that initialization is complete
+//        }
 
         val services = applicationComponent.services
         if (initializationCompleted.value)  // Ensure DisposableEffect runs only after initialization

@@ -48,7 +48,7 @@ interface SharedApplicationComponent :
     SqlDatabaseComponent {
 
     val initializers: AppInitializers
-    val suspendedInitializers: AppSuspendedInitializers
+    //val suspendedInitializers: AppSuspendedInitializers
     val services: ServiceInitializers
     val dispatchers: AppCoroutineDispatchers
 
