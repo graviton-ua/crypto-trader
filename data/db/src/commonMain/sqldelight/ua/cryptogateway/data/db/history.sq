@@ -1,0 +1,56 @@
+CREATE TABLE IF NOT EXISTS history (
+    id VARCHAR(36) PRIMARY KEY,
+    order_id VARCHAR(36) NOT NULL,
+    pair VARCHAR(13) NOT NULL,
+    quantity DOUBLE PRECISION NOT NULL,
+    price DOUBLE PRECISION NOT NULL,
+    is_taker BOOLEAN NOT NULL,
+    fee DOUBLE PRECISION NOT NULL,
+    fee_asset VARCHAR(6) NOT NULL,
+    is_buyer BOOLEAN NOT NULL,
+    quote_quantity DOUBLE PRECISION NOT NULL,
+    created_at TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- queries
+
+getAll:
+SELECT * FROM history;
+
+save:
+INSERT INTO history (
+    id,
+    order_id,
+    pair,
+    quantity,
+    price,
+    is_taker,
+    fee,
+    fee_asset,
+    is_buyer,
+    quote_quantity,
+    created_at
+) VALUES (
+    :id,
+    :orderId,
+    :pair,
+    :quantity,
+    :price,
+    :isTaker,
+    :fee,
+    :feeAsset,
+    :isBuyer,
+    :quoteQuantity,
+    :createdAt
+)
+ON CONFLICT(id) DO UPDATE SET
+    order_id = excluded.order_id,
+    pair = excluded.pair,
+    quantity = excluded.quantity,
+    price = excluded.price,
+    is_taker = excluded.is_taker,
+    fee = excluded.fee,
+    fee_asset = excluded.fee_asset,
+    is_buyer = excluded.is_buyer,
+    quote_quantity = excluded.quote_quantity,
+    created_at = excluded.created_at;

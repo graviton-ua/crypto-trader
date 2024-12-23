@@ -41,5 +41,8 @@ class DatabaseSqlDelightFactory(
         trade_booksAdapter = Trade_books.Adapter(
             created_atAdapter = InstantTimestampColumnAdapter,
         ),
+        historyAdapter = History.Adapter(
+            created_atAdapter = InstantTimestampColumnAdapter,
+        ),
     )
 }

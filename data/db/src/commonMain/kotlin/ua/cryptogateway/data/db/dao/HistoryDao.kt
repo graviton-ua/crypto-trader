@@ -1,34 +1,40 @@
 package ua.cryptogateway.data.db.dao
 
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.batchUpsert
+import ua.cryptogateway.data.db.CryptoDb
 import ua.cryptogateway.data.db.models.HistoryEntity
-import ua.cryptogateway.data.db.schema.HistorySchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
 class HistoryDao(
     dispatchers: AppCoroutineDispatchers,
-    override val database: Database,
-) : Dao {
-    override val dispatcher = dispatchers.io
+    db: CryptoDb,
+) : SqlDelightDao(dispatcher = dispatchers.io, db = db) {
 
-    suspend fun save(order: List<HistoryEntity>) = Result.runCatching {
-        dbQuery {
-            HistorySchema.batchUpsert(order){
-                this[HistorySchema.id] = it.id
-                this[HistorySchema.orderId] = it.orderId
-                this[HistorySchema.pair] = it.pair
-                this[HistorySchema.quantity] = it.quantity
-                this[HistorySchema.price] = it.price
-                this[HistorySchema.isTaker] = it.isTaker
-                this[HistorySchema.fee] = it.fee
-                this[HistorySchema.feeCurrency] = it.feeCurrency
-                this[HistorySchema.isBuyer] = it.isBuyer
-                this[HistorySchema.quoteQuantity] = it.quoteQuantity
-                this[HistorySchema.createdAt] = it.createdAt
+    suspend fun getAll(): List<HistoryEntity> = transaction {
+        historyQueries.getAll(mapper = mapper).executeAsList()
+    }
+
+    suspend fun save(entities: List<HistoryEntity>) = Result.runCatching {
+        transaction {
+            entities.forEach { entity ->
+                historyQueries.save(
+                    id = entity.id,
+                    orderId = entity.orderId,
+                    pair = entity.pair,
+                    quantity = entity.quantity,
+                    price = entity.price,
+                    isTaker = entity.isTaker,
+                    fee = entity.fee,
+                    feeAsset = entity.feeCurrency,
+                    isBuyer = entity.isBuyer,
+                    quoteQuantity = entity.quoteQuantity,
+                    createdAt = entity.createdAt,
+                )
             }
         }
     }
 }
+
+private val mapper: (String, String, String, Double, Double, Boolean, Double, String, Boolean, Double, Instant) -> HistoryEntity = ::HistoryEntity
