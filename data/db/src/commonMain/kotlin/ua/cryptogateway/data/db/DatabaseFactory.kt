@@ -3,6 +3,7 @@ package ua.cryptogateway.data.db
 import app.cash.sqldelight.EnumColumnAdapter
 import app.cash.sqldelight.db.SqlDriver
 import me.tatarka.inject.annotations.Inject
+import migrations.Ohlcv
 import ua.cryptogateway.data.db.adapters.InstantTimestampColumnAdapter
 import javax.sql.DataSource
 
@@ -32,7 +33,7 @@ class DatabaseFactory(
         ohlcvAdapter = Ohlcv.Adapter(
             open_timeAdapter = InstantTimestampColumnAdapter,
             close_timeAdapter = InstantTimestampColumnAdapter,
-            created_atAdapter = InstantTimestampColumnAdapter,
+            updated_atAdapter = InstantTimestampColumnAdapter,
         ),
         bot_configsAdapter = Bot_configs.Adapter(
             sideAdapter = EnumColumnAdapter(),
