@@ -7,7 +7,6 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import ua.cryptogateway.appinitializers.AppSuspendedInitializer
 import ua.cryptogateway.data.db.schema.HistorySchema
 import ua.cryptogateway.data.db.schema.OrderSchema
-import ua.cryptogateway.data.db.schema.TradeBookSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
@@ -20,7 +19,7 @@ class DbMigrationInitializer(
     override suspend fun initialize() {
         newSuspendedTransaction(context = dispatcher, db = database) {
             SchemaUtils.createMissingTablesAndColumns(
-                HistorySchema, OrderSchema, TradeBookSchema,
+                HistorySchema, OrderSchema,
             )
         }
     }

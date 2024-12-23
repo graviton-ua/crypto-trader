@@ -38,5 +38,8 @@ class DatabaseSqlDelightFactory(
         bot_configsAdapter = Bot_configs.Adapter(
             sideAdapter = EnumColumnAdapter(),
         ),
+        trade_booksAdapter = Trade_books.Adapter(
+            created_atAdapter = InstantTimestampColumnAdapter,
+        ),
     )
 }

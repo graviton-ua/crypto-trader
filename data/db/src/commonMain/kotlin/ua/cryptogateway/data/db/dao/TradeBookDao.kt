@@ -1,30 +1,36 @@
 package ua.cryptogateway.data.db.dao
 
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.batchUpsert
+import ua.cryptogateway.data.db.CryptoDb
 import ua.cryptogateway.data.db.models.TradeBookEntity
-import ua.cryptogateway.data.db.schema.TradeBookSchema
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
 class TradeBookDao(
     dispatchers: AppCoroutineDispatchers,
-    override val database: Database,
-) : Dao {
-    override val dispatcher = dispatchers.io
+    db: CryptoDb,
+) : SqlDelightDao(dispatcher = dispatchers.io, db = db) {
 
-    suspend fun save(order: List<TradeBookEntity>) = Result.runCatching {
-        dbQuery {
-            TradeBookSchema.batchUpsert(order) {
-                this[TradeBookSchema.id] = it.id
-                this[TradeBookSchema.pair] = it.pair
-                this[TradeBookSchema.quoteQuantity] = it.quoteQuantity
-                this[TradeBookSchema.matchPrice] = it.matchPrice
-                this[TradeBookSchema.matchQuantity] = it.matchQuantity
-                this[TradeBookSchema.side] = it.side
-                this[TradeBookSchema.createdAt] = it.createdAt
+    suspend fun getAll(): List<TradeBookEntity> = transaction {
+        trade_booksQueries.getAll(mapper = mapper).executeAsList()
+    }
+
+    suspend fun save(entities: List<TradeBookEntity>) = Result.runCatching {
+        transaction {
+            entities.forEach { entity ->
+                trade_booksQueries.save(
+                    id = entity.id,
+                    pair = entity.pair,
+                    quoteQuantity = entity.quoteQuantity,
+                    matchPrice = entity.matchPrice,
+                    matchQuantity = entity.matchQuantity,
+                    side = entity.side,
+                    createdAt = entity.createdAt,
+                )
             }
         }
     }
 }
+
+private val mapper: (String, String, Double, Double, Double, String, Instant) -> TradeBookEntity = ::TradeBookEntity

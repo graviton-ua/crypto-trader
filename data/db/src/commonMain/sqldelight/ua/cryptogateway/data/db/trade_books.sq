@@ -1,0 +1,40 @@
+CREATE TABLE IF NOT EXISTS trade_books (
+    id VARCHAR(36) PRIMARY KEY,
+    pair VARCHAR(13) NOT NULL,
+    quote_quantity DOUBLE PRECISION NOT NULL,
+    match_price DOUBLE PRECISION NOT NULL,
+    match_quantity DOUBLE PRECISION NOT NULL,
+    side VARCHAR(6) NOT NULL,
+    created_at TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- queries
+
+getAll:
+SELECT * FROM trade_books;
+
+save:
+INSERT INTO trade_books (
+    id,
+    pair,
+    quote_quantity,
+    match_price,
+    match_quantity,
+    side,
+    created_at
+) VALUES (
+    :id,
+    :pair,
+    :quoteQuantity,
+    :matchPrice,
+    :matchQuantity,
+    :side,
+    :createdAt
+)
+ON CONFLICT(id) DO UPDATE SET
+    pair = excluded.pair,
+    quote_quantity = excluded.quote_quantity,
+    match_price = excluded.match_price,
+    match_quantity = excluded.match_quantity,
+    side = excluded.side,
+    created_at = excluded.created_at;
