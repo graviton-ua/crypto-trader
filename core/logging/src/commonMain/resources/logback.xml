@@ -28,7 +28,7 @@
         <appender-ref ref="CONSOLE" />
     </root>
 
-    <logger name="ua.cryptogateway" level="debug" additivity="true">
+    <logger name="ua.cryptogateway" level="info" additivity="true">
         <appender-ref ref="ROLLING" />
     </logger>
 
