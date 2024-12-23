@@ -1,7 +1,7 @@
 package ua.cryptogateway.data.db.dao
 
 import me.tatarka.inject.annotations.Inject
-import ua.cryptogateway.data.db.CryptoDb
+import ua.cryptogateway.data.db.Database
 import ua.cryptogateway.data.db.models.BotConfigEntity
 import ua.cryptogateway.data.models.Order
 import ua.cryptogateway.util.AppCoroutineDispatchers
@@ -9,8 +9,8 @@ import ua.cryptogateway.util.AppCoroutineDispatchers
 @Inject
 class BotConfigsDao(
     dispatchers: AppCoroutineDispatchers,
-    db: CryptoDb,
-) : SqlDelightDao(dispatcher = dispatchers.io, db = db) {
+    db: Database,
+) : Dao(dispatcher = dispatchers.io, db = db) {
 
     suspend fun getAll() = transaction {
         bot_configsQueries.getAll(mapper = mapper).executeAsList()

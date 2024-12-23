@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.sqldelight)
 }
 
@@ -14,6 +15,7 @@ kotlin {
 
             implementation(projects.data.models)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.json)
             // Need to force upgrade these for recent Kotlin support
             //api(libs.kotlinx.atomicfu)
             api(libs.kotlinx.coroutines.core)
@@ -36,7 +38,7 @@ kotlin {
 
 sqldelight {
     databases {
-        create("CryptoDb") {
+        create("Database") {
             packageName = "ua.cryptogateway.data.db"
             dialect("app.cash.sqldelight:postgresql-dialect:2.0.2")
         }

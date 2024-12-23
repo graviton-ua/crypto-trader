@@ -3,15 +3,15 @@ package ua.cryptogateway.data.db.dao
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
-import ua.cryptogateway.data.db.CryptoDb
+import ua.cryptogateway.data.db.Database
 import ua.cryptogateway.data.db.models.OrderBookEntity
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
 class OrderBookDao(
     dispatchers: AppCoroutineDispatchers,
-    db: CryptoDb,
-) : SqlDelightDao(dispatcher = dispatchers.io, db = db) {
+    db: Database,
+) : Dao(dispatcher = dispatchers.io, db = db) {
 
     suspend fun getAll(): List<OrderBookEntity> = transaction {
         order_booksQueries.getAll(mapper = mapper).executeAsList()

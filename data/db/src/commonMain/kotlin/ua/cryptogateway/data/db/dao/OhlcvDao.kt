@@ -2,15 +2,15 @@ package ua.cryptogateway.data.db.dao
 
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
-import ua.cryptogateway.data.db.CryptoDb
+import ua.cryptogateway.data.db.Database
 import ua.cryptogateway.data.db.models.OhlcvEntity
 import ua.cryptogateway.util.AppCoroutineDispatchers
 
 @Inject
 class OhlcvDao(
     dispatchers: AppCoroutineDispatchers,
-    db: CryptoDb,
-) : SqlDelightDao(dispatcher = dispatchers.io, db = db) {
+    db: Database,
+) : Dao(dispatcher = dispatchers.io, db = db) {
 
     suspend fun getAll() = transaction {
         ohlcvQueries.getAll(mapper = mapper).executeAsList()

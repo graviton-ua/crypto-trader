@@ -53,14 +53,6 @@ ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.re
 hikari = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikari" }
 postgreSQL-jdbc = { module = "org.postgresql:postgresql", version.ref = "postgreSQL-JDBC" }
 
-# Exposed DB ORM framework
-exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "exposed" }
-exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "exposed" }
-exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
-exposed-json = { group = "org.jetbrains.exposed", name = "exposed-json", version.ref = "exposed" }
-exposed-migration = { group = "org.jetbrains.exposed", name = "exposed-migration", version.ref = "exposed" }
-exposed-kotlin-datetime = { group = "org.jetbrains.exposed", name = "exposed-kotlin-datetime", version.ref = "exposed" }
-
 # Sqldelight DB ORM framework
 sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-driver = { module = "app.cash.sqldelight:jdbc-driver", version.ref = "sqldelight" }

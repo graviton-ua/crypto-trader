@@ -42,7 +42,7 @@ actual interface SqlDatabasePlatformComponent {
         dataSource: DataSource,
     ): SqlDriver = dataSource.asJdbcDriver()
         .also { db ->
-            CryptoDb.Schema.create(db)
+            Database.Schema.create(db)
             //db.execute(null, "PRAGMA foreign_keys=ON", 0)
         }
 }

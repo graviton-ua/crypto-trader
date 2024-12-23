@@ -1,7 +1,9 @@
 package ua.cryptogateway.data.db
 
+import app.cash.sqldelight.EnumColumnAdapter
+import app.cash.sqldelight.db.SqlDriver
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.exposed.sql.Database
+import ua.cryptogateway.data.db.adapters.InstantTimestampColumnAdapter
 import javax.sql.DataSource
 
 /**
@@ -17,11 +19,35 @@ import javax.sql.DataSource
  */
 @Inject
 class DatabaseFactory(
-    private val dataSource: DataSource,
+    private val driver: SqlDriver,
 ) {
-    fun build(): Database = Database.connect(
-        datasource = dataSource,
-        setupConnection = {},
-        databaseConfig = null,
+    fun build(): Database = Database(
+        driver = driver,
+        balanceAdapter = Balance.Adapter(
+            updated_atAdapter = InstantTimestampColumnAdapter,
+        ),
+        tickersAdapter = Tickers.Adapter(
+            updated_atAdapter = InstantTimestampColumnAdapter,
+        ),
+        ohlcvAdapter = Ohlcv.Adapter(
+            open_timeAdapter = InstantTimestampColumnAdapter,
+            close_timeAdapter = InstantTimestampColumnAdapter,
+            created_atAdapter = InstantTimestampColumnAdapter,
+        ),
+        bot_configsAdapter = Bot_configs.Adapter(
+            sideAdapter = EnumColumnAdapter(),
+        ),
+        trade_booksAdapter = Trade_books.Adapter(
+            created_atAdapter = InstantTimestampColumnAdapter,
+        ),
+        historyAdapter = History.Adapter(
+            created_atAdapter = InstantTimestampColumnAdapter,
+        ),
+        ordersAdapter = Orders.Adapter(
+            typeAdapter = EnumColumnAdapter(),
+            sideAdapter = EnumColumnAdapter(),
+            updated_atAdapter = InstantTimestampColumnAdapter,
+            created_atAdapter = InstantTimestampColumnAdapter,
+        ),
     )
 }

@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ua.cryptogateway.data.models.Order.Side.Buy
 import ua.cryptogateway.data.models.Order.Side.Sell
+import ua.cryptogateway.data.models.Order.Type.*
 
 interface Order {
 

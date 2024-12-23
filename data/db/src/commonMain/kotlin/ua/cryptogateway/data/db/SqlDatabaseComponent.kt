@@ -1,23 +1,17 @@
 package ua.cryptogateway.data.db
 
 import me.tatarka.inject.annotations.Provides
-import org.jetbrains.exposed.sql.Database
 import ua.cryptogateway.inject.ApplicationScope
 
 expect interface SqlDatabasePlatformComponent
 
 interface SqlDatabaseComponent : SqlDatabasePlatformComponent {
-    @ApplicationScope
-    @Provides
-    fun provideMsSqlDatabase(
-        factory: DatabaseFactory,
-    ): Database = factory.build()
 
     @ApplicationScope
     @Provides
     fun provideSqlDelightDatabase(
-        factory: DatabaseSqlDelightFactory,
-    ): CryptoDb = factory.build()
+        factory: DatabaseFactory,
+    ): Database = factory.build()
 
 
 //    @ApplicationScope
