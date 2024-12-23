@@ -14,16 +14,16 @@ class OrderBookDao(
 ) : SqlDelightDao(dispatcher = dispatchers.io, db = db) {
 
     suspend fun getAll(): List<OrderBookEntity> = transaction {
-        orderbookQueries.getAll(mapper = mapper).executeAsList()
+        order_booksQueries.getAll(mapper = mapper).executeAsList()
     }
 
     suspend fun get(pair: String): OrderBookEntity? = transaction {
-        orderbookQueries.getForPair(pair = pair, mapper = mapper).executeAsOneOrNull()
+        order_booksQueries.getForPair(pair = pair, mapper = mapper).executeAsOneOrNull()
     }
 
     suspend fun save(entity: OrderBookEntity) = Result.runCatching {
         transaction {
-            orderbookQueries.save(
+            order_booksQueries.save(
                 pair = entity.pair,
                 asks = Json.encodeToString(entity.asks),
                 bids = Json.encodeToString(entity.bids),

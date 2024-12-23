@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS orderbook (
+CREATE TABLE IF NOT EXISTS order_books (
     pair VARCHAR(13) PRIMARY KEY,
     asks JSON NOT NULL,
     bids JSON NOT NULL
@@ -7,14 +7,14 @@ CREATE TABLE IF NOT EXISTS orderbook (
 -- queries
 
 getAll:
-SELECT * FROM orderbook;
+SELECT * FROM order_books;
 
 getForPair:
-SELECT * FROM orderbook
+SELECT * FROM order_books
 WHERE pair = :pair;
 
 save:
-INSERT INTO orderbook (pair, asks, bids)
+INSERT INTO order_books (pair, asks, bids)
 VALUES (:pair, :asks, :bids)
 ON CONFLICT (pair) DO UPDATE
 SET
