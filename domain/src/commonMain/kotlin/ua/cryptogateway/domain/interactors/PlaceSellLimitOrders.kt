@@ -36,14 +36,12 @@ class PlaceSellLimitOrders(
             val startQuantity = config.minSize * config.orderSize
             val bestPrice = bestPrice(pairName, config) ?: return@forEach
 
-            val balance = balanceDao.getCurrency(currency = config.baseAsset) ?: return@forEach
+            val balance = balanceDao.getForAsset(asset = config.baseAsset) ?: return@forEach
 
             // If there is no balance to purchase the minimum quantity
             if (balance.balance < config.minSize) return@forEach
 
             val activeOrders = orderDao.get(side = Order.Side.Sell)
-                .onFailure { Log.warn(it) { "Can't get active orders from table" } }
-                .getOrNull() ?: return@forEach
 
             if (activeOrders.isEmpty()) {
                 Log.info { "Active Orders table is Empty!" }

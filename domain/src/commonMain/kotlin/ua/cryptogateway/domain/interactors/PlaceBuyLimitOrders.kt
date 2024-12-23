@@ -31,7 +31,7 @@ class PlaceBuyLimitOrders(
         configs.forEach { config ->
             if (config.orderAmount == 0 || config.orderSize == 0) return@forEach
 
-            val quotAsset = balanceDao.getCurrency(currency = config.quoteAsset) ?: return@forEach
+            val quotAsset = balanceDao.getForAsset(asset = config.quoteAsset) ?: return@forEach
 
             val pairName = config.baseAsset + "_" + config.quoteAsset
             val startQuantity = config.minSize * config.orderSize
@@ -49,11 +49,9 @@ class PlaceBuyLimitOrders(
                 return@forEach
             }
 
-            val balance = balanceDao.getCurrency(currency = config.baseAsset) ?: return@forEach
+            val balance = balanceDao.getForAsset(asset = config.baseAsset) ?: return@forEach
 
             val activeOrders = orderDao.get(side = Order.Side.Buy)
-                .onFailure { Log.warn(it) { "Can't get active orders side=Buy from table" } }
-                .getOrNull() ?: return@forEach
             val buyLimit = config.fond - balance.balance
             if (buyLimit > 0) {    // need to buy
             if (activeOrders.isEmpty()) {

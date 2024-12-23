@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS ohlcv (
     low_price DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     close_price DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     volume DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-    updated_at TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_pair_open_close_time UNIQUE (pair, open_time, close_time)
 );
 
 -- queries

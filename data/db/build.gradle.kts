@@ -39,7 +39,6 @@ kotlin {
 sqldelight {
     databases {
         create("Database") {
-            deriveSchemaFromMigrations.set(true)
             packageName = "ua.cryptogateway.data.db"
             dialect("app.cash.sqldelight:postgresql-dialect:2.0.2")
         }
