@@ -45,6 +45,21 @@ ON ohlcv.pair = LatestRows.pair
    AND ohlcv.updated_at = LatestRows.timestamp
 ORDER BY ohlcv.close_time ASC;
 
+getFFF:
+SELECT
+    (2 * 60 * FLOOR(EXTRACT(EPOCH FROM open_time) / (2 * 60))) AS grp_id,
+	pair,
+	MIN(open_time) AS open_time,
+	MAX(close_time) AS close_time,
+    SUM(volume) AS volume_sum
+FROM
+    ohlcv
+WHERE pair = 'BTC_USDT'
+GROUP BY
+    pair, grp_id
+ORDER BY
+    grp_id;
+
 insert:
 INSERT INTO ohlcv (
     pair, open_time, close_time, trades, open_price, high_price, low_price, close_price, volume, updated_at
