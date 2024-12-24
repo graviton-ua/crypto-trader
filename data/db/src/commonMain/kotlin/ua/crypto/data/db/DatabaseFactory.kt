@@ -30,7 +30,7 @@ class DatabaseFactory(
         tickersAdapter = Tickers.Adapter(
             updated_atAdapter = InstantTimestampColumnAdapter,
         ),
-        ohlcvAdapter = Ohlcv.Adapter(
+        candlesAdapter = Candles.Adapter(
             open_timeAdapter = InstantTimestampColumnAdapter,
             close_timeAdapter = InstantTimestampColumnAdapter,
             updated_atAdapter = InstantTimestampColumnAdapter,

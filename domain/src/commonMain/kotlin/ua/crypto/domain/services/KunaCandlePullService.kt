@@ -11,8 +11,8 @@ import ua.crypto.core.inject.ApplicationCoroutineScope
 import ua.crypto.core.inject.ApplicationScope
 import ua.crypto.core.logs.Log
 import ua.crypto.core.util.AppCoroutineDispatchers
-import ua.crypto.data.db.dao.OhlcvDao
-import ua.crypto.data.db.models.OhlcvEntity
+import ua.crypto.data.db.dao.CandlesDao
+import ua.crypto.data.db.models.CandleEntity
 import ua.crypto.data.web.sockets.ChannelData
 import ua.crypto.data.web.sockets.KunaWebSocket
 import ua.crypto.data.web.sockets.KunaWebSocket.Channel
@@ -20,11 +20,11 @@ import ua.crypto.data.web.sockets.KunaWebSocketResponse
 
 @ApplicationScope
 @Inject
-class OhlcvPullService(
+class KunaCandlePullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val webSocket: KunaWebSocket,
-    private val dao: OhlcvDao,
+    private val dao: CandlesDao,
 ) : ServiceInitializer {
     private val dispatcher = dispatchers.io
     private var job: Job? = null
@@ -93,7 +93,7 @@ class OhlcvPullService(
 }
 
 
-private fun ChannelData.Ohlcv.Data.toEntity(pair: String): OhlcvEntity = OhlcvEntity(
+private fun ChannelData.Ohlcv.Data.toEntity(pair: String): CandleEntity = CandleEntity(
     id = 0,
     pair = pair.uppercase(),
     openTime = Instant.fromEpochMilliseconds(openTime),

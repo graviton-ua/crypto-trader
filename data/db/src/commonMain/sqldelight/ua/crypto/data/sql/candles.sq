@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ohlcv (
+CREATE TABLE IF NOT EXISTS candles (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     pair VARCHAR(13) NOT NULL,
     open_time TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL,
@@ -16,36 +16,17 @@ CREATE TABLE IF NOT EXISTS ohlcv (
 -- queries
 
 getAll:
-SELECT * FROM ohlcv;
+SELECT * FROM candles;
 
-getForId:
-SELECT * FROM ohlcv
+getById:
+SELECT * FROM candles
 WHERE id = :id;
 
-getForPair:
-SELECT * FROM ohlcv
+getByPair:
+SELECT * FROM candles
 WHERE pair = :pair;
 
-getClosedForEachMinute:
-SELECT ohlcv.id, ohlcv.pair, ohlcv.open_time, ohlcv.close_time, ohlcv.trades,
-    ohlcv.open_price, ohlcv.high_price, ohlcv.low_price, ohlcv.close_price,
-    ohlcv.volume, ohlcv.updated_at
-FROM ohlcv
-JOIN (
-    SELECT
-        pair,
-        close_time,
-        MAX(updated_at) AS timestamp
-    FROM ohlcv
-    WHERE pair = ?
-    GROUP BY pair, close_time
-) AS LatestRows
-ON ohlcv.pair = LatestRows.pair
-   AND ohlcv.close_time = LatestRows.close_time
-   AND ohlcv.updated_at = LatestRows.timestamp
-ORDER BY ohlcv.close_time ASC;
-
-getClosedForPeriod:
+getByPairInterval:
 SELECT
     :minutes * 60 * FLOOR(EXTRACT(EPOCH FROM open_time) / (:minutes * 60)) AS grp_id,
     pair,
@@ -59,15 +40,17 @@ SELECT
     SUM(volume) AS volume,
     MAX(updated_at) AS updated_at
 FROM
-    ohlcv
-WHERE pair = :pair
+    candles
+WHERE
+    pair = :pair
+    AND open_time >= :time
 GROUP BY
     pair, grp_id
 ORDER BY
     grp_id;
 
 insert:
-INSERT INTO ohlcv (
+INSERT INTO candles (
     pair, open_time, close_time, trades, open_price, high_price, low_price, close_price, volume, updated_at
 ) VALUES (
     :pair, :openTime, :closeTime, :trades, :openPrice, :highPrice, :lowPrice, :closePrice, :volume, CURRENT_TIMESTAMP

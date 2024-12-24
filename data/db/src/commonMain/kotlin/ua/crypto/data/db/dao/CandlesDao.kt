@@ -1,36 +1,32 @@
 package ua.crypto.data.db.dao
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.util.AppCoroutineDispatchers
-import ua.crypto.data.db.models.OhlcvEntity
+import ua.crypto.data.db.models.CandleEntity
 import ua.crypto.data.sql.Database
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 
 @Inject
-class OhlcvDao(
+class CandlesDao(
     dispatchers: AppCoroutineDispatchers,
     db: Database,
 ) : Dao(dispatcher = dispatchers.io, db = db) {
 
     suspend fun getAll() = transaction {
-        ohlcvQueries.getAll(mapper = mapper).executeAsList()
+        candlesQueries.getAll(mapper = mapper).executeAsList()
     }
 
-    suspend fun getAll(pair: String) = transaction {
-        ohlcvQueries.getForPair(pair = pair, mapper = mapper).executeAsList()
+    suspend fun getByPair(pair: String) = transaction {
+        candlesQueries.getByPair(pair = pair, mapper = mapper).executeAsList()
     }
 
-    suspend fun get(id: Int) = transaction {
-        ohlcvQueries.getForId(id = id, mapper = mapper).executeAsOneOrNull()
-    }
-
-
-    suspend fun getAllClosedForEachMinute(pair: String) = transaction {
-        ohlcvQueries.getClosedForEachMinute(pair = pair, mapper = mapper).executeAsList()
-    }
-
-    suspend fun getAllClosedForPeriod(pair: String, minutes: Int) = transaction {
-        ohlcvQueries.getClosedForPeriod(pair = pair, minutes = minutes.toLong(), mapper = mapperPeriod).executeAsList()
+    suspend fun getByPairInterval(pair: String, interval: Duration, duration: Duration = 24.hours) = transaction {
+        val minutesInterval = interval.inWholeMinutes
+        val durationAgo = Clock.System.now().minus(duration)
+        candlesQueries.getByPairInterval(pair = pair, minutes = minutesInterval, time = durationAgo, mapper = mapperPeriod).executeAsList()
     }
 
 
@@ -40,9 +36,9 @@ class OhlcvDao(
      *
      * @param entity The OhlcvEntity object containing the data to be saved in the database.
      */
-    suspend fun save(entity: OhlcvEntity) = Result.runCatching {
+    suspend fun save(entity: CandleEntity) = Result.runCatching {
         transaction {
-            ohlcvQueries.insert(
+            candlesQueries.insert(
                 entity.pair,
                 entity.openTime,
                 entity.closeTime,
@@ -57,7 +53,7 @@ class OhlcvDao(
     }
 }
 
-private val mapper: (Int, String, Instant, Instant, Int, Double, Double, Double, Double, Double, Instant) -> OhlcvEntity = ::OhlcvEntity
+private val mapper: (Int, String, Instant, Instant, Int, Double, Double, Double, Double, Double, Instant) -> CandleEntity = ::CandleEntity
 private val mapperPeriod: (
     grp_id: Long?,
     pair: String,
@@ -70,18 +66,18 @@ private val mapperPeriod: (
     high_price: Double?,
     volume: Double?,
     updated_at: Instant?,
-) -> OhlcvEntity = { grp_id,
-                     pair,
-                     open_time,
-                     close_time,
-                     trades,
-                     open_price,
-                     close_price,
-                     low_price,
-                     high_price,
-                     volume,
-                     updated_at ->
-    OhlcvEntity(
+) -> CandleEntity = { grp_id,
+                      pair,
+                      open_time,
+                      close_time,
+                      trades,
+                      open_price,
+                      close_price,
+                      low_price,
+                      high_price,
+                      volume,
+                      updated_at ->
+    CandleEntity(
         id = grp_id?.toInt()!!,
         pair = pair,
         openTime = open_time!!,

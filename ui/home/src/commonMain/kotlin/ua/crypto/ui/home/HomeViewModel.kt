@@ -7,9 +7,11 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.connorsrsi.crsi
 import ua.crypto.core.util.AppCoroutineDispatchers
-import ua.crypto.data.db.dao.OhlcvDao
+import ua.crypto.data.db.dao.CandlesDao
 import ua.crypto.domain.interactors.PlaceBuyLimitOrders
 import ua.crypto.domain.interactors.PlaceSellLimitOrders
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.measureTimedValue
 
 @Inject
@@ -17,7 +19,7 @@ class HomeViewModel(
     dispatchers: AppCoroutineDispatchers,
     private val placeBuyLimitOrders: PlaceBuyLimitOrders,
     private val placeSellLimitOrders: PlaceSellLimitOrders,
-    private val dao: OhlcvDao,
+    private val dao: CandlesDao,
 ) : ViewModel() {
     private val dispatcher = dispatchers.io
 
@@ -34,8 +36,10 @@ class HomeViewModel(
 //            91913.95,95883.19,95690.84,97374.43,96263.32,97026.18,95815.67,95750.94,98581.58,97094.16,99695.25,99728.31,101043.67,97434.39,96912.13,
 //            100900.57, 99923.68, 101394.34, 101261.05, 104181.49, 105746.04, 106142.79, 100195.80, 97703.97, 98124.17,
 //        )
-        //val entities = measureTimedValue { dao.getAllClosedForEachMinute("BTC_USDT") }.also { println("Read candles Exec time: ${it.duration}") }.value
-        val entities = measureTimedValue { dao.getAllClosedForPeriod("BTC_USDT", 2) }.also { println("Read candles Exec time: ${it.duration}") }.value
+        //val entities = measureTimedValue { dao.getByPair("BTC_USDT") }.also { println("Read candles Exec time: ${it.duration}") }.value
+        val entities = measureTimedValue {
+            dao.getByPairInterval(pair = "BTC_USDT", interval = 2.minutes, duration = 4.hours + 30.minutes)
+        }.also { println("Read candles Exec time: ${it.duration}") }.value
         println(entities.joinToString("\n"))
 
         val prices = entities.map { it.closePrice }

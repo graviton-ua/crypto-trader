@@ -11,7 +11,7 @@ interface DomainComponent {
 
     @Provides
     @IntoSet
-    fun provideOhlcvPullService(impl: OhlcvPullService): ServiceInitializer = impl
+    fun provideOhlcvPullService(impl: KunaCandlePullService): ServiceInitializer = impl
 
     @Provides
     @IntoSet

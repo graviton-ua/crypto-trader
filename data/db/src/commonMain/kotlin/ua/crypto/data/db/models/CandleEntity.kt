@@ -3,7 +3,7 @@ package ua.crypto.data.db.models
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-data class OhlcvEntity(
+data class CandleEntity(
     val id: Int,
 
     val pair: String,
