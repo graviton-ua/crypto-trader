@@ -197,14 +197,14 @@ private fun ConfigEditDialog(
                 OutlinedTextField(
                     value = state.priceStep,
                     onValueChange = onPriceStepChange,
-                    label = { Text(text = "Price step") },
+                    label = { Text(text = "Price step %") },
                     singleLine = true,
                     modifier = Modifier.weight(1f),
                 )
                 OutlinedTextField(
                     value = state.biasPrice,
                     onValueChange = onBiasPriceChange,
-                    label = { Text(text = "Bias price") },
+                    label = { Text(text = "Bias price %") },
                     singleLine = true,
                     modifier = Modifier.weight(1f),
                 )
@@ -230,7 +230,7 @@ private fun ConfigEditDialog(
                 OutlinedTextField(
                     value = state.sizeStep,
                     onValueChange = onSizeStepChange,
-                    label = { Text(text = "Size step") },
+                    label = { Text(text = "Size step %") },
                     singleLine = true,
                     modifier = Modifier.weight(1f),
                 )
