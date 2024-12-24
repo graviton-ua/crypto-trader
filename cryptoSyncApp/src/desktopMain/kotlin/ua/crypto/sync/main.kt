@@ -11,8 +11,8 @@ import androidx.compose.ui.window.application
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import org.jetbrains.compose.resources.painterResource
-import ua.cryptogateway.inject.DesktopApplicationComponent
-import ua.cryptogateway.inject.create
+import ua.crypto.shared.inject.DesktopApplicationComponent
+import ua.crypto.shared.inject.create
 import ua.crypto.sync.resources.Res
 import ua.crypto.sync.resources.letter_d
 import java.awt.*

@@ -14,23 +14,11 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.base)
-                //api(projects.core.analytics)
                 api(projects.core.logging)
-                //api(projects.core.notifications.core)
-                //api(projects.core.performance)
-                //api(projects.core.permissions)
-                //api(projects.core.powercontroller)
                 api(projects.core.preferences)
                 api(projects.data.db)
                 api(projects.data.web)
-                //api(projects.data.licenses)
-                //api(projects.api.trakt)
-                //api(projects.api.tmdb)
                 api(projects.domain)
-                //api(projects.tasks)
-
-                //api(projects.common.imageloading)
-                //api(projects.common.ui.compose)
 
                 api(projects.ui.home)
                 api(projects.ui.configs)

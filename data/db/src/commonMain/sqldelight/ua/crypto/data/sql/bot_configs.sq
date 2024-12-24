@@ -1,0 +1,100 @@
+CREATE TABLE IF NOT EXISTS bot_configs (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    base_asset VARCHAR(6) NOT NULL,
+    quote_asset VARCHAR(6) NOT NULL,
+    side VARCHAR(6) AS ua.crypto.data.models.Order.Side NOT NULL,
+    fond DOUBLE PRECISION NOT NULL,
+    start_price DOUBLE PRECISION NOT NULL,
+    price_step DOUBLE PRECISION NOT NULL,
+    bias_price DOUBLE PRECISION NOT NULL,
+    min_size DOUBLE PRECISION NOT NULL,
+    order_size INTEGER NOT NULL,
+    size_step DOUBLE PRECISION NOT NULL,
+    order_amount INTEGER NOT NULL,
+    price_force boolean NOT NULL,
+    market boolean NOT NULL,
+    base_prec INTEGER NOT NULL,
+    quote_prec INTEGER NOT NULL,
+    active BOOLEAN NOT NULL,
+    CONSTRAINT bot_configs_unique_asset_side_unique UNIQUE (base_asset, quote_asset, side)
+);
+
+-- queries
+
+getAll:
+SELECT * FROM bot_configs
+ORDER BY base_asset ASC, quote_asset ASC, side ASC;
+
+getForId:
+SELECT * FROM bot_configs
+WHERE id = :id;
+
+getForUnique:
+SELECT * FROM bot_configs
+WHERE base_asset = :baseAsset AND quote_asset = :quoteAsset AND side = :side;
+
+getActiveForSide:
+SELECT * FROM bot_configs
+WHERE active = 'true' AND side = :side;
+
+saveWithId:
+UPDATE bot_configs
+SET
+    base_asset = :baseAsset,
+    quote_asset = :quoteAsset,
+    side = :side,
+    fond = :fond,
+    start_price = :startPrice,
+    price_step = :priceStep,
+    bias_price = :biasPrice,
+    min_size = :minSize,
+    order_size = :orderSize,
+    size_step = :sizeStep,
+    order_amount = :orderAmount,
+    price_force = :priceForce,
+    market = :market,
+    base_prec = :basePrec,
+    quote_prec = :quotePrec,
+    active = :active
+WHERE id = :id;
+
+saveWithUniques:
+INSERT INTO bot_configs (
+    base_asset, quote_asset,
+    side, fond, start_price,
+    price_step, bias_price,
+    min_size, order_size,
+    size_step, order_amount,
+    price_force, market,
+    base_prec, quote_prec, active
+) VALUES (
+    :baseAsset, :quoteAsset,
+    :side, :fond, :startPrice,
+    :priceStep, :biasPrice,
+    :minSize, :orderSize,
+    :sizeStep, :orderAmount,
+    :priceForce, :market,
+    :basePrec, :quotePrec, :active
+)
+ON CONFLICT(base_asset, quote_asset, side) DO UPDATE SET
+    fond = excluded.fond,
+    start_price = excluded.start_price,
+    price_step = excluded.price_step,
+    bias_price = excluded.bias_price,
+    min_size = excluded.min_size,
+    order_size = excluded.order_size,
+    size_step = excluded.size_step,
+    order_amount = excluded.order_amount,
+    price_force = excluded.price_force,
+    market = excluded.market,
+    base_prec = excluded.base_prec,
+    quote_prec = excluded.quote_prec,
+    active = excluded.active;
+
+deleteById:
+DELETE FROM bot_configs
+WHERE id = :id;
+
+deleteByUniqueKey:
+DELETE FROM bot_configs
+WHERE base_asset = :baseAsset AND quote_asset = :quoteAsset AND side = :side;

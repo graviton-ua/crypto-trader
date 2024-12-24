@@ -1,7 +1,6 @@
 package ua.crypto.trader
 
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.DpSize
@@ -10,9 +9,9 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import kotlinx.coroutines.cancel
-import ua.cryptogateway.inject.DesktopApplicationComponent
-import ua.cryptogateway.inject.WindowComponent
-import ua.cryptogateway.inject.create
+import ua.crypto.shared.inject.DesktopApplicationComponent
+import ua.crypto.shared.inject.WindowComponent
+import ua.crypto.shared.inject.create
 import java.util.*
 
 /**

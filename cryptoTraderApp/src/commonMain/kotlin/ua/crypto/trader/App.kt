@@ -16,15 +16,15 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ua.cryptogateway.inject.SharedUiComponent
-import ua.hospes.cryptogateway.ui.common.theme.AppTheme
-import ua.hospes.cryptogateway.ui.configs.ConfigsScreen
-import ua.hospes.cryptogateway.ui.configs.addConfigEditDialog
-import ua.hospes.cryptogateway.ui.configs.addConfigsScreen
-import ua.hospes.cryptogateway.ui.home.HomeScreen
-import ua.hospes.cryptogateway.ui.home.addHomeScreen
-import ua.hospes.cryptogateway.ui.settings.SettingsScreen
-import ua.hospes.cryptogateway.ui.settings.addSettingsScreen
+import ua.crypto.shared.inject.SharedUiComponent
+import ua.crypto.ui.common.theme.AppTheme
+import ua.crypto.ui.configs.ConfigsScreen
+import ua.crypto.ui.configs.addConfigEditDialog
+import ua.crypto.ui.configs.addConfigsScreen
+import ua.crypto.ui.home.HomeScreen
+import ua.crypto.ui.home.addHomeScreen
+import ua.crypto.ui.settings.SettingsScreen
+import ua.crypto.ui.settings.addSettingsScreen
 
 @Composable
 fun App(

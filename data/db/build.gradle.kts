@@ -39,7 +39,7 @@ kotlin {
 sqldelight {
     databases {
         create("Database") {
-            packageName = "ua.cryptogateway.data.db"
+            packageName = "ua.crypto.data.sql"
             dialect("app.cash.sqldelight:postgresql-dialect:2.0.2")
         }
     }

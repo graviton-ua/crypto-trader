@@ -5,7 +5,7 @@ plugins {
 }
 
 buildConfig {
-    packageName("ua.cryptogateway.data.web")
+    packageName("ua.crypto.data.web")
 
     buildConfigField(
         type = String::class.java,
