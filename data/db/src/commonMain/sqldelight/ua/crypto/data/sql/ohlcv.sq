@@ -45,16 +45,22 @@ ON ohlcv.pair = LatestRows.pair
    AND ohlcv.updated_at = LatestRows.timestamp
 ORDER BY ohlcv.close_time ASC;
 
-getFFF:
+getClosedForPeriod:
 SELECT
-    (2 * 60 * FLOOR(EXTRACT(EPOCH FROM open_time) / (2 * 60))) AS grp_id,
-	pair,
-	MIN(open_time) AS open_time,
-	MAX(close_time) AS close_time,
-    SUM(volume) AS volume_sum
+    :minutes * 60 * FLOOR(EXTRACT(EPOCH FROM open_time) / (:minutes * 60)) AS grp_id,
+    pair,
+    MIN(open_time) AS open_time,
+    MAX(close_time) AS close_time,
+	SUM(trades) AS trades,
+  	ARRAY_AGG(open_price ORDER BY open_time ASC) AS open_price,
+  	ARRAY_AGG(close_price ORDER BY open_time DESC) AS close_price,
+    MIN(low_price) AS low_price,
+    MAX(high_price) AS high_price,
+    SUM(volume) AS volume,
+    MAX(updated_at) AS updated_at
 FROM
     ohlcv
-WHERE pair = 'BTC_USDT'
+WHERE pair = :pair
 GROUP BY
     pair, grp_id
 ORDER BY
