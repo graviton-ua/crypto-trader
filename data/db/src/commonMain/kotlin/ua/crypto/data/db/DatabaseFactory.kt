@@ -31,6 +31,7 @@ class DatabaseFactory(
             updated_atAdapter = InstantTimestampColumnAdapter,
         ),
         candlesAdapter = Candles.Adapter(
+            platformAdapter = EnumColumnAdapter(),
             open_timeAdapter = InstantTimestampColumnAdapter,
             close_timeAdapter = InstantTimestampColumnAdapter,
             updated_atAdapter = InstantTimestampColumnAdapter,

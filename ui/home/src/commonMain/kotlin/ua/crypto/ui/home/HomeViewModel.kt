@@ -8,6 +8,7 @@ import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.connorsrsi.crsi
 import ua.crypto.core.util.AppCoroutineDispatchers
 import ua.crypto.data.db.dao.CandlesDao
+import ua.crypto.data.models.CryptoPlatform
 import ua.crypto.domain.interactors.PlaceBuyLimitOrders
 import ua.crypto.domain.interactors.PlaceSellLimitOrders
 import kotlin.time.Duration.Companion.hours
@@ -38,7 +39,7 @@ class HomeViewModel(
 //        )
         //val entities = measureTimedValue { dao.getByPair("BTC_USDT") }.also { println("Read candles Exec time: ${it.duration}") }.value
         val entities = measureTimedValue {
-            dao.getByPairInterval(pair = "BTC_USDT", interval = 2.minutes, duration = 4.hours + 30.minutes)
+            dao.getByPairInterval(platform = CryptoPlatform.KUNA, pair = "BTC_USDT", interval = 2.minutes, duration = 4.hours + 30.minutes)
         }.also { println("Read candles Exec time: ${it.duration}") }.value
         println(entities.joinToString("\n"))
 

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS candles (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    platform VARCHAR(20) AS ua.crypto.data.models.CryptoPlatform NOT NULL,
     pair VARCHAR(13) NOT NULL,
     open_time TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL,
     close_time TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS candles (
     close_price DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     volume DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     updated_at TIMESTAMPTZ AS kotlinx.datetime.Instant NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_pair_open_close_time UNIQUE (pair, open_time, close_time)
+    CONSTRAINT candles_pkey PRIMARY KEY (platform, pair, open_time, close_time)
 );
 
 -- queries
@@ -18,17 +18,14 @@ CREATE TABLE IF NOT EXISTS candles (
 getAll:
 SELECT * FROM candles;
 
-getById:
-SELECT * FROM candles
-WHERE id = :id;
-
 getByPair:
 SELECT * FROM candles
-WHERE pair = :pair;
+WHERE platform = :platform AND pair = :pair;
 
 getByPairInterval:
 SELECT
     :minutes * 60 * FLOOR(EXTRACT(EPOCH FROM open_time) / (:minutes * 60)) AS grp_id,
+    platform,
     pair,
     MIN(open_time) AS open_time,
     MAX(close_time) AS close_time,
@@ -42,20 +39,21 @@ SELECT
 FROM
     candles
 WHERE
-    pair = :pair
+    platform = :platform
+    AND pair = :pair
     AND open_time >= :time
 GROUP BY
-    pair, grp_id
+    platform, pair, grp_id
 ORDER BY
     grp_id;
 
 insert:
 INSERT INTO candles (
-    pair, open_time, close_time, trades, open_price, high_price, low_price, close_price, volume, updated_at
+    platform, pair, open_time, close_time, trades, open_price, high_price, low_price, close_price, volume, updated_at
 ) VALUES (
-    :pair, :openTime, :closeTime, :trades, :openPrice, :highPrice, :lowPrice, :closePrice, :volume, CURRENT_TIMESTAMP
+    :platform, :pair, :openTime, :closeTime, :trades, :openPrice, :highPrice, :lowPrice, :closePrice, :volume, CURRENT_TIMESTAMP
 )
-ON CONFLICT (pair, open_time, close_time) DO UPDATE SET
+ON CONFLICT (platform, pair, open_time, close_time) DO UPDATE SET
     trades = excluded.trades,
     open_price = excluded.open_price,
     high_price = excluded.high_price,

@@ -13,6 +13,7 @@ import ua.crypto.core.logs.Log
 import ua.crypto.core.util.AppCoroutineDispatchers
 import ua.crypto.data.db.dao.CandlesDao
 import ua.crypto.data.db.models.CandleEntity
+import ua.crypto.data.models.CryptoPlatform
 import ua.crypto.data.web.sockets.ChannelData
 import ua.crypto.data.web.sockets.KunaWebSocket
 import ua.crypto.data.web.sockets.KunaWebSocket.Channel
@@ -80,7 +81,7 @@ class KunaCandlePullService(
 
 
     private fun CoroutineScope.updateTable() = launch(dispatcher) {
-        Log.debug { "updateOhlcvTable() job started" }
+        Log.debug { "updateCandlesTable() job started" }
 
         data.filterNotNull()
             .map { (pair, data) -> data.toEntity(pair) }
@@ -89,12 +90,12 @@ class KunaCandlePullService(
                     .onFailure { Log.error(throwable = it) }
             }
 
-    }.also { it.invokeOnCompletion { Log.debug { "updateOhlcvTable() job completed (exception: ${it?.message})" } } }
+    }.also { it.invokeOnCompletion { Log.debug { "updateCandlesTable() job completed (exception: ${it?.message})" } } }
 }
 
 
 private fun ChannelData.Ohlcv.Data.toEntity(pair: String): CandleEntity = CandleEntity(
-    id = 0,
+    platform = CryptoPlatform.KUNA,
     pair = pair.uppercase(),
     openTime = Instant.fromEpochMilliseconds(openTime),
     closeTime = Instant.fromEpochMilliseconds(closeTime),

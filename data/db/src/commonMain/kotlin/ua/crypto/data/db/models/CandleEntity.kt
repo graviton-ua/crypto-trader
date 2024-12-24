@@ -2,10 +2,10 @@ package ua.crypto.data.db.models
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import ua.crypto.data.models.CryptoPlatform
 
 data class CandleEntity(
-    val id: Int,
-
+    val platform: CryptoPlatform,
     val pair: String,
 
     val openTime: Instant,     // open time
