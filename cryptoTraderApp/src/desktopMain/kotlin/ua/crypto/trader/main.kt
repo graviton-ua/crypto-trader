@@ -1,4 +1,4 @@
-package ua.hospes.cryptogateway
+package ua.crypto.trader
 
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -59,7 +59,7 @@ fun main() {
             state = rememberWindowState(size = DpSize(1300.dp, 660.dp)),
             resizable = true,
             onCloseRequest = ::exitApplication,
-            title = "CryptoGateway",
+            title = "CryptoTrader",
         ) {
             val uiComponent = remember(applicationComponent) { WindowComponent.create(applicationComponent) }
 

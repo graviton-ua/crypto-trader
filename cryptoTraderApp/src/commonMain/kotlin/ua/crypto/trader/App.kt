@@ -1,4 +1,4 @@
-package ua.hospes.cryptogateway
+package ua.crypto.trader
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Icon

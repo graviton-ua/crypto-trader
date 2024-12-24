@@ -45,11 +45,11 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "ua.hospes.cryptogateway.MainKt"
+        mainClass = "ua.crypto.trader.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "ua.hospes.cryptogateway"
+            packageName = "ua.crypto.trader"
             packageVersion = "1.0.0"
         }
     }

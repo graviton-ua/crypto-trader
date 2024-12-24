@@ -1,4 +1,4 @@
-rootProject.name = "CryptoGateway"
+rootProject.name = "Crypto-Trader"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -47,4 +47,5 @@ include(
     ":ui:configs",
     ":ui:settings",
 )
-include(":composeApp")
+include(":cryptoSyncApp")
+include(":cryptoTraderApp")
