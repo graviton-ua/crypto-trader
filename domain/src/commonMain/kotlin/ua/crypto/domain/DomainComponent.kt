@@ -5,27 +5,37 @@ import me.tatarka.inject.annotations.Provides
 import ua.crypto.domain.services.*
 
 interface DomainComponent {
-    @Provides
-    @IntoSet
-    fun provideBalancePullService(impl: BalancePullService): ServiceInitializer = impl
+
+    //  ===============
+    //  Crypto Trader services
+    //  ===============
 
     @Provides
     @IntoSet
-    fun provideOhlcvPullService(impl: KunaCandlePullService): ServiceInitializer = impl
+    fun provideBalancePullService(impl: BalancePullService): TraderServiceInitializer = impl
 
     @Provides
     @IntoSet
-    fun provideTickersPullService(impl: TickersPullService): ServiceInitializer = impl
+    fun provideTickersPullService(impl: TickersPullService): TraderServiceInitializer = impl
 
     @Provides
     @IntoSet
-    fun provideActiveOrdersPullService(impl: ActiveOrdersPullService): ServiceInitializer = impl
+    fun provideActiveOrdersPullService(impl: ActiveOrdersPullService): TraderServiceInitializer = impl
 
     @Provides
     @IntoSet
-    fun provideTradeBookPullService(impl: TradeBookPullService): ServiceInitializer = impl
+    fun provideTradeBookPullService(impl: TradeBookPullService): TraderServiceInitializer = impl
 
     @Provides
     @IntoSet
-    fun provideHistoryPullService(impl: HistoryPullService): ServiceInitializer = impl
+    fun provideKunaHistoryPullService(impl: KunaHistoryPullService): TraderServiceInitializer = impl
+
+
+    //  ===============
+    //  Crypto Sync services
+    //  ===============
+
+    @Provides
+    @IntoSet
+    fun provideKunaCandlePullService(impl: KunaCandlePullService): SyncServiceInitializer = impl
 }

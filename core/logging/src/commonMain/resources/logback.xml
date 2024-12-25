@@ -28,11 +28,11 @@
         <appender-ref ref="CONSOLE" />
     </root>
 
-    <logger name="ua.cryptogateway" level="info" additivity="true">
+    <logger name="ua.cryptogateway" level="debug" additivity="true">
         <appender-ref ref="ROLLING" />
     </logger>
 
-    <logger name="io.ktor.client" level="info" additivity="true">
+    <logger name="io.ktor.client" level="debug" additivity="true">
         <appender-ref ref="ROLLING" />
     </logger>
 

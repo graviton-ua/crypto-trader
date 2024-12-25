@@ -31,7 +31,7 @@ fun main() {
 //            initializationCompleted.value = true // Signal that initialization is complete
 //        }
 
-        val services = applicationComponent.services
+        val services = applicationComponent.syncServices
         if (initializationCompleted.value)  // Ensure DisposableEffect runs only after initialization
             DisposableEffect(services) {
                 services.start()

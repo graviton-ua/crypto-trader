@@ -14,7 +14,8 @@ import ua.crypto.data.db.SqlDatabaseComponent
 import ua.crypto.data.web.KtorComponent
 import ua.crypto.domain.DomainComponent
 import ua.crypto.shared.appinitializers.AppInitializers
-import ua.crypto.shared.serviceinitializers.ServiceInitializers
+import ua.crypto.shared.serviceinitializers.SyncServiceInitializers
+import ua.crypto.shared.serviceinitializers.TraderServiceInitializers
 
 expect interface SharedPlatformApplicationComponent
 
@@ -28,7 +29,10 @@ interface SharedApplicationComponent :
 
     val initializers: AppInitializers
     //val suspendedInitializers: AppSuspendedInitializers
-    val services: ServiceInitializers
+
+    val traderServices: TraderServiceInitializers
+    val syncServices: SyncServiceInitializers
+
     val dispatchers: AppCoroutineDispatchers
 
     val appScope: ApplicationCoroutineScope

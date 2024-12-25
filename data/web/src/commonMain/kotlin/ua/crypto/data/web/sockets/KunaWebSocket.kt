@@ -38,7 +38,11 @@ class KunaWebSocket(
         val session = client.webSocketSession("wss://ws-pro.kuna.io/socketcluster/")
         Log.debug { "Connected to Kuna.SocketCluster server." }
 
-        session.authenticate { session.close() }
+        session.authenticate {
+            Log.debug { "Incoming flow finished, closing websocket..." }
+            session.close()
+            this@channelFlow.close()
+        }
 
         // Start
         launch(dispatcher) {
@@ -50,39 +54,59 @@ class KunaWebSocket(
 
         launch(dispatcher) {
             Log.debug { "Start listen for incoming frames" }
-            session.incoming.receiveAsFlow().collectLatest {
-                when (it) {
-                    is Frame.Text -> {
-                        val text = it.readText()
-
-                        when {
-                            text.isEmpty() -> {
-                                session.send("")
-                                return@collectLatest
-                            }
-
-                            text.contains("rid") -> {
-                                /* We received confirmation of successful subscription etc, ignore it */
-                                return@collectLatest
-                            }
-                        }
-
-                        Log.debug { "Received: $text" }
-                        if (text.contains("disconnect")) close()
-
-
-                        val parsed = measureTimedValue {
-                            val trimmed = text.replace(eventRegexp, "\"event\":\"")
-                            Log.debug { "Trimmed: $trimmed" }
-                            Result.runCatching { json.decodeFromString<KunaWebSocketResponse>(trimmed) }
-                        }
-                        this@channelFlow.send(parsed.value)
-                        Log.debug { "Emit response[decoding: ${parsed.duration}]: ${parsed.value}" }
-                    }
-
-                    else -> println("Unknown frame: $it")
+            session.incoming.receiveAsFlow()
+                .onCompletion {
+                    Log.debug { "Incoming flow finished, closing websocket..." }
+                    session.close()
+                    this@channelFlow.close()
                 }
-            }
+                .collectLatest {
+                    when (it) {
+                        is Frame.Text -> {
+                            val text = it.readText()
+
+                            when {
+                                text.isEmpty() -> {
+                                    Log.debug { "Received ping message, sending pong..." }
+                                    session.send("")
+                                    return@collectLatest
+                                }
+
+                                text.contains("rid") -> {
+                                    /* We received confirmation of successful subscription etc, ignore it */
+                                    Log.debug { "Received success message for: $text" }
+                                    return@collectLatest
+                                }
+                            }
+
+                            Log.debug { "Received: $text" }
+
+                            val parsed = measureTimedValue {
+                                val trimmed = text.replace(eventRegexp, "\"event\":\"")
+                                Result.runCatching { json.decodeFromString<KunaWebSocketResponse>(trimmed) }
+                            }
+                            this@channelFlow.send(parsed.value)
+                            //Log.debug { "Emit response[decoding: ${parsed.duration}]: ${parsed.value}" }
+                        }
+
+                        is Frame.Ping -> {
+                            Log.debug { "Received Frame.Ping, sending pong..." }
+                            session.send("")
+                        }
+
+                        is Frame.Binary -> {
+                            Log.debug { "Received Frame.Binary, ignoring..." }
+                        }
+
+                        is Frame.Close -> {
+                            Log.debug { "Received Frame.Close, closing websocket..." }
+                            session.close()
+                            this@channelFlow.close()
+                        }
+
+                        else -> println("Unknown frame: $it")
+                    }
+                }
         }
 
         awaitClose {
