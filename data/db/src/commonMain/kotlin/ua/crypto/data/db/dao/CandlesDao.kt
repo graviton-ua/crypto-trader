@@ -58,6 +58,9 @@ class CandlesDao(
         ).executeAsList()
     }
 
+    suspend fun getByPairInterval(platform: CryptoPlatform, pair: String, interval: Duration, crsiLength: Int) =
+        getByPairInterval(platform, pair = pair, interval = interval, duration = interval * (crsiLength + 1))
+
 
     /**
      * Saves the given OHLCV entity to the database. This method performs an upsert operation on the

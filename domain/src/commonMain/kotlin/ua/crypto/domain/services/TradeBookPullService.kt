@@ -26,7 +26,7 @@ class TradeBookPullService(
     private val api: KunaApi,
     private val daoTradeBook: TradeBookDao,
     private val botConfigsDao: BotConfigsDao,
-) : ServiceInitializer {
+) : TraderServiceInitializer {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null

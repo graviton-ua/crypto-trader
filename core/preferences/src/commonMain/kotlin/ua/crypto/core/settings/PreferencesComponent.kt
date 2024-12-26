@@ -6,9 +6,9 @@ import ua.crypto.core.inject.ApplicationScope
 expect interface PreferencesPlatformComponent
 
 interface PreferencesComponent : PreferencesPlatformComponent {
-    val preferences: TiviPreferences
+    val preferences: TraderPreferences
 
     @ApplicationScope
     @Provides
-    fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences = bind
+    fun providePreferences(bind: TraderPreferencesImpl): TraderPreferences = bind
 }

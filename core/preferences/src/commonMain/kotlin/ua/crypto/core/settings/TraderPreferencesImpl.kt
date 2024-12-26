@@ -8,53 +8,25 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.inject.ApplicationCoroutineScope
-import ua.crypto.core.settings.TiviPreferences.LogLevel
-import ua.crypto.core.settings.TiviPreferences.Theme
+import ua.crypto.core.settings.TraderPreferences.LogLevel
 import ua.crypto.core.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalSettingsApi::class)
 @Inject
-class TiviPreferencesImpl(
+class TraderPreferencesImpl(
     settings: Lazy<ObservableSettings>,
     private val coroutineScope: ApplicationCoroutineScope,
     private val dispatchers: AppCoroutineDispatchers,
-) : TiviPreferences {
+) : TraderPreferences {
     private val settings: ObservableSettings by settings
     private val flowSettings by lazy { settings.value.toFlowSettings(dispatchers.io) }
 
     override val dbPort: Preference<String> by lazy { StringPreference(KEY_DB_PORT, "5432") }
     override val loglevel: Preference<LogLevel> by lazy { MappingIntPreference(KEY_LOG_LEVEL, LogLevel.INFO, LogLevel::fromInt, LogLevel::toInt) }
 
-    override val theme: Preference<Theme> by lazy { MappingPreference(KEY_THEME, Theme.SYSTEM, ::getThemeForStorageValue, ::themeToStorageValue) }
+    override val kunaApiKey: Preference<String> by lazy { StringPreference(KEY_KUNA_API_KEY, "") }
 
-    override val useDynamicColors: Preference<Boolean> by lazy {
-        BooleanPreference(KEY_USE_DYNAMIC_COLORS, true)
-    }
-    override val useLessData: Preference<Boolean> by lazy {
-        BooleanPreference(KEY_DATA_SAVER)
-    }
-    override val libraryFollowedActive: Preference<Boolean> by lazy {
-        BooleanPreference(KEY_LIBRARY_FOLLOWED_ACTIVE)
-    }
-    override val upNextFollowedOnly: Preference<Boolean> by lazy {
-        BooleanPreference(KEY_UPNEXT_FOLLOWED_ONLY)
-    }
-    override val ignoreSpecials: Preference<Boolean> by lazy {
-        BooleanPreference(KEY_IGNORE_SPECIALS, true)
-    }
-    override val reportAppCrashes: Preference<Boolean> by lazy {
-        BooleanPreference(KEY_OPT_IN_CRASH_REPORTING, true)
-    }
-    override val reportAnalytics: Preference<Boolean> by lazy {
-        BooleanPreference(KEY_OPT_IN_ANALYTICS_REPORTING, true)
-    }
-    override val developerHideArtwork: Preference<Boolean> by lazy {
-        BooleanPreference(KEY_DEV_HIDE_ARTWORK)
-    }
-    override val episodeAiringNotificationsEnabled: Preference<Boolean> by lazy {
-        BooleanPreference(KEY_NOTIFICATIONS)
-    }
 
     private inner class StringPreference(
         private val key: String,
@@ -192,38 +164,9 @@ class TiviPreferencesImpl(
     }
 }
 
-private fun themeToStorageValue(theme: Theme): String = when (theme) {
-    Theme.LIGHT -> THEME_LIGHT_VALUE
-    Theme.DARK -> THEME_DARK_VALUE
-    Theme.SYSTEM -> THEME_SYSTEM_VALUE
-}
-
-private fun getThemeForStorageValue(value: String) = when (value) {
-    THEME_LIGHT_VALUE -> Theme.LIGHT
-    THEME_DARK_VALUE -> Theme.DARK
-    else -> Theme.SYSTEM
-}
-
 internal const val KEY_DB_PORT = "pref_db_port"
 internal const val KEY_LOG_LEVEL = "pref_log_level"
-internal const val KEY_THEME = "pref_theme"
-internal const val KEY_USE_DYNAMIC_COLORS = "pref_dynamic_colors"
-internal const val KEY_DATA_SAVER = "pref_data_saver"
-internal const val KEY_LIBRARY_FOLLOWED_ACTIVE = "pref_library_followed_active"
-internal const val KEY_LIBRARY_WATCHED_ACTIVE = "pref_library_watched_active"
-internal const val KEY_UPNEXT_FOLLOWED_ONLY = "pref_upnext_followedonly_active"
-internal const val KEY_IGNORE_SPECIALS = "pref_ignore_specials"
-
-internal const val KEY_NOTIFICATIONS = "pref_notifications"
-
-internal const val KEY_OPT_IN_CRASH_REPORTING = "pref_opt_in_crash_reporting"
-internal const val KEY_OPT_IN_ANALYTICS_REPORTING = "pref_opt_in_analytics_reporting"
-
-internal const val KEY_DEV_HIDE_ARTWORK = "pref_dev_hide_artwork"
-
-internal const val THEME_LIGHT_VALUE = "light"
-internal const val THEME_DARK_VALUE = "dark"
-internal const val THEME_SYSTEM_VALUE = "system"
+internal const val KEY_KUNA_API_KEY = "pref_kuna_api_key"
 
 private fun ObservableSettings.toggleBoolean(key: String, defaultValue: Boolean = false) {
     putBoolean(key, !getBoolean(key, defaultValue))

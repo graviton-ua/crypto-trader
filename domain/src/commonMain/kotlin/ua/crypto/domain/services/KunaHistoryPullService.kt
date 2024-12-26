@@ -19,12 +19,12 @@ import kotlin.time.Duration.Companion.seconds
 
 @ApplicationScope
 @Inject
-class HistoryPullService(
+class KunaHistoryPullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
     private val daoHistory: HistoryDao,
-) : ServiceInitializer {
+) : TraderServiceInitializer {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null

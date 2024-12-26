@@ -10,15 +10,15 @@ import me.tatarka.inject.annotations.Inject
 import org.slf4j.LoggerFactory
 import ua.crypto.core.appinitializers.AppInitializer
 import ua.crypto.core.inject.ApplicationCoroutineScope
-import ua.crypto.core.settings.TiviPreferences
-import ua.crypto.core.settings.TiviPreferences.LogLevel
+import ua.crypto.core.settings.TraderPreferences
+import ua.crypto.core.settings.TraderPreferences.LogLevel
 import ua.crypto.core.util.AppCoroutineDispatchers
 
 @Inject
 class LogbackInitializer(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
-    private val prefs: TiviPreferences,
+    private val prefs: TraderPreferences,
 ) : AppInitializer {
     private val dispatcher = dispatchers.io
 

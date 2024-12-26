@@ -24,7 +24,7 @@ class ActiveOrdersPullService(
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
     private val dao: OrderDao,
-) : ServiceInitializer {
+) : TraderServiceInitializer {
     private val dispatcher = dispatchers.io
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null

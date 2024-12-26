@@ -26,7 +26,7 @@ class TickersPullService(
     private val scope: ApplicationCoroutineScope,
     private val webSocket: KunaWebSocket,
     private val dao: TickersDao,
-) : ServiceInitializer {
+) : TraderServiceInitializer {
     private val dispatcher = dispatchers.io
     private var job: Job? = null
     private val data = MutableSharedFlow<List<ChannelData.Ticker.Data>?>(

@@ -7,11 +7,11 @@ import ua.crypto.core.util.AppCoroutineDispatchers
 import ua.crypto.domain.ResultInteractor
 
 @Inject
-class GetDbPort(
+class SetKunaApiKey(
     dispatchers: AppCoroutineDispatchers,
     private val preferences: TraderPreferences,
-) : ResultInteractor<Unit, String>() {
+) : ResultInteractor<String, Unit>() {
     private val dispatcher = dispatchers.io
 
-    override suspend fun doWork(params: Unit): String = withContext(dispatcher) { preferences.dbPort.get() }
+    override suspend fun doWork(params: String) = withContext(dispatcher) { preferences.kunaApiKey.set(params) }
 }

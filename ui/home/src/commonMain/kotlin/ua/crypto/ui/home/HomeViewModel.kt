@@ -39,7 +39,8 @@ class HomeViewModel(
 //        )
         //val entities = measureTimedValue { dao.getByPair("BTC_USDT") }.also { println("Read candles Exec time: ${it.duration}") }.value
         val entities = measureTimedValue {
-            dao.getByPairInterval(platform = CryptoPlatform.KUNA, pair = "BTC_USDT", interval = 2.minutes, duration = 4.hours + 30.minutes)
+            //dao.getByPairInterval(platform = CryptoPlatform.KUNA, pair = "BTC_USDT", interval = 15.minutes, duration = 8.hours + 30.minutes)
+            dao.getByPairInterval(platform = CryptoPlatform.KUNA, pair = "BTC_USDT", interval = 2.minutes, duration = 21.minutes)
         }.also { println("Read candles Exec time: ${it.duration}") }.value
         println(entities.joinToString("\n"))
 

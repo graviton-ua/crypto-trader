@@ -22,11 +22,6 @@ buildConfig {
         name = "KUNA_PRIVAT_KEY",
         value = provider { properties["KUNA_PRIVAT_KEY"]?.toString() ?: "MxibPfs11MQhCHfSOos7feUuFJ0gZNx5njxOVxDm" },
     )
-    buildConfigField(
-        type = String::class.java,
-        name = "KUNA_API_KEY",
-        value = provider { properties["KUNA_API_KEY"]?.toString() ?: "77HmE/lav4JZbiMy5e4IvNsOWINLH8dU4HJ0SDsNugk=" },
-    )
 }
 
 kotlin {
@@ -36,6 +31,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
+                implementation(projects.core.preferences)
                 implementation(projects.core.logging)
 
                 implementation(projects.data.models)

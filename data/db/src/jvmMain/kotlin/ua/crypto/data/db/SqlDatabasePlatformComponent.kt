@@ -6,7 +6,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import me.tatarka.inject.annotations.Provides
 import ua.crypto.core.inject.ApplicationScope
-import ua.crypto.core.settings.TiviPreferences
+import ua.crypto.core.settings.TraderPreferences
 import ua.crypto.data.sql.Database
 import java.io.File
 import javax.sql.DataSource
@@ -18,9 +18,9 @@ actual interface SqlDatabasePlatformComponent {
     @Provides
     @ApplicationScope
     fun provideHikariConfig(
-        tiviPreferences: TiviPreferences,
+        traderPreferences: TraderPreferences,
     ): HikariConfig = HikariConfig().apply {
-        jdbcUrl = "jdbc:postgresql://localhost:${tiviPreferences.dbPort.getNotSuspended()}/crypto"
+        jdbcUrl = "jdbc:postgresql://localhost:${traderPreferences.dbPort.getNotSuspended()}/crypto"
         driverClassName = "org.postgresql.Driver"
         username = "crypto_trader"
         password = "crypto_trader"

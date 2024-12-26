@@ -26,7 +26,7 @@ class KunaCandlePullService(
     private val scope: ApplicationCoroutineScope,
     private val webSocket: KunaWebSocket,
     private val dao: CandlesDao,
-) : ServiceInitializer {
+) : SyncServiceInitializer {
     private val dispatcher = dispatchers.io
     private var job: Job? = null
     private val data = MutableSharedFlow<Pair<String, ChannelData.Ohlcv.Data>?>(
