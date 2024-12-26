@@ -6,7 +6,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import ua.crypto.core.settings.TiviPreferences.LogLevel
+import ua.crypto.core.settings.TraderPreferences.LogLevel
 import ua.crypto.core.util.AppCoroutineDispatchers
 import ua.crypto.domain.interactors.GetDbPort
 import ua.crypto.domain.interactors.SetDbPort

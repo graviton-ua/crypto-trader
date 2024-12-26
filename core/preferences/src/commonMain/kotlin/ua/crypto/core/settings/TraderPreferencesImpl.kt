@@ -8,18 +8,18 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.inject.ApplicationCoroutineScope
-import ua.crypto.core.settings.TiviPreferences.LogLevel
-import ua.crypto.core.settings.TiviPreferences.Theme
+import ua.crypto.core.settings.TraderPreferences.LogLevel
+import ua.crypto.core.settings.TraderPreferences.Theme
 import ua.crypto.core.util.AppCoroutineDispatchers
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalSettingsApi::class)
 @Inject
-class TiviPreferencesImpl(
+class TraderPreferencesImpl(
     settings: Lazy<ObservableSettings>,
     private val coroutineScope: ApplicationCoroutineScope,
     private val dispatchers: AppCoroutineDispatchers,
-) : TiviPreferences {
+) : TraderPreferences {
     private val settings: ObservableSettings by settings
     private val flowSettings by lazy { settings.value.toFlowSettings(dispatchers.io) }
 

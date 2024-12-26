@@ -1,6 +1,6 @@
 package ua.crypto.core.settings
 
-interface TiviPreferences {
+interface TraderPreferences {
 
     val dbPort: Preference<String>
     val loglevel: Preference<LogLevel>

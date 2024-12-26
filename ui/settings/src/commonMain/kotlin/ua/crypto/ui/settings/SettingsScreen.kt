@@ -13,7 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.crypto.core.inject.injectViewModel
-import ua.crypto.core.settings.TiviPreferences.LogLevel
+import ua.crypto.core.settings.TraderPreferences.LogLevel
 
 @Serializable
 data object SettingsScreen
