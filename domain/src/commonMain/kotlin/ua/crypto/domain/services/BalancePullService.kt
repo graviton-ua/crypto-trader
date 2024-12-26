@@ -79,7 +79,7 @@ class BalancePullService(
 
 
     private fun CoroutineScope.updateBalanceTable() = launch(dispatcher) {
-        Log.debug { "updateTickersTable() job started" }
+        Log.debug { "updateBalanceTable() job started" }
 
         data.filterNotNull()
             .map { it.map(KunaBalance::toEntity) }
@@ -88,7 +88,7 @@ class BalancePullService(
                     .onFailure { Log.error(throwable = it) }
             }
 
-    }.also { it.invokeOnCompletion { Log.debug { "updateTickersTable() job completed (exception: ${it?.message})" } } }
+    }.also { it.invokeOnCompletion { Log.debug { "updateBalanceTable() job completed (exception: ${it?.message})" } } }
 }
 
 private fun KunaBalance.toEntity(): BalanceEntity = BalanceEntity(currency, balance, lockBalance, entire, timestamp)
