@@ -1,11 +1,11 @@
 <configuration>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %-20.20logger{0} : %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] %-24.24logger{0} : %msg%n</pattern>
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %-20.20logger{0} : %msg%n</pattern>-->
             <!-- Optional color support -->
-            <pattern>
-                %d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %-20.20logger{0} : %msg%n
-            </pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%highlight(%-5level)] %-24.24logger{0} : %msg%n</pattern>
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %-20.20logger{0} : %msg%n</pattern>-->
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>DEBUG</level> <!-- Only show INFO and higher logs in console -->
@@ -19,7 +19,8 @@
             <maxHistory>7</maxHistory> <!-- Keep logs for 7 days -->
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %-20.20logger{0} : %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] %-24.24logger{0} : %msg%n</pattern>
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %-20.20logger{0} : %msg%n</pattern>-->
         </encoder>
     </appender>
 

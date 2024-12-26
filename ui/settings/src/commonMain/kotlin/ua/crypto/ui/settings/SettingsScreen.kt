@@ -34,8 +34,9 @@ private fun SettingsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     SettingsScreen(
         state = state,
-        onPortUpdate = viewModel::onUpdatePort,
+        onPortChange = viewModel::onPortChange,
         onLogLevelSelect = viewModel::onLogLevelSelect,
+        onKunaApiKeyChange = viewModel::onKunaApiKeyChange,
     )
 }
 
@@ -43,8 +44,9 @@ private fun SettingsScreen(
 @Composable
 private fun SettingsScreen(
     state: SettingsViewState,
-    onPortUpdate: (String) -> Unit,
+    onPortChange: (String) -> Unit,
     onLogLevelSelect: (LogLevel) -> Unit,
+    onKunaApiKeyChange: (String) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -67,7 +69,7 @@ private fun SettingsScreen(
             ) {
                 OutlinedTextField(
                     value = state.port,
-                    onValueChange = onPortUpdate,
+                    onValueChange = onPortChange,
                     label = { Text("Database connection port") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
@@ -75,6 +77,16 @@ private fun SettingsScreen(
                 LogLevelDropdown(
                     selected = state.logLevel,
                     onSelectItem = onLogLevelSelect,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                HorizontalDivider()
+
+                OutlinedTextField(
+                    value = state.kunaApiKey,
+                    onValueChange = onKunaApiKeyChange,
+                    label = { Text("Kuna API Key") },
+                    singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -131,8 +143,9 @@ private fun Preview() {
     MaterialTheme {
         SettingsScreen(
             state = SettingsViewState.Init,
-            onPortUpdate = {},
+            onPortChange = {},
             onLogLevelSelect = {},
+            onKunaApiKeyChange = {},
         )
     }
 }

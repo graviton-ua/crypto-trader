@@ -13,13 +13,15 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.logs.Log
+import ua.crypto.core.settings.TraderPreferences
 import ua.crypto.core.util.AppCoroutineDispatchers
-import ua.crypto.data.web.BuildConfig
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.measureTimedValue
 
 @Inject
 class KunaWebSocket(
     dispatchers: AppCoroutineDispatchers,
+    private val prefs: TraderPreferences,
     private val client: HttpClient,
 ) {
     private val dispatcher = dispatchers.io
@@ -38,76 +40,79 @@ class KunaWebSocket(
         val session = client.webSocketSession("wss://ws-pro.kuna.io/socketcluster/")
         Log.debug { "Connected to Kuna.SocketCluster server." }
 
+        var auth = true
         session.authenticate {
-            Log.debug { "Incoming flow finished, closing websocket..." }
+            Log.debug { "Authentication failed, closing websocket..." }
+            auth = false
             session.close()
-            this@channelFlow.close()
+            this@channelFlow.close(cause = IllegalStateException("Authentication failed"))
         }
 
         // Start
-        launch(dispatcher) {
-            Log.debug { "Start listen for sending events" }
-            eventChannel.collect {
-                session.sendEvent(it)
+        if (auth)
+            launch(dispatcher) {
+                eventChannel.collect { session.sendEvent(it) }
             }
-        }
 
-        launch(dispatcher) {
-            Log.debug { "Start listen for incoming frames" }
-            session.incoming.receiveAsFlow()
-                .onCompletion {
-                    Log.debug { "Incoming flow finished, closing websocket..." }
-                    session.close()
-                    this@channelFlow.close()
-                }
-                .collectLatest {
-                    when (it) {
-                        is Frame.Text -> {
-                            val text = it.readText()
-
-                            when {
-                                text.isEmpty() -> {
-                                    Log.debug { "Received ping message, sending pong..." }
-                                    session.send("")
-                                    return@collectLatest
-                                }
-
-                                text.contains("rid") -> {
-                                    /* We received confirmation of successful subscription etc, ignore it */
-                                    Log.debug { "Received success message for: $text" }
-                                    return@collectLatest
-                                }
-                            }
-
-                            Log.debug { "Received: $text" }
-
-                            val parsed = measureTimedValue {
-                                val trimmed = text.replace(eventRegexp, "\"event\":\"")
-                                Result.runCatching { json.decodeFromString<KunaWebSocketResponse>(trimmed) }
-                            }
-                            this@channelFlow.send(parsed.value)
-                            //Log.debug { "Emit response[decoding: ${parsed.duration}]: ${parsed.value}" }
-                        }
-
-                        is Frame.Ping -> {
-                            Log.debug { "Received Frame.Ping, sending pong..." }
-                            session.send("")
-                        }
-
-                        is Frame.Binary -> {
-                            Log.debug { "Received Frame.Binary, ignoring..." }
-                        }
-
-                        is Frame.Close -> {
-                            Log.debug { "Received Frame.Close, closing websocket..." }
-                            session.close()
-                            this@channelFlow.close()
-                        }
-
-                        else -> println("Unknown frame: $it")
+        if (auth)
+            launch(dispatcher) {
+                Log.debug { "Start listen for incoming frames" }
+                session.incoming.receiveAsFlow()
+                    .onCompletion {
+                        // If throwable is coroutine CancellationException then we are fine (scope or coroutine was canceled)
+                        if (it is CancellationException) return@onCompletion
+                        Log.debug { "Incoming flow completed unexpectedly, close websocket with error" }
+                        session.close()
+                        this@channelFlow.close(cause = IllegalStateException("Incoming flow completed unexpectedly, need retry"))
                     }
-                }
-        }
+                    .collectLatest {
+                        when (it) {
+                            is Frame.Text -> {
+                                val text = it.readText()
+
+                                when {
+                                    text.isEmpty() -> {
+                                        Log.debug { "Received ping message, sending pong..." }
+                                        session.send("")
+                                        return@collectLatest
+                                    }
+
+                                    text.contains("rid") -> {
+                                        /* We received confirmation of successful subscription etc, ignore it */
+                                        Log.debug { "Received success message for: $text" }
+                                        return@collectLatest
+                                    }
+                                }
+
+                                Log.debug { "Received: $text" }
+
+                                val parsed = measureTimedValue {
+                                    val trimmed = text.replace(eventRegexp, "\"event\":\"")
+                                    Result.runCatching { json.decodeFromString<KunaWebSocketResponse>(trimmed) }
+                                }
+                                this@channelFlow.send(parsed.value)
+                                //Log.debug { "Emit response[decoding: ${parsed.duration}]: ${parsed.value}" }
+                            }
+
+                            is Frame.Ping -> {
+                                Log.debug { "Received Frame.Ping, sending pong..." }
+                                session.send("")
+                            }
+
+                            is Frame.Binary -> {
+                                Log.debug { "Received Frame.Binary, ignoring..." }
+                            }
+
+                            is Frame.Close -> {
+                                Log.debug { "Received Frame.Close, closing websocket..." }
+                                session.close()
+                                this@channelFlow.close()
+                            }
+
+                            else -> println("Unknown frame: $it")
+                        }
+                    }
+            }
 
         awaitClose {
             /* do on cancellation */
@@ -131,33 +136,42 @@ class KunaWebSocket(
     }
 
 
+    @Suppress("DuplicatedCode")
     private suspend fun DefaultClientWebSocketSession.authenticate(closeSocket: suspend () -> Unit) {
         // Step 1: Send Handshake event
         val handshakeCid = cid.getAndIncrement()
         sendEvent(KunaWebSocketEvent.Handshake(cid = handshakeCid))
 
         // Step 2: Wait for Handshake response
-        val handshakeResult = incoming.receiveAsFlow().filterIsInstance<Frame.Text>().firstOrNull { frame ->
-            frame.readText().contains("\"rid\":$handshakeCid")
-        }
+        val handshakeResult = incoming.receiveAsFlow().filterIsInstance<Frame.Text>().map { it.readText() }
+            .firstOrNull { message -> message.contains("\"rid\":$handshakeCid") }
+            ?.let { message ->
+                Result.runCatching { json.decodeFromString(KunaWebSocketEventConfirm.serializer(), message) }
+                    .onFailure { Log.warn(throwable = it) { "Can't parse websocket response: $message" } }
+                    .getOrNull()
+            }
 
-        if (handshakeResult == null) {
-            Log.warn { "Handshake failed. Cannot proceed." }
+        if (handshakeResult == null || handshakeResult.error != null) {
+            Log.warn { "Handshake failed. Cannot proceed. ${handshakeResult?.error}" }
             closeSocket()
             return
         } else Log.debug { "Success handshake" }
 
         // Step 3: Send Authentication event
         val authCid = cid.getAndIncrement()
-        sendEvent(KunaWebSocketEvent.Login(apiKey = BuildConfig.KUNA_API_KEY, cid = authCid))
+        sendEvent(KunaWebSocketEvent.Login(apiKey = prefs.kunaApiKey.get(), cid = authCid))
 
         // Step 4: Wait for Authentication response
-        val authResult = incoming.receiveAsFlow().filterIsInstance<Frame.Text>().firstOrNull { frame ->
-            frame.readText().contains("\"rid\":$authCid")
-        }
+        val authResult = incoming.receiveAsFlow().filterIsInstance<Frame.Text>().map { it.readText() }
+            .firstOrNull { message -> message.contains("\"rid\":$authCid") }
+            ?.let { message ->
+                Result.runCatching { json.decodeFromString(KunaWebSocketEventConfirm.serializer(), message) }
+                    .onFailure { Log.warn(throwable = it) { "Can't parse websocket response: $message" } }
+                    .getOrNull()
+            }
 
-        if (authResult == null) {
-            Log.warn { "Authentication failed. Cannot proceed." }
+        if (authResult == null || authResult.error != null || authResult.data?.isAuthenticated == false) {
+            Log.warn { "Authentication failed. Cannot proceed. ${authResult?.error}" }
             closeSocket()
             return
         } else Log.debug { "Success authentication" }

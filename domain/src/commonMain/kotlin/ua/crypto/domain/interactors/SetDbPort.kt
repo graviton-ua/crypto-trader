@@ -13,7 +13,5 @@ class SetDbPort(
 ) : ResultInteractor<String, Unit>() {
     private val dispatcher = dispatchers.io
 
-    override suspend fun doWork(params: String) = withContext(dispatcher) {
-        preferences.dbPort.set(params)
-    }
+    override suspend fun doWork(params: String) = withContext(dispatcher) { preferences.dbPort.set(params) }
 }
