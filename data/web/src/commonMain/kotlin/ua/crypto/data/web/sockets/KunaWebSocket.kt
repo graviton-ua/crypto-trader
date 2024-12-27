@@ -15,6 +15,7 @@ import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.logs.Log
 import ua.crypto.core.settings.TraderPreferences
 import ua.crypto.core.util.AppCoroutineDispatchers
+import ua.crypto.data.web.excpetions.WebSocketNeedRetryException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.measureTimedValue
 
@@ -63,7 +64,7 @@ class KunaWebSocket(
                         if (it is CancellationException) return@onCompletion
                         Log.debug { "Incoming flow completed unexpectedly, close websocket with error" }
                         session.close()
-                        this@channelFlow.close(cause = IllegalStateException("Incoming flow completed unexpectedly, need retry"))
+                        this@channelFlow.close(cause = WebSocketNeedRetryException("Incoming flow completed unexpectedly, need retry", it))
                     }
                     .collectLatest {
                         when (it) {
