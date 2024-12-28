@@ -1,11 +1,8 @@
 package ua.crypto.domain.services
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.inject.ApplicationCoroutineScope
@@ -53,13 +50,24 @@ class KunaCandlePullService(
 
             webSocket.flow()
                 .retryWhen { cause, attempt ->
-                    if (cause is WebSocketNeedRetryException) {    // retry on IOException
-                        //emit(RetryWrapperValue(e))
-                        delay(1.seconds)                // delay for one second before retry
-                        webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))
-                        true
-                    } else {                       // do not retry otherwise
-                        false
+                    when (cause) {
+                        // retry on IOException
+                        is WebSocketNeedRetryException -> {
+                            delay(1.seconds)                // delay for one second before retry
+                            webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))
+                            true
+                        }
+
+                        // If it's CancellationException we should finish our flow
+                        is CancellationException -> false
+
+                        // do retry otherwise
+                        else -> {
+                            Log.warn(throwable = cause) { "Unknown error on websocket, retry..." }
+                            delay(1.seconds)                // delay for one second before retry
+                            webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))
+                            true
+                        }
                     }
                 }
                 .mapNotNull { result ->
