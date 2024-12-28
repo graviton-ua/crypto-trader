@@ -1,3 +1,5 @@
 package ua.crypto.data.web.excpetions
 
-class WebSocketNeedRetryException(message: String, cause: Throwable? = null) : IllegalStateException(message, cause)
+import kotlinx.io.IOException
+
+class WebSocketNeedRetryException(message: String, cause: Throwable? = null) : IOException(message, cause)

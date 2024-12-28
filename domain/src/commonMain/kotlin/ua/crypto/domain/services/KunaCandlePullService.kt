@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.datetime.Instant
+import kotlinx.io.IOException
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.inject.ApplicationCoroutineScope
 import ua.crypto.core.inject.ApplicationScope
@@ -12,7 +13,6 @@ import ua.crypto.core.util.AppCoroutineDispatchers
 import ua.crypto.data.db.dao.CandlesDao
 import ua.crypto.data.db.models.CandleEntity
 import ua.crypto.data.models.CryptoPlatform
-import ua.crypto.data.web.excpetions.WebSocketNeedRetryException
 import ua.crypto.data.web.sockets.ChannelData
 import ua.crypto.data.web.sockets.KunaWebSocket
 import ua.crypto.data.web.sockets.KunaWebSocket.Channel
@@ -52,7 +52,7 @@ class KunaCandlePullService(
                 .retryWhen { cause, attempt ->
                     when (cause) {
                         // retry on IOException
-                        is WebSocketNeedRetryException -> {
+                        is IOException -> {
                             delay(1.seconds)                // delay for one second before retry
                             webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))
                             true
