@@ -54,14 +54,14 @@ internal fun ConfigTitleRow(
         },
         priceStep = {
             Text(
-                text = "Price\nstep", textAlign = TextAlign.Center,
+                text = "Price\nstep %", textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.width(60.dp),
             )
         },
         biasPrice = {
             Text(
-                text = "Bias\nprice", textAlign = TextAlign.Center,
+                text = "Bias\nprice %", textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.width(60.dp),
             )
@@ -82,7 +82,7 @@ internal fun ConfigTitleRow(
         },
         sizeStep = {
             Text(
-                text = "Size\nstep", textAlign = TextAlign.Center,
+                text = "Size\nstep %", textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.width(60.dp),
             )

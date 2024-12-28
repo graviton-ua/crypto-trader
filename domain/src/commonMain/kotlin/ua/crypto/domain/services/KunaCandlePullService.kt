@@ -3,6 +3,7 @@ package ua.crypto.domain.services
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
@@ -14,10 +15,12 @@ import ua.crypto.core.util.AppCoroutineDispatchers
 import ua.crypto.data.db.dao.CandlesDao
 import ua.crypto.data.db.models.CandleEntity
 import ua.crypto.data.models.CryptoPlatform
+import ua.crypto.data.web.excpetions.WebSocketNeedRetryException
 import ua.crypto.data.web.sockets.ChannelData
 import ua.crypto.data.web.sockets.KunaWebSocket
 import ua.crypto.data.web.sockets.KunaWebSocket.Channel
 import ua.crypto.data.web.sockets.KunaWebSocketResponse
+import kotlin.time.Duration.Companion.seconds
 
 @ApplicationScope
 @Inject
@@ -49,6 +52,16 @@ class KunaCandlePullService(
             webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))  // Subscribe for doge_usdt@ohlcv
 
             webSocket.flow()
+                .retryWhen { cause, attempt ->
+                    if (cause is WebSocketNeedRetryException) {    // retry on IOException
+                        //emit(RetryWrapperValue(e))
+                        delay(1.seconds)                // delay for one second before retry
+                        webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))
+                        true
+                    } else {                       // do not retry otherwise
+                        false
+                    }
+                }
                 .mapNotNull { result ->
                     result
                         .onFailure { Log.warn(throwable = it) }
