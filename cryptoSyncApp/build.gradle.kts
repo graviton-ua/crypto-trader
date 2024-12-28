@@ -46,7 +46,10 @@ compose.desktop {
             // Enable console for the application
             windows {
                 console = true // Ensures the console opens when the app launches
+                dirChooser = true
                 perUserInstall = true
+                menu = true
+                shortcut = true
                 upgradeUuid = "9c72f767-74e5-48e7-98fc-f2210e1de82d"
             }
         }

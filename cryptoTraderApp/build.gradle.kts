@@ -42,6 +42,11 @@ kotlin {
     }
 }
 
+compose.resources {
+    publicResClass = false
+    packageOfResClass = "ua.crypto.trader.resources"
+    generateResClass = auto
+}
 
 compose.desktop {
     application {
@@ -51,6 +56,18 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ua.crypto.trader"
             packageVersion = "1.0.0"
+
+            includeAllModules = true
+
+            // Enable console for the application
+            windows {
+                console = false
+                dirChooser = true
+                perUserInstall = true
+                menu = true
+                shortcut = true
+                upgradeUuid = "97576404-bc72-4a29-88c9-7f42a210271b"
+            }
         }
     }
 }
