@@ -46,13 +46,18 @@ private fun HttpStatusCode.isSuccess() = value in 200..299
  * @param path The API endpoint path for which the headers are being added.
  * @param body The request body that will be included in the signature.
  */
-internal inline fun <reified T> HttpMessageBuilder.privateHeaders(path: String, body: T) {
-    header("public-key", BuildConfig.KUNA_PUBLIC_KEY)
+internal inline fun <reified T> HttpMessageBuilder.privateHeaders(
+    path: String,
+    body: T,
+    publicKey: String = BuildConfig.KUNA_PUBLIC_KEY,
+    privateKey: String = BuildConfig.KUNA_PRIVATE_KEY,
+) {
+    header("public-key", publicKey)
     header("account", "pro")
     val nonce = Clock.System.now().toEpochMilliseconds()
     header("nonce", nonce)
     val jsonBody = Json.encodeToString(value = body)
-    header("signature", createSignature(path = path, nonce = nonce, body = jsonBody))
+    header("signature", createSignature(path = path, nonce = nonce, body = jsonBody, privateKey = privateKey))
 }
 
 /**
@@ -67,8 +72,8 @@ internal inline fun <reified T> HttpMessageBuilder.privateHeaders(path: String, 
 private fun createSignature(
     path: String,
     nonce: Long,
-    body: String? = null,
-    privateKey: String = BuildConfig.KUNA_PRIVAT_KEY,
+    body: String?,
+    privateKey: String,
 ): String {
     // Serialize the body to JSON
     val message = "$path$nonce$body"

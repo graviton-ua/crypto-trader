@@ -13,15 +13,14 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.logs.Log
-import ua.crypto.core.settings.TraderPreferences
 import ua.crypto.core.util.AppCoroutineDispatchers
+import ua.crypto.data.web.BuildConfig
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.measureTimedValue
 
 @Inject
 class KunaWebSocket(
     dispatchers: AppCoroutineDispatchers,
-    private val prefs: TraderPreferences,
     private val client: HttpClient,
 ) {
     private val dispatcher = dispatchers.io
@@ -159,7 +158,7 @@ class KunaWebSocket(
 
         // Step 3: Send Authentication event
         val authCid = cid.getAndIncrement()
-        sendEvent(KunaWebSocketEvent.Login(apiKey = prefs.kunaApiKey.get(), cid = authCid))
+        sendEvent(KunaWebSocketEvent.Login(apiKey = BuildConfig.KUNA_API_KEY, cid = authCid))
 
         // Step 4: Wait for Authentication response
         val authResult = incoming.receiveAsFlow().filterIsInstance<Frame.Text>().map { it.readText() }

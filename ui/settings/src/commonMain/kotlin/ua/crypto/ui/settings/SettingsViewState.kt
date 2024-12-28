@@ -7,8 +7,6 @@ import ua.crypto.core.settings.TraderPreferences.LogLevel
 data class SettingsViewState(
     val port: String = "",
     val logLevel: LogLevel = LogLevel.INFO,
-
-    val kunaApiKey: String = "",
 ) {
 
 

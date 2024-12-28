@@ -14,13 +14,18 @@ buildConfig {
     )
     buildConfigField(
         type = String::class.java,
-        name = "KUNA_PUBLIC_KEY",
-        value = provider { properties["KUNA_PUBLIC_KEY"]?.toString() ?: "xFk60WymLUE1d8TzosFw3NWaOsWJok7R8t8SxNx2" },
+        name = "KUNA_API_KEY",
+        value = provider { System.getenv("KUNA_API_KEY") ?: properties["KUNA_API_KEY"]?.toString() ?: "" },
     )
     buildConfigField(
         type = String::class.java,
-        name = "KUNA_PRIVAT_KEY",
-        value = provider { properties["KUNA_PRIVAT_KEY"]?.toString() ?: "MxibPfs11MQhCHfSOos7feUuFJ0gZNx5njxOVxDm" },
+        name = "KUNA_PUBLIC_KEY",
+        value = provider { System.getenv("KUNA_PUBLIC_KEY") ?: properties["KUNA_PUBLIC_KEY"]?.toString() ?: "" },
+    )
+    buildConfigField(
+        type = String::class.java,
+        name = "KUNA_PRIVATE_KEY",
+        value = provider { System.getenv("KUNA_PRIVATE_KEY") ?: properties["KUNA_PRIVATE_KEY"]?.toString() ?: "" },
     )
 }
 
@@ -50,6 +55,14 @@ kotlin {
 
                 api(libs.kotlininject.runtime)
             }
+        }
+    }
+}
+
+tasks.register("printAllEnvVars") {
+    doLast {
+        System.getenv().toSortedMap { key1,key2-> key1.compareTo(key2) }.forEach { (key, value) ->
+            println("$key = $value")
         }
     }
 }

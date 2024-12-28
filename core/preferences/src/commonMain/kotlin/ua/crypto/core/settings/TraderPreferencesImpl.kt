@@ -25,8 +25,6 @@ class TraderPreferencesImpl(
     override val dbPort: Preference<String> by lazy { StringPreference(KEY_DB_PORT, "5432") }
     override val loglevel: Preference<LogLevel> by lazy { MappingIntPreference(KEY_LOG_LEVEL, LogLevel.INFO, LogLevel::fromInt, LogLevel::toInt) }
 
-    override val kunaApiKey: Preference<String> by lazy { StringPreference(KEY_KUNA_API_KEY, "") }
-
 
     private inner class StringPreference(
         private val key: String,
@@ -166,7 +164,6 @@ class TraderPreferencesImpl(
 
 internal const val KEY_DB_PORT = "pref_db_port"
 internal const val KEY_LOG_LEVEL = "pref_log_level"
-internal const val KEY_KUNA_API_KEY = "pref_kuna_api_key"
 
 private fun ObservableSettings.toggleBoolean(key: String, defaultValue: Boolean = false) {
     putBoolean(key, !getBoolean(key, defaultValue))

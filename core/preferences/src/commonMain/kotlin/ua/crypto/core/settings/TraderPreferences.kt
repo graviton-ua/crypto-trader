@@ -5,8 +5,6 @@ interface TraderPreferences {
     val dbPort: Preference<String>
     val loglevel: Preference<LogLevel>
 
-    val kunaApiKey: Preference<String>
-
     enum class LogLevel {
         DEBUG, INFO, WARNING, ERROR;
 

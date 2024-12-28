@@ -36,7 +36,6 @@ private fun SettingsScreen(
         state = state,
         onPortChange = viewModel::onPortChange,
         onLogLevelSelect = viewModel::onLogLevelSelect,
-        onKunaApiKeyChange = viewModel::onKunaApiKeyChange,
     )
 }
 
@@ -46,7 +45,6 @@ private fun SettingsScreen(
     state: SettingsViewState,
     onPortChange: (String) -> Unit,
     onLogLevelSelect: (LogLevel) -> Unit,
-    onKunaApiKeyChange: (String) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -77,16 +75,6 @@ private fun SettingsScreen(
                 LogLevelDropdown(
                     selected = state.logLevel,
                     onSelectItem = onLogLevelSelect,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                HorizontalDivider()
-
-                OutlinedTextField(
-                    value = state.kunaApiKey,
-                    onValueChange = onKunaApiKeyChange,
-                    label = { Text("Kuna API Key") },
-                    singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -145,7 +133,6 @@ private fun Preview() {
             state = SettingsViewState.Init,
             onPortChange = {},
             onLogLevelSelect = {},
-            onKunaApiKeyChange = {},
         )
     }
 }
