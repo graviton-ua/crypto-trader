@@ -33,7 +33,8 @@ class KunaWebSocket(
     }
     private val eventRegexp = """\"event\":\"[^"]+@""".toRegex()
     private val cid = atomic(0)
-    private val eventChannel = MutableSharedFlow<KunaWebSocketEvent>(replay = 10, onBufferOverflow = BufferOverflow.DROP_LATEST)
+    private val channels = MutableStateFlow<Set<Channel>>(emptySet())
+    private val eventChannel = MutableSharedFlow<KunaWebSocketEvent>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_LATEST)
 
 
     fun flow(): Flow<Result<KunaWebSocketResponse>> = channelFlow {
@@ -49,14 +50,22 @@ class KunaWebSocket(
         }
 
         // Start
-        if (auth)
+        if (auth) {
             launch(dispatcher) {
                 eventChannel.collect { session.sendEvent(it) }
             }
+            launch(dispatcher) {
+                channels.take(1).collect { list ->
+                    val events = list.map {
+                        KunaWebSocketEvent.Subscribe(KunaWebSocketEvent.Subscribe.Data(channel = it.tag), cid = cid.getAndIncrement())
+                    }
+                    events.forEach { session.sendEvent(it) }
+                }
+            }
+        }
 
         if (auth)
             launch(dispatcher) {
-                Log.debug { "Start listen for incoming frames" }
                 session.incoming.receiveAsFlow()
                     .onCompletion {
                         // If throwable is coroutine CancellationException then we are fine (scope or coroutine was canceled)
@@ -130,9 +139,17 @@ class KunaWebSocket(
     private fun sendEvent(event: KunaWebSocketEvent) = eventChannel.tryEmit(event)
 
     fun subscribe(vararg channels: Channel) {
-        channels.forEach {
-            sendEvent(KunaWebSocketEvent.Subscribe(KunaWebSocketEvent.Subscribe.Data(channel = it.tag), cid = cid.getAndIncrement()))
+        this.channels.update { current -> current + channels.toSet() }
+        if (eventChannel.subscriptionCount.value > 0) {
+            channels.forEach {
+                sendEvent(KunaWebSocketEvent.Subscribe(KunaWebSocketEvent.Subscribe.Data(channel = it.tag), cid = cid.getAndIncrement()))
+            }
         }
+    }
+
+    fun unsubscribe(vararg channels: Channel) {
+        this.channels.update { current -> current - channels.toSet() }
+        // Implement unsubscribe event
     }
 
 

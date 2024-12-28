@@ -54,7 +54,6 @@ class KunaCandlePullService(
                         // retry on IOException
                         is IOException -> {
                             delay(1.seconds)                // delay for one second before retry
-                            webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))
                             true
                         }
 
@@ -65,7 +64,6 @@ class KunaCandlePullService(
                         else -> {
                             Log.warn(throwable = cause) { "Unknown error on websocket, retry..." }
                             delay(1.seconds)                // delay for one second before retry
-                            webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))
                             true
                         }
                     }
