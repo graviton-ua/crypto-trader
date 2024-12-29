@@ -5,10 +5,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
@@ -17,10 +19,13 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.crypto.core.inject.injectViewModel
 import ua.crypto.ui.common.navigation.OpenResultRecipient
+import ua.crypto.ui.common.screens.RailScreen
 import ua.crypto.ui.configs.views.ConfigGroup
 
 @Serializable
-data object ConfigsScreen
+data object ConfigsScreen : RailScreen {
+    override val icon: ImageVector = Icons.Default.SmartToy
+}
 
 @Composable
 internal fun ConfigsScreen(

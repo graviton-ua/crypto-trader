@@ -4,19 +4,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Icon
 import androidx.compose.material.NavigationRail
 import androidx.compose.material.NavigationRailItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ua.crypto.shared.inject.SharedUiComponent
+import ua.crypto.ui.common.screens.RailScreen
 import ua.crypto.ui.common.theme.AppTheme
 import ua.crypto.ui.configs.ConfigsScreen
 import ua.crypto.ui.configs.addConfigEditDialog
@@ -35,33 +32,7 @@ fun App(
         val navController = rememberNavController()
         Row {
             NavigationRail {
-                destinations.forEach {
-                    NavigationRailItem(
-                        icon = {
-                            Icon(
-                                imageVector = when (it) {
-                                    HomeScreen -> Icons.Default.Home
-                                    ConfigsScreen -> Icons.Default.SmartToy
-                                    SettingsScreen -> Icons.Default.Settings
-                                    else -> Icons.Default.QuestionMark
-                                },
-                                contentDescription = null,
-                            )
-                        },
-                        selected = navController.currentBackStackEntryAsState().value?.destination?.hasRoute(it::class) == true,
-                        onClick = {
-                            navController.navigate(it) {
-                                navController.graph.startDestinationRoute?.let { route ->
-                                    popUpTo(route) {
-                                        saveState = true
-                                    }
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    )
-                }
+                destinations.forEach { NavigationItem(it, navController) }
             }
 
             NavHost(
@@ -75,5 +46,27 @@ fun App(
                 addSettingsScreen(diComponent = uiComponent, navController = navController)
             }
         }
+    }
+}
+
+@Composable
+private fun NavigationItem(
+    screen: RailScreen,
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+) {
+    NavigationRailItem(
+        selected = navController.currentBackStackEntryAsState().value?.destination?.hasRoute(screen::class) == true,
+        onClick = { navController.navigateToRailScreen(screen) },
+        icon = { Icon(imageVector = screen.icon, contentDescription = null) },
+        modifier = modifier,
+    )
+}
+
+private fun NavHostController.navigateToRailScreen(screen: Any) {
+    navigate(screen) {
+        graph.startDestinationRoute?.let { route -> popUpTo(route) { saveState = true } }
+        launchSingleTop = true
+        restoreState = true
     }
 }
