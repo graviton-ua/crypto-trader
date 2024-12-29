@@ -24,19 +24,22 @@ class TraderPreferencesImpl(
 
     override val dbPort: Preference<String> by lazy { StringPreference(KEY_DB_PORT, "5432") }
     override val loglevel: Preference<LogLevel> by lazy { MappingIntPreference(KEY_LOG_LEVEL, LogLevel.INFO, LogLevel::fromInt, LogLevel::toInt) }
+    override val disabledServices: Preference<List<String>> by lazy {
+        MappingPreference(
+            key = KEY_DISABLED_SERVICES, defaultValue = emptyList(),
+            toValue = { s -> s.split(",").map { it.trim() }.filter { it.isNotEmpty() }.toList() },
+            fromValue = { list -> list.joinToString(",") },
+        )
+    }
 
 
     private inner class StringPreference(
         private val key: String,
         override val defaultValue: String = "",
     ) : Preference<String> {
-        override suspend fun set(value: String) = withContext(dispatchers.io) {
-            settings[key] = value
-        }
-
-        override suspend fun get(): String = withContext(dispatchers.io) {
-            settings.getString(key, defaultValue)
-        }
+        override suspend fun set(value: String) = withContext(dispatchers.io) { settings[key] = value }
+        override suspend fun get(): String = withContext(dispatchers.io) { settings.getString(key, defaultValue) }
+        override suspend fun update(block: suspend (String) -> String) = withContext(dispatchers.io) { set(block(get())) }
 
         override fun getNotSuspended(): String = settings.getString(key, defaultValue)
 
@@ -55,13 +58,13 @@ class TraderPreferencesImpl(
         private val key: String,
         override val defaultValue: Int? = null,
     ) : Preference<Int?> {
-        override suspend fun set(value: Int?) = withContext(dispatchers.io) {
-            settings[key] = value
-        }
+        override suspend fun set(value: Int?) = withContext(dispatchers.io) { settings[key] = value }
 
         override suspend fun get(): Int? = withContext(dispatchers.io) {
             if (defaultValue != null) settings.getInt(key, defaultValue) else settings.getIntOrNull(key)
         }
+
+        override suspend fun update(block: suspend (Int?) -> Int?) = withContext(dispatchers.io) { set(block(get())) }
 
         override fun getNotSuspended(): Int? {
             return if (defaultValue != null) settings.getInt(key, defaultValue) else settings.getIntOrNull(key)
@@ -82,13 +85,9 @@ class TraderPreferencesImpl(
         private val key: String,
         override val defaultValue: Boolean = false,
     ) : Preference<Boolean> {
-        override suspend fun set(value: Boolean) = withContext(dispatchers.io) {
-            settings[key] = value
-        }
-
-        override suspend fun get(): Boolean = withContext(dispatchers.io) {
-            settings.getBoolean(key, defaultValue)
-        }
+        override suspend fun set(value: Boolean) = withContext(dispatchers.io) { settings[key] = value }
+        override suspend fun get(): Boolean = withContext(dispatchers.io) { settings.getBoolean(key, defaultValue) }
+        override suspend fun update(block: suspend (Boolean) -> Boolean) = withContext(dispatchers.io) { set(block(get())) }
 
         override fun getNotSuspended(): Boolean = settings.getBoolean(key, defaultValue)
 
@@ -109,13 +108,9 @@ class TraderPreferencesImpl(
         private val toValue: (String) -> V,
         private val fromValue: (V) -> String,
     ) : Preference<V> {
-        override suspend fun set(value: V) = withContext(dispatchers.io) {
-            settings[key] = fromValue(value)
-        }
-
-        override suspend fun get(): V = withContext(dispatchers.io) {
-            settings.getStringOrNull(key)?.let(toValue) ?: defaultValue
-        }
+        override suspend fun set(value: V) = withContext(dispatchers.io) { settings[key] = fromValue(value) }
+        override suspend fun get(): V = withContext(dispatchers.io) { settings.getStringOrNull(key)?.let(toValue) ?: defaultValue }
+        override suspend fun update(block: suspend (V) -> V) = withContext(dispatchers.io) { set(block(get())) }
 
         override fun getNotSuspended(): V = settings.getStringOrNull(key)?.let(toValue) ?: defaultValue
 
@@ -136,13 +131,9 @@ class TraderPreferencesImpl(
         private val toValue: (Int) -> V,
         private val fromValue: (V) -> Int,
     ) : Preference<V> {
-        override suspend fun set(value: V) = withContext(dispatchers.io) {
-            settings[key] = fromValue(value)
-        }
-
-        override suspend fun get(): V = withContext(dispatchers.io) {
-            settings.getIntOrNull(key)?.let(toValue) ?: defaultValue
-        }
+        override suspend fun set(value: V) = withContext(dispatchers.io) { settings[key] = fromValue(value) }
+        override suspend fun get(): V = withContext(dispatchers.io) { settings.getIntOrNull(key)?.let(toValue) ?: defaultValue }
+        override suspend fun update(block: suspend (V) -> V) = withContext(dispatchers.io) { set(block(get())) }
 
         override fun getNotSuspended(): V = settings.getIntOrNull(key)?.let(toValue) ?: defaultValue
 
@@ -164,6 +155,7 @@ class TraderPreferencesImpl(
 
 internal const val KEY_DB_PORT = "pref_db_port"
 internal const val KEY_LOG_LEVEL = "pref_log_level"
+internal const val KEY_DISABLED_SERVICES = "pref_disabled_services"
 
 private fun ObservableSettings.toggleBoolean(key: String, defaultValue: Boolean = false) {
     putBoolean(key, !getBoolean(key, defaultValue))

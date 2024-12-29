@@ -12,6 +12,7 @@ data class ServicesViewState(
     data class AppService(
         val name: String,
         val isRunning: Boolean,
+        val isAuto: Boolean,
         val service: Service,
     )
 

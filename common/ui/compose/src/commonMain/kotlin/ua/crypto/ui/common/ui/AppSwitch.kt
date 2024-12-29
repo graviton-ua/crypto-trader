@@ -3,10 +3,7 @@ package ua.crypto.ui.common.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchColors
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,7 +22,7 @@ fun AppSwitch(
     thumbContent: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    colors: SwitchColors = SwitchDefaults.colors(checkedThumbColor = AppTheme.colors.primary),
+    colors: SwitchColors = SwitchDefaults.colors(),
 ) = Switch(checked, onCheckedChange, modifier, thumbContent, enabled, colors, interactionSource)
 
 @Composable
@@ -37,7 +34,7 @@ fun AppSwitch(
     enabled: Boolean = true,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(16.dp),
-    colors: SwitchColors = SwitchDefaults.colors(checkedThumbColor = AppTheme.colors.primary),
+    colors: SwitchColors = SwitchDefaults.colors(),
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable RowScope.() -> Unit,
 ) {

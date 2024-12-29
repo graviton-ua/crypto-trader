@@ -2,7 +2,9 @@ package ua.crypto.ui.services
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.*
@@ -51,6 +53,8 @@ private fun ServicesScreen(
         state = state,
         onStartService = viewModel::onStartService,
         onStopService = viewModel::onStopService,
+        onEnableService = viewModel::onAutoStartService,
+        onDisableService = viewModel::onAutoStopService,
     )
 }
 
@@ -60,6 +64,8 @@ private fun ServicesScreen(
     state: ServicesViewState,
     onStartService: (ServicesViewState.AppService) -> Unit,
     onStopService: (ServicesViewState.AppService) -> Unit,
+    onEnableService: (ServicesViewState.AppService) -> Unit,
+    onDisableService: (ServicesViewState.AppService) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -73,6 +79,7 @@ private fun ServicesScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxWidth()
+                .verticalScroll(state = rememberScrollState())
                 .padding(paddings)
                 .padding(24.dp),
         ) {
@@ -81,6 +88,8 @@ private fun ServicesScreen(
                     service = service,
                     onStart = remember(onStartService, service) { { onStartService(service) } },
                     onStop = remember(onStopService, service) { { onStopService(service) } },
+                    onEnable = remember(onEnableService, service) { { onEnableService(service) } },
+                    onDisable = remember(onDisableService, service) { { onDisableService(service) } },
                     modifier = Modifier.widthIn(min = 300.dp, max = 420.dp),
                 )
             }
@@ -94,6 +103,8 @@ private fun ServiceCard(
     service: ServicesViewState.AppService,
     onStart: () -> Unit,
     onStop: () -> Unit,
+    onEnable: () -> Unit,
+    onDisable: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     OutlinedCard(
@@ -138,8 +149,8 @@ private fun ServiceCard(
             ) { Text(text = "Enabled") }
 
             AppSwitch(
-                checked = service.isRunning,
-                onCheckedChange = remember(onStart, onStart) { { if (it) onStart() else onStop() } },
+                checked = service.isAuto,
+                onCheckedChange = remember(onEnable, onDisable) { { if (it) onEnable() else onDisable() } },
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(text = "Auto start enabled") }
         }
@@ -155,6 +166,8 @@ private fun Preview() {
             state = ServicesViewState.Init,
             onStartService = {},
             onStopService = {},
+            onEnableService = {},
+            onDisableService = {},
         )
     }
 }
