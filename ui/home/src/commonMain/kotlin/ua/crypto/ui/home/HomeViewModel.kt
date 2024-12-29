@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.connorsrsi.crsi
+import ua.crypto.core.exponentialma.sma
 import ua.crypto.core.util.AppCoroutineDispatchers
 import ua.crypto.data.db.dao.CandlesDao
 import ua.crypto.data.models.CryptoPlatform
@@ -13,7 +14,6 @@ import ua.crypto.domain.interactors.PlaceBuyLimitOrders
 import ua.crypto.domain.interactors.PlaceSellLimitOrders
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.measureTimedValue
 
 @Inject
 class HomeViewModel(
@@ -38,14 +38,36 @@ class HomeViewModel(
 //            100900.57, 99923.68, 101394.34, 101261.05, 104181.49, 105746.04, 106142.79, 100195.80, 97703.97, 98124.17,
 //        )
         //val entities = measureTimedValue { dao.getByPair("BTC_USDT") }.also { println("Read candles Exec time: ${it.duration}") }.value
-        val entities = measureTimedValue {
-            //dao.getByPairInterval(platform = CryptoPlatform.KUNA, pair = "BTC_USDT", interval = 15.minutes, duration = 8.hours + 30.minutes)
-            dao.getByPairInterval(platform = CryptoPlatform.KUNA, pair = "BTC_USDT", interval = 2.minutes, duration = 21.minutes)
-        }.also { println("Read candles Exec time: ${it.duration}") }.value
-        println(entities.joinToString("\n"))
+
+//        val entities = dao.getByPairInterval(platform = CryptoPlatform.KUNA, pair = "BTC_USDT", interval = 2.minutes, crsiLength = 10)
+        //val entities = dao.getByPairInterval(platform = CryptoPlatform.KUNA, pair = "BTC_USDT", interval = 5.minutes, duration = 48.hours)
+        val entities = dao.getByPairIntervalLimit(platform = CryptoPlatform.KUNA, pair = "BTC_USDT", interval = 5.minutes, limit = 20)
+//        println(entities.joinToString("\n"))
 
         val prices = entities.map { it.closePrice }
+//
+//        val result = prices.crsi(3, 2, 10)
 
-        val result = measureTimedValue { prices.crsi(3, 2, 10) }.also { println("CRSI Exec time: ${it.duration}") }.value
+//        val currentCandle = entities.last()
+//        val currentCRSI = result.last()
+
+//        when {
+//            (currentCRSI > 70) ||
+//                    (currentCRSI > 70) ||
+//                    (currentCRSI > 70) ||
+//                    (currentCRSI > 70) -> {
+//
+//            }
+//
+//            currentCRSI < 30 -> {
+//
+//            }
+//        }
+//        for (i in entities.indices) {
+//            val candle = entities.get(i)
+//            val crsi = result.get(i)
+//            println("$i | ${candle.closePrice} | $crsi")
+//        }
+        val smaEntities = prices.sma(5)
     }
 }

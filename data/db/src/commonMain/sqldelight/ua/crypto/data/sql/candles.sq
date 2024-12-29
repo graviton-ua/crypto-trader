@@ -47,6 +47,31 @@ GROUP BY
 ORDER BY
     grp_id;
 
+getByPairIntervalLimit:
+SELECT
+    :minutes * 60 * FLOOR(EXTRACT(EPOCH FROM open_time) / (:minutes * 60)) AS grp_id,
+    platform,
+    pair,
+    MIN(open_time) AS open_time,
+    MAX(close_time) AS close_time,
+	SUM(trades) AS trades,
+  	ARRAY_AGG(open_price ORDER BY open_time ASC) AS open_price,
+  	ARRAY_AGG(close_price ORDER BY open_time DESC) AS close_price,
+    MIN(low_price) AS low_price,
+    MAX(high_price) AS high_price,
+    SUM(volume) AS volume,
+    MAX(updated_at) AS updated_at
+FROM
+    candles
+WHERE
+    platform = :platform
+    AND pair = :pair
+GROUP BY
+    platform, pair, grp_id
+ORDER BY
+    grp_id
+LIMIT :limit;
+
 insert:
 INSERT INTO candles (
     platform, pair, open_time, close_time, trades, open_price, high_price, low_price, close_price, volume, updated_at

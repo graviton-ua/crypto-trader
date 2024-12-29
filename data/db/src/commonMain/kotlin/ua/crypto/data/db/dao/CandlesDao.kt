@@ -61,6 +61,16 @@ class CandlesDao(
     suspend fun getByPairInterval(platform: CryptoPlatform, pair: String, interval: Duration, crsiLength: Int) =
         getByPairInterval(platform, pair = pair, interval = interval, duration = interval * (crsiLength + 1))
 
+    suspend fun getByPairIntervalLimit(platform: CryptoPlatform, pair: String, interval: Duration, limit: Int) = transaction {
+        val minutesInterval = interval.inWholeMinutes
+        candlesQueries.getByPairIntervalLimit(
+            platform = platform,
+            pair = pair,
+            minutes = minutesInterval,
+            limit = limit.toLong(),
+            mapper = mapperPeriod,
+        ).executeAsList()
+    }
 
     /**
      * Saves the given OHLCV entity to the database. This method performs an upsert operation on the
