@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Icon
 import androidx.compose.material.NavigationRail
 import androidx.compose.material.NavigationRailItem
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -12,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.jetbrains.compose.resources.stringResource
 import ua.crypto.shared.inject.SharedUiComponent
 import ua.crypto.ui.common.screens.RailScreen
 import ua.crypto.ui.common.theme.AppTheme
@@ -20,6 +22,8 @@ import ua.crypto.ui.configs.addConfigEditDialog
 import ua.crypto.ui.configs.addConfigsScreen
 import ua.crypto.ui.home.HomeScreen
 import ua.crypto.ui.home.addHomeScreen
+import ua.crypto.ui.services.ServicesScreen
+import ua.crypto.ui.services.addServicesScreen
 import ua.crypto.ui.settings.SettingsScreen
 import ua.crypto.ui.settings.addSettingsScreen
 
@@ -28,7 +32,7 @@ fun App(
     uiComponent: SharedUiComponent,
 ) {
     AppTheme {
-        val destinations = remember { listOf(HomeScreen, ConfigsScreen, SettingsScreen) }
+        val destinations = remember { listOf(HomeScreen, ConfigsScreen, ServicesScreen, SettingsScreen) }
         val navController = rememberNavController()
         Row {
             NavigationRail {
@@ -43,6 +47,7 @@ fun App(
                 addHomeScreen(diComponent = uiComponent, navController = navController)
                 addConfigsScreen(diComponent = uiComponent, navController = navController)
                 addConfigEditDialog(diComponent = uiComponent, navController = navController)
+                addServicesScreen(diComponent = uiComponent, navController = navController)
                 addSettingsScreen(diComponent = uiComponent, navController = navController)
             }
         }
@@ -59,6 +64,7 @@ private fun NavigationItem(
         selected = navController.currentBackStackEntryAsState().value?.destination?.hasRoute(screen::class) == true,
         onClick = { navController.navigateToRailScreen(screen) },
         icon = { Icon(imageVector = screen.icon, contentDescription = null) },
+        label = { Text(text = stringResource(screen.title)) },
         modifier = modifier,
     )
 }

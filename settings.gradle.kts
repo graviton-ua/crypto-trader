@@ -43,11 +43,15 @@ include(
 )
 include(":domain")
 include(":shared")
-include(":common:ui:compose")
+include(
+    ":common:ui:compose",
+    ":common:ui:resources",
+)
 include(
     ":ui:home",
     ":ui:configs",
     ":ui:settings",
+    ":ui:services",
 )
 include(":cryptoSyncApp")
 include(":cryptoTraderApp")

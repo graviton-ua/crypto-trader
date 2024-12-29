@@ -29,7 +29,7 @@ import java.util.*
  * - Constructs and displays the main application window with the user interface defined in `App` composable.
  */
 fun main() {
-    Locale.setDefault(Locale.US)
+    //Locale.setDefault(Locale("ru", "RU"))
     System.setProperty("skiko.renderApi", "OPENGL") //TODO: Fixes issue with G-Sync stuttering
     val applicationComponent = DesktopApplicationComponent.create()
     applicationComponent.initializers.initialize()

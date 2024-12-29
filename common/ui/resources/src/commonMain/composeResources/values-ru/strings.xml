@@ -1,0 +1,6 @@
+<resources>
+    <string name="rail_screen_home">Главная</string>
+    <string name="rail_screen_configs">БотКонфиг</string>
+    <string name="rail_screen_services">Сервисы</string>
+    <string name="rail_screen_settings">Настройки</string>
+</resources>

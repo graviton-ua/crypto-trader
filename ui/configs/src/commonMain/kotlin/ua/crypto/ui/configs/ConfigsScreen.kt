@@ -16,15 +16,20 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.crypto.core.inject.injectViewModel
 import ua.crypto.ui.common.navigation.OpenResultRecipient
 import ua.crypto.ui.common.screens.RailScreen
 import ua.crypto.ui.configs.views.ConfigGroup
+import ua.crypto.ui.resources.Res
+import ua.crypto.ui.resources.rail_screen_configs
 
 @Serializable
 data object ConfigsScreen : RailScreen {
     override val icon: ImageVector = Icons.Default.SmartToy
+    override val title: StringResource = Res.string.rail_screen_configs
 }
 
 @Composable
@@ -64,7 +69,7 @@ private fun ConfigsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Crypto Bot configs") },
+                title = { Text(text = stringResource(ConfigsScreen.title)) },
                 actions = {
                     OutlinedButton(
                         onClick = { onConfigEdit(null) },

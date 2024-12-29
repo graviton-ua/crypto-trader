@@ -11,13 +11,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.crypto.core.inject.injectViewModel
 import ua.crypto.ui.common.screens.RailScreen
+import ua.crypto.ui.resources.Res
+import ua.crypto.ui.resources.rail_screen_home
 
 @Serializable
 data object HomeScreen : RailScreen {
     override val icon: ImageVector = Icons.Default.Home
+    override val title: StringResource = Res.string.rail_screen_home
 }
 
 @Composable
@@ -46,7 +51,7 @@ private fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Home") },
+                title = { Text(text = stringResource(HomeScreen.title)) },
             )
         },
         modifier = Modifier.fillMaxSize(),

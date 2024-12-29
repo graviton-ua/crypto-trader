@@ -15,6 +15,7 @@ kotlin {
             implementation(projects.core.base)
             implementation(projects.core.logging)
             implementation(projects.core.composeInject)
+            implementation(projects.core.preferences)
             implementation(projects.domain)
 
             implementation(libs.kotlinx.serialization.json)

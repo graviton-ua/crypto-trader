@@ -1,8 +1,8 @@
-package ua.crypto.ui.settings
+package ua.crypto.ui.services
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,29 +21,29 @@ import ua.crypto.core.inject.injectViewModel
 import ua.crypto.core.settings.TraderPreferences.LogLevel
 import ua.crypto.ui.common.screens.RailScreen
 import ua.crypto.ui.resources.Res
-import ua.crypto.ui.resources.rail_screen_settings
+import ua.crypto.ui.resources.rail_screen_services
 
 @Serializable
-data object SettingsScreen : RailScreen {
-    override val icon: ImageVector = Icons.Default.Settings
-    override val title: StringResource = Res.string.rail_screen_settings
+data object ServicesScreen : RailScreen {
+    override val icon: ImageVector = Icons.Default.Tune
+    override val title: StringResource = Res.string.rail_screen_services
 }
 
 @Composable
-internal fun SettingsScreen(
-    diComponent: SettingsComponent,
+internal fun ServicesScreen(
+    diComponent: ServicesComponent,
 ) {
-    SettingsScreen(
-        viewModel = injectViewModel { diComponent.settingsViewModel() },
+    ServicesScreen(
+        viewModel = injectViewModel { diComponent.servicesViewModel() },
     )
 }
 
 @Composable
-private fun SettingsScreen(
-    viewModel: SettingsViewModel,
+private fun ServicesScreen(
+    viewModel: ServicesViewModel,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    SettingsScreen(
+    ServicesScreen(
         state = state,
         onPortChange = viewModel::onPortChange,
         onLogLevelSelect = viewModel::onLogLevelSelect,
@@ -52,15 +52,15 @@ private fun SettingsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsScreen(
-    state: SettingsViewState,
+private fun ServicesScreen(
+    state: ServicesViewState,
     onPortChange: (String) -> Unit,
     onLogLevelSelect: (LogLevel) -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(SettingsScreen.title)) },
+                title = { Text(text = stringResource(ServicesScreen.title)) },
             )
         },
         modifier = Modifier.fillMaxSize(),
@@ -140,8 +140,8 @@ internal fun LogLevelDropdown(
 @Composable
 private fun Preview() {
     MaterialTheme {
-        SettingsScreen(
-            state = SettingsViewState.Init,
+        ServicesScreen(
+            state = ServicesViewState.Init,
             onPortChange = {},
             onLogLevelSelect = {},
         )

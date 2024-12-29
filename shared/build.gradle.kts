@@ -23,6 +23,7 @@ kotlin {
                 api(projects.ui.home)
                 api(projects.ui.configs)
                 api(projects.ui.settings)
+                api(projects.ui.services)
             }
         }
     }
