@@ -1,16 +1,19 @@
 package ua.crypto.ui.services
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
@@ -18,8 +21,9 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.crypto.core.inject.injectViewModel
-import ua.crypto.core.settings.TraderPreferences.LogLevel
 import ua.crypto.ui.common.screens.RailScreen
+import ua.crypto.ui.common.theme.AppTheme
+import ua.crypto.ui.common.ui.AppSwitch
 import ua.crypto.ui.resources.Res
 import ua.crypto.ui.resources.rail_screen_services
 
@@ -45,17 +49,17 @@ private fun ServicesScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     ServicesScreen(
         state = state,
-        onPortChange = viewModel::onPortChange,
-        onLogLevelSelect = viewModel::onLogLevelSelect,
+        onStartService = viewModel::onStartService,
+        onStopService = viewModel::onStopService,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun ServicesScreen(
     state: ServicesViewState,
-    onPortChange: (String) -> Unit,
-    onLogLevelSelect: (LogLevel) -> Unit,
+    onStartService: (ServicesViewState.AppService) -> Unit,
+    onStopService: (ServicesViewState.AppService) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -65,28 +69,19 @@ private fun ServicesScreen(
         },
         modifier = Modifier.fillMaxSize(),
     ) { paddings ->
-        Box(
-            contentAlignment = Alignment.TopCenter,
-            modifier = Modifier.fillMaxSize(),
+        FlowRow(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth()
+                .padding(paddings)
+                .padding(24.dp),
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier
-                    .widthIn(min = 320.dp, max = 720.dp)
-                    .padding(paddings)
-                    .padding(24.dp),
-            ) {
-                OutlinedTextField(
-                    value = state.port,
-                    onValueChange = onPortChange,
-                    label = { Text("Database connection port") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                LogLevelDropdown(
-                    selected = state.logLevel,
-                    onSelectItem = onLogLevelSelect,
-                    modifier = Modifier.fillMaxWidth(),
+            state.services.forEach { service ->
+                ServiceCard(
+                    service = service,
+                    onStart = remember(onStartService, service) { { onStartService(service) } },
+                    onStop = remember(onStopService, service) { { onStopService(service) } },
+                    modifier = Modifier.widthIn(min = 300.dp, max = 420.dp),
                 )
             }
         }
@@ -94,43 +89,59 @@ private fun ServicesScreen(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun LogLevelDropdown(
-    selected: LogLevel,
-    onSelectItem: (LogLevel) -> Unit,
+private fun ServiceCard(
+    service: ServicesViewState.AppService,
+    onStart: () -> Unit,
+    onStop: () -> Unit,
     modifier: Modifier = Modifier,
-    items: List<LogLevel> = LogLevel.entries,
 ) {
-    val expanded = remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(
-        expanded = expanded.value,
-        onExpandedChange = { expanded.value = it },
+    OutlinedCard(
         modifier = modifier,
     ) {
-        OutlinedTextField(
-            value = selected.name,
-            onValueChange = {},
-            label = { Text("Log level") },
-            readOnly = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-        )
-        ExposedDropdownMenu(
-            expanded = expanded.value,
-            onDismissRequest = { expanded.value = false },
-            modifier = Modifier.exposedDropdownSize(true),
+        // Title
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(16.dp),
         ) {
-            items.forEach { item ->
-                DropdownMenuItem(
-                    text = { Text(text = item.name) },
-                    onClick = {
-                        onSelectItem(item)
-                        expanded.value = false
-                    },
-                )
-            }
+            Text(
+                text = service.name,
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            Text(
+                text = if (service.isRunning) "ON" else "OFF",
+                textAlign = TextAlign.Center,
+                color = if (service.isRunning) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .defaultMinSize(minWidth = 70.dp)
+                    .clip(shape = CircleShape)
+                    .background(color = if (service.isRunning) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background)
+                    .padding(vertical = 2.dp, horizontal = 6.dp),
+            )
+        }
+
+        HorizontalDivider()
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(16.dp),
+        ) {
+            AppSwitch(
+                checked = service.isRunning,
+                onCheckedChange = remember(onStart, onStart) { { if (it) onStart() else onStop() } },
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(text = "Enabled") }
+
+            AppSwitch(
+                checked = service.isRunning,
+                onCheckedChange = remember(onStart, onStart) { { if (it) onStart() else onStop() } },
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(text = "Auto start enabled") }
         }
     }
 }
@@ -139,11 +150,11 @@ internal fun LogLevelDropdown(
 @Preview
 @Composable
 private fun Preview() {
-    MaterialTheme {
+    AppTheme {
         ServicesScreen(
             state = ServicesViewState.Init,
-            onPortChange = {},
-            onLogLevelSelect = {},
+            onStartService = {},
+            onStopService = {},
         )
     }
 }

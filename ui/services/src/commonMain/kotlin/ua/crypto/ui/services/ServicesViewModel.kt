@@ -4,36 +4,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import ua.crypto.core.settings.TraderPreferences.LogLevel
 import ua.crypto.core.util.AppCoroutineDispatchers
-import ua.crypto.domain.interactors.GetDbPort
-import ua.crypto.domain.interactors.SetDbPort
-import ua.crypto.domain.interactors.SetLogLevel
-import ua.crypto.domain.observers.ObserveLogLevel
+import ua.crypto.domain.services.TraderServiceInitializer
 
 @OptIn(FlowPreview::class)
 @Inject
 class ServicesViewModel(
     dispatchers: AppCoroutineDispatchers,
-
-    getDbPort: GetDbPort,
-    observeLogLevel: ObserveLogLevel,
-
-    setDbPort: SetDbPort,
-    private val setLogLevel: SetLogLevel,
+    private val services: Lazy<Set<TraderServiceInitializer>>,
 ) : ViewModel() {
 
-    private val port = MutableStateFlow("")
-    private val logLevel = observeLogLevel.flow.onStart { emit(LogLevel.INFO) }
+    private val serviceStates = combine(services.value.map { service ->
+        service.isRunning.map { isRunning ->
+            ServicesViewState.AppService(
+                name = service::class.simpleName!!,
+                isRunning = isRunning,
+                service = service,
+            )
+        }
+    }) { it.toList() }
 
     val state: StateFlow<ServicesViewState> = combine(
-        port, logLevel
-    ) { port, logLevel ->
+        flowOf(12), serviceStates
+    ) { _, services ->
         ServicesViewState(
-            port = port,
-            logLevel = logLevel,
+            services = services,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -41,23 +37,7 @@ class ServicesViewModel(
         initialValue = ServicesViewState.Init,
     )
 
-    init {
-        observeLogLevel()
 
-        viewModelScope.launch(dispatchers.io) {
-            port.value = getDbPort.executeSync(Unit)
-        }
-
-        viewModelScope.launch(dispatchers.io) {
-            port.debounce(500).collectLatest {
-                setDbPort.executeSync(it)
-            }
-        }
-    }
-
-    fun onPortChange(text: String) = with(port) { value = text }
-
-    fun onLogLevelSelect(level: LogLevel) {
-        viewModelScope.launch { setLogLevel.executeSync(level) }
-    }
+    fun onStartService(service: ServicesViewState.AppService) = with(service) { this.service.start() }
+    fun onStopService(service: ServicesViewState.AppService) = with(service) { this.service.stop() }
 }

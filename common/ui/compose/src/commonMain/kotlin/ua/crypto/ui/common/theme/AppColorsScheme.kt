@@ -59,8 +59,8 @@ object AppLightColorsScheme : AppColorsScheme {
     override val tertiary: Color = AppColorPalette.Curious500
     override val tertiaryVariant: Color = tertiary
     override val tertiarySurface: Color = AppColorPalette.Curious50
-    override val background: Color = AppColorPalette.White
-    override val surface: Color = background
+    override val background: Color = AppColorPalette.Grey200
+    override val surface: Color = AppColorPalette.Surface
     override val error: Color = AppColorPalette.AlertRed
     override val onPrimary: Color = AppColorPalette.White
     override val onPrimarySurface: Color = AppColorPalette.Black
@@ -88,8 +88,8 @@ object AppDarkColorsScheme : AppColorsScheme {
     override val tertiary: Color = AppColorPalette.Curious500
     override val tertiaryVariant: Color = tertiary
     override val tertiarySurface: Color = AppColorPalette.Curious50
-    override val background: Color = AppColorPalette.White
-    override val surface: Color = background
+    override val background: Color = AppColorPalette.Grey200
+    override val surface: Color = AppColorPalette.Surface
     override val error: Color = AppColorPalette.AlertRed
     override val onPrimary: Color = AppColorPalette.White
     override val onPrimarySurface: Color = AppColorPalette.Black

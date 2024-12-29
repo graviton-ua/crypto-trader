@@ -4,13 +4,12 @@ import androidx.compose.ui.graphics.Color
 
 object AppColorPalette {
     // Base
-    // The base the house is built on. Use Leather Black for titles, Beyond Beige for containers and White for all the rooms that’s left.
     val Black = Color(0xFF1C1818)
     val White = Color(0xFFFFFFFF)
     val Paper = Color(0xFFFAF4E1)
+    val Surface = Color(0xFFFCFBFB)
 
     // Grey
-    // Grey is the the underlying support system for all things readable. We use it for certain states, readable text and dividers etc.
     val Grey50 = Color(0xFFF5F5F5)
     val Grey100 = Color(0xFFE8E8E8)
     val Grey200 = Color(0xFFD1D1D1)
@@ -23,7 +22,6 @@ object AppColorPalette {
     val Grey900 = Color(0xFF2F2F2F)
 
     // Brand - Whoppah Green
-    // The Whoppah Green colour, it’s leading in all our visual communication. We use it for our main buttons.
     val Brand50 = Color(0xFFE6EFEB)
     val Brand100 = Color(0xFFCCDFD6)
     val Brand200 = Color(0xFF99BEAD)
@@ -36,7 +34,6 @@ object AppColorPalette {
     val Brand900 = Color(0xFF002615)
 
     // Attention - Memphis Pink
-    // Hard not to look at, this Memphis Pink screams for attentions. Pink enough to not just be a warning but sometimes also a bold CTA.
     val Attention50 = Color(0xFFFFEDF7)
     val Attention100 = Color(0xFFFFDBEF)
     val Attention200 = Color(0xFFFFB6DE)
@@ -49,7 +46,6 @@ object AppColorPalette {
     val Attention900 = Color(0xFF681E46)
 
     // Curious - Don’t feel Blue
-    // The Curious palette can be used for hyperlinks and focused state. It leads you to new snippets of information and helps you guide your way through the platform.
     val Curious50 = Color(0xFFE6F5FF)
     val Curious100 = Color(0xFFCDECFE)
     val Curious200 = Color(0xFF9AD9FE)
@@ -62,7 +58,6 @@ object AppColorPalette {
     val Curious900 = Color(0xFF024268)
 
     // Flavour - Mid Century Lime
-    // Sometimes you could use some extra flavour. Mid Century Lime is here for you to create nice visual blocks and themes in cases the other main colours don’t seem like enough.
     val Flavour50 = Color(0xFFF5F9ED)
     val Flavour100 = Color(0xFFEBF2DA)
     val Flavour200 = Color(0xFFD7E5B5)
@@ -75,7 +70,6 @@ object AppColorPalette {
     val Flavour900 = Color(0xFF404E1E)
 
     // Burst - Ecstatic Yellow
-    // For a burst of.. something! Small accents, a light bulb or a sparkle.. This colour will just be used for tiny accents that need a little energy.
     val Burst50 = Color(0xFFFEFCEA)
     val Burst100 = Color(0xFFFDF9D4)
     val Burst200 = Color(0xFFFAF4A9)
@@ -87,30 +81,11 @@ object AppColorPalette {
     val Burst800 = Color(0xFF8B6926)
     val Burst900 = Color(0xFF6F4F1E)
 
-    val Brenger = Color(0xFF0073FA)
-
-
-    // Legacy colors
-    // Primary
-    val VibrantPink = Color(0xFFE26F77)
-
-    // Secondary
-    val AntiqueBlue = Color(0xFF8AA8D9)
-
-    // Support colors
-    val LightPink = Color(0xFFFFF7F7)
-    val LightBlue = Color(0xFFF4F8FF)
-    val LightYellow = Color(0xFFFDF0BF)
-    val ExtraLightYellow = Color(0xFFFEF7DF)
 
     // Alert colors
     val AlertRed = Color(0xFFFF0000)
-    val AlertGreen = Color(0xFF21B881)
 
-    // Base colors
-    val Grey = Color(0xFFB0B0B0)
-    val LightGrey = Color(0xFFF9F9F9)
 
-    // Others
-    val SocialFacebook = Color(0xFF1877F2)
+    val Primary = Color(0xFF97B9FE)
+    val Secondary = Color(0xFFD1EB07)
 }
