@@ -1,6 +1,8 @@
 package ua.crypto.ui.settings
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -47,6 +49,7 @@ private fun SettingsScreen(
         state = state,
         onPortChange = viewModel::onPortChange,
         onLogLevelSelect = viewModel::onLogLevelSelect,
+        onFileLogLevelSelect = viewModel::onFileLogLevelSelect,
     )
 }
 
@@ -56,6 +59,7 @@ private fun SettingsScreen(
     state: SettingsViewState,
     onPortChange: (String) -> Unit,
     onLogLevelSelect: (LogLevel) -> Unit,
+    onFileLogLevelSelect: (LogLevel) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -73,21 +77,73 @@ private fun SettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
                     .widthIn(min = 320.dp, max = 720.dp)
+                    .verticalScroll(state = rememberScrollState())
                     .padding(paddings)
                     .padding(24.dp),
             ) {
-                OutlinedTextField(
-                    value = state.port,
-                    onValueChange = onPortChange,
-                    label = { Text("Database connection port") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                LogLevelDropdown(
-                    selected = state.logLevel,
-                    onSelectItem = onLogLevelSelect,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                OutlinedCard {
+                    // Title
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        Text(
+                            text = "Database settings",
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
+
+                    HorizontalDivider()
+
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        OutlinedTextField(
+                            value = state.port,
+                            onValueChange = onPortChange,
+                            label = { Text("Database connection port") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+
+                OutlinedCard {
+                    // Title
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        Text(
+                            text = "Logs settings",
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
+
+                    HorizontalDivider()
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        LogLevelDropdown(
+                            title = "Console LogLevel",
+                            selected = state.logLevel,
+                            onSelectItem = onLogLevelSelect,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        LogLevelDropdown(
+                            title = "File LogLevel",
+                            selected = state.fileLogLevel,
+                            onSelectItem = onFileLogLevelSelect,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
             }
         }
     }
@@ -97,6 +153,7 @@ private fun SettingsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LogLevelDropdown(
+    title: String,
     selected: LogLevel,
     onSelectItem: (LogLevel) -> Unit,
     modifier: Modifier = Modifier,
@@ -111,7 +168,7 @@ internal fun LogLevelDropdown(
         OutlinedTextField(
             value = selected.name,
             onValueChange = {},
-            label = { Text("Log level") },
+            label = { Text(title) },
             readOnly = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -144,6 +201,7 @@ private fun Preview() {
             state = SettingsViewState.Init,
             onPortChange = {},
             onLogLevelSelect = {},
+            onFileLogLevelSelect = {},
         )
     }
 }

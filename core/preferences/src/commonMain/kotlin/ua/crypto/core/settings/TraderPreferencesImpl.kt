@@ -24,6 +24,9 @@ class TraderPreferencesImpl(
 
     override val dbPort: Preference<String> by lazy { StringPreference(KEY_DB_PORT, "5432") }
     override val loglevel: Preference<LogLevel> by lazy { MappingIntPreference(KEY_LOG_LEVEL, LogLevel.INFO, LogLevel::fromInt, LogLevel::toInt) }
+    override val fileLoglevel: Preference<LogLevel> by lazy {
+        MappingIntPreference(KEY_FILE_LOG_LEVEL, LogLevel.INFO, LogLevel::fromInt, LogLevel::toInt)
+    }
     override val disabledServices: Preference<List<String>> by lazy {
         MappingPreference(
             key = KEY_DISABLED_SERVICES, defaultValue = emptyList(),
@@ -49,7 +52,7 @@ class TraderPreferencesImpl(
                 .stateIn(
                     scope = coroutineScope,
                     started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
-                    initialValue = defaultValue,
+                    initialValue = getNotSuspended(),
                 )
         }
     }
@@ -76,7 +79,7 @@ class TraderPreferencesImpl(
                 .stateIn(
                     scope = coroutineScope,
                     started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
-                    initialValue = defaultValue,
+                    initialValue = getNotSuspended(),
                 )
         }
     }
@@ -97,7 +100,7 @@ class TraderPreferencesImpl(
                 .stateIn(
                     scope = coroutineScope,
                     started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
-                    initialValue = defaultValue,
+                    initialValue = getNotSuspended(),
                 )
         }
     }
@@ -120,7 +123,7 @@ class TraderPreferencesImpl(
                 .stateIn(
                     scope = coroutineScope,
                     started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
-                    initialValue = defaultValue,
+                    initialValue = getNotSuspended(),
                 )
         }
     }
@@ -143,7 +146,7 @@ class TraderPreferencesImpl(
                 .stateIn(
                     scope = coroutineScope,
                     started = SharingStarted.WhileSubscribed(SUBSCRIBED_TIMEOUT),
-                    initialValue = defaultValue,
+                    initialValue = getNotSuspended(),
                 )
         }
     }
@@ -155,6 +158,7 @@ class TraderPreferencesImpl(
 
 internal const val KEY_DB_PORT = "pref_db_port"
 internal const val KEY_LOG_LEVEL = "pref_log_level"
+internal const val KEY_FILE_LOG_LEVEL = "pref_file_log_level"
 internal const val KEY_DISABLED_SERVICES = "pref_disabled_services"
 
 private fun ObservableSettings.toggleBoolean(key: String, defaultValue: Boolean = false) {

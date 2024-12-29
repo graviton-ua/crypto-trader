@@ -30,21 +30,11 @@
 
     <root level="debug">
         <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ROLLING" />
     </root>
 
-    <logger name="ua.crypto" level="debug" additivity="true">
-        <appender-ref ref="ROLLING" />
-    </logger>
-
-    <logger name="io.ktor.client" level="info" additivity="true">
-        <appender-ref ref="ROLLING" />
-    </logger>
-
-    <logger name="com.zaxxer.hikari" level="info" additivity="true">
-        <appender-ref ref="ROLLING" />
-    </logger>
-
-    <logger name="Exposed" level="info" additivity="true">
-        <appender-ref ref="ROLLING" />
-    </logger>
+    <logger name="ua.crypto" level="debug" additivity="true" />
+    <logger name="io.ktor.client" level="debug" additivity="true" />
+    <logger name="com.zaxxer.hikari" level="info" additivity="true" />
+    <logger name="Exposed" level="info" additivity="true" />
 </configuration>

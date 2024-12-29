@@ -4,6 +4,7 @@ interface TraderPreferences {
 
     val dbPort: Preference<String>
     val loglevel: Preference<LogLevel>
+    val fileLoglevel: Preference<LogLevel>
     val disabledServices: Preference<List<String>>
 
     enum class LogLevel {

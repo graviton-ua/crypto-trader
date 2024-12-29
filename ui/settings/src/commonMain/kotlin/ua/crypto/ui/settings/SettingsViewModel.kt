@@ -10,7 +10,9 @@ import ua.crypto.core.settings.TraderPreferences.LogLevel
 import ua.crypto.core.util.AppCoroutineDispatchers
 import ua.crypto.domain.interactors.GetDbPort
 import ua.crypto.domain.interactors.SetDbPort
+import ua.crypto.domain.interactors.SetFileLogLevel
 import ua.crypto.domain.interactors.SetLogLevel
+import ua.crypto.domain.observers.ObserveFileLogLevel
 import ua.crypto.domain.observers.ObserveLogLevel
 
 @OptIn(FlowPreview::class)
@@ -20,20 +22,22 @@ class SettingsViewModel(
 
     getDbPort: GetDbPort,
     observeLogLevel: ObserveLogLevel,
+    observeFileLogLevel: ObserveFileLogLevel,
 
     setDbPort: SetDbPort,
     private val setLogLevel: SetLogLevel,
+    private val setFileLogLevel: SetFileLogLevel,
 ) : ViewModel() {
 
     private val port = MutableStateFlow("")
-    private val logLevel = observeLogLevel.flow.onStart { emit(LogLevel.INFO) }
 
     val state: StateFlow<SettingsViewState> = combine(
-        port, logLevel
-    ) { port, logLevel ->
+        port, observeLogLevel.flow, observeFileLogLevel.flow
+    ) { port, logLevel, fileLogLevel ->
         SettingsViewState(
             port = port,
             logLevel = logLevel,
+            fileLogLevel = fileLogLevel,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -43,6 +47,7 @@ class SettingsViewModel(
 
     init {
         observeLogLevel()
+        observeFileLogLevel()
 
         viewModelScope.launch(dispatchers.io) {
             port.value = getDbPort.executeSync(Unit)
@@ -59,5 +64,9 @@ class SettingsViewModel(
 
     fun onLogLevelSelect(level: LogLevel) {
         viewModelScope.launch { setLogLevel.executeSync(level) }
+    }
+
+    fun onFileLogLevelSelect(level: LogLevel) {
+        viewModelScope.launch { setFileLogLevel.executeSync(level) }
     }
 }
