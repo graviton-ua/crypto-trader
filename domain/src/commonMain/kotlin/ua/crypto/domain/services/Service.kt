@@ -1,6 +1,10 @@
 package ua.crypto.domain.services
 
+import kotlinx.coroutines.flow.StateFlow
+
 interface Service {
+    val isRunning: StateFlow<Boolean>
+
     fun start()
     fun stop()
     fun restart() {

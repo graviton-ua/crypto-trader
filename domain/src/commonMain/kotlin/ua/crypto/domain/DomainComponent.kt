@@ -12,19 +12,19 @@ interface DomainComponent {
 
     @Provides
     @IntoSet
-    fun provideBalancePullService(impl: BalancePullService): TraderServiceInitializer = impl
+    fun provideBalancePullService(impl: KunaBalancePullService): TraderServiceInitializer = impl
 
     @Provides
     @IntoSet
-    fun provideTickersPullService(impl: TickersPullService): TraderServiceInitializer = impl
+    fun provideTickersPullService(impl: KunaTickersPullService): TraderServiceInitializer = impl
 
     @Provides
     @IntoSet
-    fun provideActiveOrdersPullService(impl: ActiveOrdersPullService): TraderServiceInitializer = impl
+    fun provideActiveOrdersPullService(impl: KunaActiveOrdersPullService): TraderServiceInitializer = impl
 
     @Provides
     @IntoSet
-    fun provideTradeBookPullService(impl: TradeBookPullService): TraderServiceInitializer = impl
+    fun provideTradeBookPullService(impl: KunaTradeBookPullService): TraderServiceInitializer = impl
 
     @Provides
     @IntoSet

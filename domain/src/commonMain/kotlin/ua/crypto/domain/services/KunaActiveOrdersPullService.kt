@@ -19,24 +19,28 @@ import kotlin.time.Duration.Companion.seconds
 
 @ApplicationScope
 @Inject
-class ActiveOrdersPullService(
+class KunaActiveOrdersPullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
     private val dao: OrderDao,
 ) : TraderServiceInitializer {
     private val dispatcher = dispatchers.io
+    private val _running = MutableStateFlow(false)
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
     private val data = MutableStateFlow<List<KunaActiveOrder>?>(null)
 
     init {
-        //start()
         scope.updateActiveTable()
     }
 
+
+    override val isRunning: StateFlow<Boolean> = _running
+
     override fun start() {
-        if (job != null) return
+        if (job != null || _running.value) return
+        _running.value = true
         job = scope.launch(dispatcher) {
             Log.debug { "DataPuller job started" }
             DataPuller().pull(delay.value) { api.getActiveOrders() }
@@ -48,7 +52,9 @@ class ActiveOrdersPullService(
                 }
         }.also {
             it.invokeOnCompletion {
-                Log.debug { "DataPuller job completed (exception: ${it?.message})" }; job = null
+                _running.value = false
+                job = null
+                Log.debug { "DataPuller job completed (exception: ${it?.message})" }
             }
         }
     }
@@ -66,7 +72,6 @@ class ActiveOrdersPullService(
             .map { it.map(KunaActiveOrder::toEntity) }
             .collectLatest { list ->
                 Result.runCatching { dao.saveActive(list) }
-//                    .onSuccess { Log.info { "ActiveTable updated" } }
                     .onFailure { Log.error(throwable = it) }
             }
 

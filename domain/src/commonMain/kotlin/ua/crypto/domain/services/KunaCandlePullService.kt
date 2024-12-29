@@ -1,10 +1,11 @@
 package ua.crypto.domain.services
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
-import kotlinx.io.IOException
 import me.tatarka.inject.annotations.Inject
 import ua.crypto.core.inject.ApplicationCoroutineScope
 import ua.crypto.core.inject.ApplicationScope
@@ -17,6 +18,7 @@ import ua.crypto.data.web.sockets.ChannelData
 import ua.crypto.data.web.sockets.KunaWebSocket
 import ua.crypto.data.web.sockets.KunaWebSocket.Channel
 import ua.crypto.data.web.sockets.KunaWebSocketResponse
+import ua.crypto.data.web.sockets.retryWhenNotCancelled
 import kotlin.time.Duration.Companion.seconds
 
 @ApplicationScope
@@ -28,6 +30,7 @@ class KunaCandlePullService(
     private val dao: CandlesDao,
 ) : SyncServiceInitializer {
     private val dispatcher = dispatchers.io
+    private val _running = MutableStateFlow(false)
     private var job: Job? = null
     private val data = MutableSharedFlow<Pair<String, ChannelData.Ohlcv.Data>?>(
         replay = 0, // No replay; emit only new values
@@ -35,39 +38,23 @@ class KunaCandlePullService(
         onBufferOverflow = BufferOverflow.DROP_OLDEST // Drop the oldest message if buffer is full
     )
 
-
     init {
         scope.updateTable()
     }
 
 
+    override val isRunning: StateFlow<Boolean> = _running
+
     override fun start() {
-        if (job != null) return
+        if (job != null || _running.value) return
+        _running.value = true
         job = scope.launch(dispatcher) {
             Log.debug { "Websocket job started" }
 
             webSocket.subscribe(Channel.Ohlcv("btc_usdt"), Channel.Ohlcv("doge_usdt"))  // Subscribe for doge_usdt@ohlcv
 
             webSocket.flow()
-                .retryWhen { cause, attempt ->
-                    when (cause) {
-                        // retry on IOException
-                        is IOException -> {
-                            delay(1.seconds)                // delay for one second before retry
-                            true
-                        }
-
-                        // If it's CancellationException we should finish our flow
-                        is CancellationException -> false
-
-                        // do retry otherwise
-                        else -> {
-                            Log.warn(throwable = cause) { "Unknown error on websocket, retry..." }
-                            delay(1.seconds)                // delay for one second before retry
-                            true
-                        }
-                    }
-                }
+                .retryWhenNotCancelled(1.seconds)
                 .mapNotNull { result ->
                     result
                         .onFailure { Log.warn(throwable = it) }
@@ -90,7 +77,13 @@ class KunaCandlePullService(
                 .collectLatest {
                     data.tryEmit(it)
                 }
-        }.also { it.invokeOnCompletion { Log.debug { "Websocket job completed (exception: ${it?.message})" }; job = null } }
+        }.also {
+            it.invokeOnCompletion {
+                _running.value = false
+                job = null
+                Log.debug { "Websocket job completed (exception: ${it?.message})" }
+            }
+        }
     }
 
     override fun stop() {
@@ -111,7 +104,6 @@ class KunaCandlePullService(
 
     }.also { it.invokeOnCompletion { Log.debug { "updateCandlesTable() job completed (exception: ${it?.message})" } } }
 }
-
 
 private fun ChannelData.Ohlcv.Data.toEntity(pair: String): CandleEntity = CandleEntity(
     platform = CryptoPlatform.KUNA,

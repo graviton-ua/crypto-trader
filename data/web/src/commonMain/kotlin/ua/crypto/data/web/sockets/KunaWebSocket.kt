@@ -7,8 +7,10 @@ import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.io.IOException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
@@ -17,6 +19,8 @@ import ua.crypto.core.util.AppCoroutineDispatchers
 import ua.crypto.data.web.BuildConfig
 import ua.crypto.data.web.excpetions.WebSocketNeedRetryException
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTimedValue
 
 @Inject
@@ -206,5 +210,25 @@ class KunaWebSocket(
 
 
         data object Accounts : Channel("accounts")
+    }
+}
+
+fun <T> Flow<T>.retryWhenNotCancelled(delay: Duration = 1.seconds): Flow<T> = retryWhen { cause, attempt ->
+    when (cause) {
+        // retry on IOException
+        is IOException -> {
+            delay(delay)                // delay for one second before retry
+            true
+        }
+
+        // If it's CancellationException we should finish our flow
+        is CancellationException -> false
+
+        // do retry otherwise
+        else -> {
+            Log.warn(throwable = cause) { "Unknown error on websocket, retry..." }
+            delay(delay)                // delay for one second before retry
+            true
+        }
     }
 }

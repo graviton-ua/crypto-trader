@@ -7,23 +7,17 @@ import ua.crypto.domain.services.TraderServiceInitializer
 @Inject
 class TraderServiceInitializers(
     private val initializers: Lazy<Set<TraderServiceInitializer>>,
-) : TraderServiceInitializer {
+) {
+    fun start() = initializers.value.forEach { it.start() }
 
-    override fun start() = initializers.value.forEach { it.start() }
-
-    override fun stop() = initializers.value.forEach { it.stop() }
-
-    override fun restart() = initializers.value.forEach { it.restart() }
+    fun stop() = initializers.value.forEach { it.stop() }
 }
 
 @Inject
 class SyncServiceInitializers(
     private val initializers: Lazy<Set<SyncServiceInitializer>>,
-) : SyncServiceInitializer {
+) {
+    fun start() = initializers.value.forEach { it.start() }
 
-    override fun start() = initializers.value.forEach { it.start() }
-
-    override fun stop() = initializers.value.forEach { it.stop() }
-
-    override fun restart() = initializers.value.forEach { it.restart() }
+    fun stop() = initializers.value.forEach { it.stop() }
 }

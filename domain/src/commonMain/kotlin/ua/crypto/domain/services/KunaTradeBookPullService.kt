@@ -20,7 +20,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @ApplicationScope
 @Inject
-class TradeBookPullService(
+class KunaTradeBookPullService(
     dispatchers: AppCoroutineDispatchers,
     private val scope: ApplicationCoroutineScope,
     private val api: KunaApi,
@@ -28,31 +28,29 @@ class TradeBookPullService(
     private val botConfigsDao: BotConfigsDao,
 ) : TraderServiceInitializer {
     private val dispatcher = dispatchers.io
+    private val _running = MutableStateFlow(false)
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
     private val data = MutableStateFlow<List<KunaTradesBook>?>(null)
 
     init {
-        //start()
         scope.updateTradesBookTable()
     }
 
+
+    override val isRunning: StateFlow<Boolean> = _running
+
     override fun start() {
-        if (job != null) return
+        if (job != null || _running.value) return
+        _running.value = true
         job = scope.launch(dispatcher) {
             Log.debug { "DataPuller job started" }
             DataPuller().pull(delay.value) {
                 // Fetch active pairs form KunaList table first and then use active tickers as input params for fetching TradesBookTable
                 val active = botConfigsDao.getActiveTickers().map { it.pair }
-//                Log.info { "Active tickers: $active" }
                 active.flatMap { pair ->
                     api.getTradesBook(pair, 1)
-//                        .onSuccess { value ->
-//                            Log.info { "getTradesBook: $value" }
-//                        }
-                        .onFailure { exception ->
-                            Log.error(throwable = exception) { "getTradesBook: Some error happen" }
-                        }
+                        .onFailure { exception -> Log.error(throwable = exception) { "getTradesBook: Some error happen" } }
                         .getOrDefault(emptyList())
                 }.ifEmpty { null }
             }
@@ -64,7 +62,9 @@ class TradeBookPullService(
                 }
         }.also {
             it.invokeOnCompletion {
-                Log.debug { "DataPuller job completed (exception: ${it?.message})" }; job = null
+                _running.value = false
+                job = null
+                Log.debug { "DataPuller job completed (exception: ${it?.message})" }
             }
         }
     }
@@ -80,21 +80,13 @@ class TradeBookPullService(
 
         data
             .filterNotNull()
-//            .also {
-//                Log.info { "Flow: $it" }
-//            }
-            .map { it ->
-//                Log.info { "List: $it" }
-                it.map(KunaTradesBook::toEntity)
-            }
+            .map { it.map(KunaTradesBook::toEntity) }
             .collectLatest { list ->
                 daoTradeBook.save(list)
-//                    .onSuccess { Log.info { "TradesBook updated" } }
                     .onFailure { Log.error(throwable = it) }
             }
 
     }.also { it.invokeOnCompletion { Log.debug { "updateTradesBook() job completed (exception: ${it?.message})" } } }
 }
 
-private fun KunaTradesBook.toEntity(): TradeBookEntity =
-    TradeBookEntity(id, pair, quoteQuantity, matchPrice, matchQuantity, side, createdAt)
+private fun KunaTradesBook.toEntity(): TradeBookEntity = TradeBookEntity(id, pair, quoteQuantity, matchPrice, matchQuantity, side, createdAt)

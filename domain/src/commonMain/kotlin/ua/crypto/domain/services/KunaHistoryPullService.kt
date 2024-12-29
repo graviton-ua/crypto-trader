@@ -26,17 +26,21 @@ class KunaHistoryPullService(
     private val daoHistory: HistoryDao,
 ) : TraderServiceInitializer {
     private val dispatcher = dispatchers.io
+    private val _running = MutableStateFlow(false)
     private val delay = MutableStateFlow<Duration>(10.seconds)
     private var job: Job? = null
     private val data = MutableStateFlow<List<KunaHistory>?>(null)
 
     init {
-        //start()
         scope.updateHistoryTable()
     }
 
+
+    override val isRunning: StateFlow<Boolean> = _running
+
     override fun start() {
-        if (job != null) return
+        if (job != null || _running.value) return
+        _running.value = true
         job = scope.launch(dispatcher) {
             Log.debug { "DataPuller job started" }
             DataPuller().pull(delay.value) { api.geHistory() }
@@ -46,7 +50,13 @@ class KunaHistoryPullService(
                 .collectLatest {
                     data.value = it
                 }
-        }.also { it.invokeOnCompletion { Log.debug { "DataPuller job completed (exception: ${it?.message})" }; job = null } }
+        }.also {
+            it.invokeOnCompletion {
+                _running.value = false
+                job = null
+                Log.debug { "DataPuller job completed (exception: ${it?.message})" }
+            }
+        }
     }
 
     override fun stop() {
@@ -60,16 +70,9 @@ class KunaHistoryPullService(
 
         data
             .filterNotNull()
-            .also {
-                Log.info { "Flow: $it" }
-            }
-            .map { it ->
-                Log.info { "List: $it" }
-                it.map(KunaHistory::toEntity)
-            }
+            .map { it.map(KunaHistory::toEntity) }
             .collectLatest { list ->
                 daoHistory.save(list)
-                    .onSuccess { Log.info { "History updated" } }
                     .onFailure { Log.error(throwable = it) }
             }
 
