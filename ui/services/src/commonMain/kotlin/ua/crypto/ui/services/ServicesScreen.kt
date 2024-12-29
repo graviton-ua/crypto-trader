@@ -25,6 +25,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.crypto.core.inject.injectViewModel
 import ua.crypto.ui.common.screens.RailScreen
 import ua.crypto.ui.common.theme.AppTheme
+import ua.crypto.ui.common.ui.AppCard
 import ua.crypto.ui.common.ui.AppSwitch
 import ua.crypto.ui.resources.Res
 import ua.crypto.ui.resources.rail_screen_services
@@ -77,7 +78,7 @@ private fun ServicesScreen(
     ) { paddings ->
         FlowRow(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(space = 16.dp, alignment = Alignment.CenterHorizontally),
             modifier = Modifier.fillMaxWidth()
                 .verticalScroll(state = rememberScrollState())
                 .padding(paddings)
@@ -107,22 +108,10 @@ private fun ServiceCard(
     onDisable: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        modifier = modifier,
-    ) {
-        // Title
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(16.dp),
-        ) {
-            Text(
-                text = service.name,
-                style = MaterialTheme.typography.titleMedium,
-            )
-
+    AppCard(
+        title = {
+            Text(text = service.name)
             Spacer(Modifier.weight(1f))
-
             Text(
                 text = if (service.isRunning) "ON" else "OFF",
                 textAlign = TextAlign.Center,
@@ -134,26 +123,20 @@ private fun ServiceCard(
                     .background(color = if (service.isRunning) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background)
                     .padding(vertical = 2.dp, horizontal = 6.dp),
             )
-        }
+        },
+        modifier = modifier,
+    ) {
+        AppSwitch(
+            checked = service.isRunning,
+            onCheckedChange = remember(onStart, onStart) { { if (it) onStart() else onStop() } },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(text = "Enabled") }
 
-        HorizontalDivider()
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(16.dp),
-        ) {
-            AppSwitch(
-                checked = service.isRunning,
-                onCheckedChange = remember(onStart, onStart) { { if (it) onStart() else onStop() } },
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(text = "Enabled") }
-
-            AppSwitch(
-                checked = service.isAuto,
-                onCheckedChange = remember(onEnable, onDisable) { { if (it) onEnable() else onDisable() } },
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(text = "Auto start enabled") }
-        }
+        AppSwitch(
+            checked = service.isAuto,
+            onCheckedChange = remember(onEnable, onDisable) { { if (it) onEnable() else onDisable() } },
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(text = "Auto start enabled") }
     }
 }
 

@@ -2,70 +2,74 @@ package ua.crypto.ui.common.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun AppDialog(
-    title: @Composable ColumnScope.() -> Unit,
+    title: @Composable RowScope.() -> Unit,
     modifier: Modifier = Modifier,
-    onClose: (() -> Unit)? = null,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    titleVerticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
+    contentVerticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable ColumnScope.() -> Unit,
 ) = AppDialog(
-    onClose = onClose,
-    modifier = modifier,
-    contentPadding = contentPadding,
-    verticalArrangement = verticalArrangement,
+    modifier = Modifier
+        .width(IntrinsicSize.Max)
+        .then(modifier),
 ) {
-    ProvideTextStyle(value = MaterialTheme.typography.titleMedium) {
-        title()
+    Row(
+        verticalAlignment = titleVerticalAlignment,
+        horizontalArrangement = titleHorizontalArrangement,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(contentPadding)
+    ) {
+        ProvideTextStyle(value = MaterialTheme.typography.titleMedium) {
+            title()
+        }
     }
-    content()
+    HorizontalDivider()
+    Column(
+        verticalArrangement = contentVerticalArrangement,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(contentPadding),
+    ) {
+        content()
+    }
 }
 
 @Composable
 fun AppDialog(
     modifier: Modifier = Modifier,
-    onClose: (() -> Unit)? = null,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Box(
-        modifier = modifier.background(color = MaterialTheme.colorScheme.background, shape = MaterialTheme.shapes.medium),
+    Column(
+        verticalArrangement = verticalArrangement,
+        modifier = modifier
+            .background(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
+            .padding(contentPadding),
     ) {
-        onClose?.let {
-            IconButton(
-                onClick = it,
-                modifier = Modifier.align(Alignment.TopEnd),
-            ) { Icon(imageVector = Icons.Default.Close, contentDescription = null) }
-        }
-
-        Column(
-            verticalArrangement = verticalArrangement,
-            modifier = Modifier.padding(contentPadding),
-        ) {
-            /**
-             * Provides a composition local value for [LocalUriHandler] that is guaranteed to be the same instance
-             * throughout the composition hierarchy. This is important because [LocalUriHandler] is typically replaced
-             * with a new instance each time the content is rendered, leading to potential issues. By using this provider,
-             * you can ensure that the original [UriHandler] created by your application is used consistently.
-             */
-//            CompositionLocalProvider(
-//                LocalUriHandler provides (LocalWhUriHandler.current ?: LocalUriHandler.current)
-//            ) {
-            content()
-//            }
-        }
+        /**
+         * Provides a composition local value for [LocalUriHandler] that is guaranteed to be the same instance
+         * throughout the composition hierarchy. This is important because [LocalUriHandler] is typically replaced
+         * with a new instance each time the content is rendered, leading to potential issues. By using this provider,
+         * you can ensure that the original [UriHandler] created by your application is used consistently.
+         */
+//        CompositionLocalProvider(
+//            LocalUriHandler provides (LocalWhUriHandler.current ?: LocalUriHandler.current)
+//        ) {
+        content()
+//        }
     }
 }

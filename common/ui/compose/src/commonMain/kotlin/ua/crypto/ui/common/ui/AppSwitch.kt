@@ -9,6 +9,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -42,6 +44,7 @@ fun AppSwitch(
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         modifier = modifier
+            .pointerHoverIcon(PointerIcon.Hand)
             .clip(shape = AppTheme.shapes.small)
             .let { m -> onCheckedChange?.let { m.clickable(enabled = enabled) { onCheckedChange(!checked) } } ?: m }
             .padding(contentPadding),

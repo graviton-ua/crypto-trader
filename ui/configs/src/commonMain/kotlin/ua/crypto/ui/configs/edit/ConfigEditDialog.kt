@@ -1,6 +1,5 @@
 package ua.crypto.ui.configs.edit
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -28,6 +27,7 @@ import ua.crypto.ui.common.JsonNavType
 import ua.crypto.ui.common.navigation.ResultBackNavigator
 import ua.crypto.ui.common.theme.AppTheme
 import ua.crypto.ui.common.ui.AppCheckbox
+import ua.crypto.ui.common.ui.AppDialog
 import ua.crypto.ui.configs.ConfigsComponent
 import kotlin.reflect.typeOf
 
@@ -123,26 +123,15 @@ private fun ConfigEditDialog(
     onDelete: () -> Unit,
     onSave: () -> Unit,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier
-            .width(IntrinsicSize.Max)
-            .background(color = MaterialTheme.colorScheme.background, shape = MaterialTheme.shapes.medium),
+    AppDialog(
+        title = { Text(text = state.title?.let { "Edit \"$it\" config" } ?: "Create config") },
+        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier.width(IntrinsicSize.Max),
     ) {
-        Text(
-            text = state.title?.let { "Edit \"$it\" config" } ?: "Create config",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-                .padding(top = 24.dp, start = 24.dp, end = 24.dp),
-        )
-
-        HorizontalDivider()
-
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp, start = 24.dp, end = 24.dp)
                 .widthIn(min = 300.dp, max = 600.dp)
                 .heightIn(min = 240.dp, max = 640.dp),
         ) {
