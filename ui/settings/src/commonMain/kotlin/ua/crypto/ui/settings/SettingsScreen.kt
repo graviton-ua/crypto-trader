@@ -22,6 +22,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import ua.crypto.core.inject.injectViewModel
 import ua.crypto.core.settings.TraderPreferences.LogLevel
 import ua.crypto.ui.common.screens.RailScreen
+import ua.crypto.ui.common.ui.AppCard
 import ua.crypto.ui.resources.Res
 import ua.crypto.ui.resources.rail_screen_settings
 
@@ -81,68 +82,33 @@ private fun SettingsScreen(
                     .padding(paddings)
                     .padding(24.dp),
             ) {
-                OutlinedCard {
-                    // Title
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.padding(16.dp),
-                    ) {
-                        Text(
-                            text = "Database settings",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    }
-
-                    HorizontalDivider()
-
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.padding(16.dp),
-                    ) {
-                        OutlinedTextField(
-                            value = state.port,
-                            onValueChange = onPortChange,
-                            label = { Text("Database connection port") },
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
+                AppCard(
+                    title = { Text(text = "Database settings") },
+                ) {
+                    OutlinedTextField(
+                        value = state.port,
+                        onValueChange = onPortChange,
+                        label = { Text("Database connection port") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
 
-                OutlinedCard {
-                    // Title
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.padding(16.dp),
-                    ) {
-                        Text(
-                            text = "Logs settings",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    }
-
-                    HorizontalDivider()
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.padding(16.dp),
-                    ) {
-                        LogLevelDropdown(
-                            title = "Console LogLevel",
-                            selected = state.logLevel,
-                            onSelectItem = onLogLevelSelect,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                        LogLevelDropdown(
-                            title = "File LogLevel",
-                            selected = state.fileLogLevel,
-                            onSelectItem = onFileLogLevelSelect,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
+                AppCard(
+                    title = { Text(text = "Logs settings") },
+                ) {
+                    LogLevelDropdown(
+                        title = "Console LogLevel",
+                        selected = state.logLevel,
+                        onSelectItem = onLogLevelSelect,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    LogLevelDropdown(
+                        title = "File LogLevel",
+                        selected = state.fileLogLevel,
+                        onSelectItem = onFileLogLevelSelect,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
             }
         }
